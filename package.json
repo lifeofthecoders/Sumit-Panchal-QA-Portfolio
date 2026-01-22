@@ -1,7 +1,7 @@
 {
   "homepage": "https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio",
 "predeploy": "npm run build",
-"deploy": "gh-pages -d build",
+"deploy": "gh-pages -d dist",
 "name": "qa-",
   "private": true,
   "version": "0.0.0",
