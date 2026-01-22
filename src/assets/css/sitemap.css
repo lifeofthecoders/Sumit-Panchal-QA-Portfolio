@@ -1,0 +1,616 @@
+      /* ================= HAMBURGER ================= */
+      #menu-toggle {
+          display: none;
+      }
+
+      .hamburger {
+          display: none;
+          cursor: pointer;
+      }
+
+      .hamburger::before {
+          content: "☰";
+          font-size: 19px;
+      }
+
+      #menu-toggle:checked+.hamburger::before {
+          content: "✕";
+      }
+
+      /* ================= MOBILE MENU ================= */
+      @media (max-width: 768px) {
+
+          /* ✅ hide desktop nav ONLY on mobile */
+          .nav-links {
+              display: none;
+          }
+
+          .hamburger {
+              display: block;
+              position: absolute;
+              top: 50px;
+              left: 15px;
+              background: #fff;
+              padding: 6px 10px;
+              border-radius: 4px;
+              z-index: 10001;
+          }
+
+          /* When menu is open, keep hamburger fixed */
+          @media (max-width: 768px) {
+              #menu-toggle:checked+.hamburger {
+                  position: fixed;
+                  /* ✅ fixed ONLY when open */
+                  top: 50px;
+                  left: 15px;
+              }
+          }
+
+          .nav-links {
+              display: none;
+          }
+
+          .nav {
+              position: fixed;
+              top: -350px;
+              left: -305px;
+              width: 300px;
+              height: 150%;
+              background: #fff;
+              padding: 80px 20px;
+              box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+              transition: left 0.4s ease;
+              z-index: 10000;
+              display: flex;
+              flex-direction: column;
+          }
+
+          #menu-toggle:checked~.nav {
+              left: 0;
+          }
+      }
+
+      .nav a {
+          font-size: 16px;
+          padding: 10px 0;
+      }
+
+      /*================ Main CSS Structure ================*/
+      body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          margin: 40px;
+      }
+
+      h1 {
+          font-size: 43px;
+          margin-bottom: 10px;
+      }
+
+      h2 {
+          font-size: 24px;
+          font-weight: bold;
+          margin: 10px;
+      }
+
+      h3 {
+          font-size: 18.72px;
+          font-weight: bold;
+          margin: 10px;
+      }
+
+      h4 {
+          font-size: 16px;
+          font-weight: bold;
+          margin: 10px;
+      }
+
+      .summary-paragraph {
+          text-align: justify;
+          text-indent: 2em;
+          margin-bottom: 20px;
+          margin-bottom: 20px;
+      }
+
+
+      /* GLOBAL RESET */
+      * {
+          box-sizing: border-box;
+      }
+
+      body {
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+              "Roboto", "Helvetica Neue", Arial, sans-serif;
+          line-height: 1.6;
+      }
+
+      html,
+      body {
+          height: 100%;
+      }
+
+      body {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+      }
+
+      .container {
+          flex: 1;
+      }
+
+      /* ===== LOGO TITLE ===== */
+
+      .logo-link {
+          display: flex;
+          align-items: center;
+      }
+
+      .site-logo {
+          height: 65px;
+          width: auto;
+          border-radius: 35px;
+          object-fit: contain;
+          transition: transform 0.3s ease;
+      }
+
+      /* =====================================================
+      LOGO — RIGHT → LEFT SCROLL RE-ANIMATION
+      ===================================================== */
+
+      .logo-slide {
+          opacity: 0;
+          transform: translateX(120px);
+          will-change: transform, opacity;
+      }
+
+      /* Active animation state */
+      .logo-slide.animate {
+          animation: logoRightToLeft 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      }
+
+      @keyframes logoRightToLeft {
+          0% {
+              opacity: 0;
+              transform: translateX(120px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateX(-10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+      /* Hover animation stays consistent with text behavior */
+      .logo-link:hover .site-logo {
+          transform: scale(1.05);
+      }
+
+      /* Disable underline animation for logo only */
+      .logo-link::after {
+          display: none !important;
+      }
+
+
+      /* =============================================
+      HERO TITLE ANIMATION — LEFT → RIGHT Replays on scroll (same method as slide-left)
+      ============================================== */
+
+      /* H1 — LEFT ➜ RIGHT */
+      .hero-animate h1 {
+          opacity: 0;
+          transform: translateX(-80px);
+          will-change: transform, opacity;
+      }
+
+      .hero-animate h1.in-view {
+          animation: heroLeftToRight 0.9s ease-out forwards;
+      }
+
+      /* H2 — RIGHT ➜ LEFT */
+      .hero-animate h2 {
+          opacity: 0;
+          transform: translateX(80px);
+          will-change: transform, opacity;
+      }
+
+      .hero-animate h2.in-view {
+          animation: heroRightToLeft 0.9s ease-out forwards;
+      }
+
+      /* KEYFRAMES */
+      @keyframes heroLeftToRight {
+          0% {
+              opacity: 0;
+              transform: translateX(-80px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateX(10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+      @keyframes heroRightToLeft {
+          0% {
+              opacity: 0;
+              transform: translateX(80px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateX(-10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+
+      /* CONTENT SECTION animation */
+      .animate-content {
+          opacity: 0;
+          transform: translateY(80px);
+          will-change: transform, opacity;
+      }
+
+      .animate-content.in-view {
+          animation: contentBottomToTop 0.9s ease-out forwards;
+      }
+
+      @keyframes contentBottomToTop {
+          0% {
+              opacity: 0;
+              transform: translateY(80px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateY(-10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateY(0);
+          }
+      }
+
+      /* HERO HEADER */
+      .sitemap-header {
+          min-height: 320px;
+          /* ✅ prevents cut on zoom */
+          width: 100%;
+          background-image: url(/image/navbar.jpg);
+          background-size: cover;
+          background-position: center;
+          position: relative;
+          color: #111;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding-top: 90px;
+          /* ✅ prevents top bar overlap */
+          padding-bottom: 40px;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          padding: 12px 3vw;
+          /* ✅ responsive padding */
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          /* ✅ prevents breaking on zoom */
+      }
+
+      /* OWNER NAME */
+      .owner-name {
+          font-size: 14px;
+          font-weight: 600;
+          letter-spacing: 0.67px;
+          white-space: nowrap;
+          text-decoration: none;
+          /* ✅ REMOVES DEFAULT UNDERLINE */
+      }
+
+
+      /* =====================================================
+      NAV LINKS
+      ===================================================== */
+      .nav-links {
+          display: flex;
+          gap: 19px;
+          flex-wrap: wrap;
+      }
+
+      /* ---- BASE LINK ---- */
+      .nav-links a {
+          position: relative;
+          padding: 4px 10px;
+          border-radius: 999px;
+          font-size: 14px;
+          font-weight: 800;
+          letter-spacing: 1px;
+          color: #1a1a1a;
+          transition:
+              color 0.3s ease,
+              background 0.3s ease,
+              box-shadow 0.3s ease;
+      }
+
+      /* ---- SHARED UNDERLINE / DOT ---- */
+      .nav-links a::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          bottom: -12px;
+          width: 0;
+          height: 2px;
+          background: #e53935;
+          transform: translateX(-50%);
+          transition:
+              width 0.3s ease,
+              height 0.3s ease,
+              border-radius 0.3s ease;
+      }
+
+      /* ---- ACTIVE TAB ---- */
+      .nav-links a.active {
+          color: #e53935;
+          background: rgba(229, 57, 53, 0.08);
+          box-shadow: inset 0 0 0 1px rgba(229, 57, 53, 0.18);
+      }
+
+      .nav-links a.active::after {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.18);
+      }
+
+      /* ---- HOVER (ACTIVE + INACTIVE) ---- */
+      .nav-links a:hover {
+          color: #e53935;
+          background: rgba(229, 57, 53, 0.08);
+          box-shadow: inset 0 0 0 1px rgba(229, 57, 53, 0.18);
+      }
+
+      .nav-links a:hover::after {
+          width: 80%;
+          height: 3px;
+          border-radius: 50%;
+          box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.18);
+      }
+
+      /* CENTER TITLE */
+      .hero-title {
+          text-align: center;
+          max-width: 90%;
+      }
+
+      .hero-title h1 {
+          font-size: 48px;
+          letter-spacing: 4px;
+          margin: 10px 0 10px;
+      }
+
+      .hero-title h2 {
+          font-family: Arial, sans-serif;
+          margin: 10px 0 10px;
+          font-size: 18px;
+          font-weight: 600;
+          letter-spacing: 3px;
+      }
+
+      /* ✅ UNDERLINE - EXACTLY UNDER HERO TITLE BLOCK */
+
+      .hero-title {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      .hero-title h1 {
+          position: relative;
+      }
+
+      .hero-title h1::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          bottom: 0;
+          transform: translateX(-50%);
+          width: 90px;
+          height: 5px;
+          background: #000;
+          /* ✅ BLACK so it shows on white */
+      }
+
+
+      /* Hide old underline div so it doesn't interfere */
+      .title-underline {
+          display: none;
+      }
+
+
+      /* MAIN CONTENT */
+      .sitemap-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 40px 40px;
+      }
+
+      /* ===== GLOBAL LINK STYLING ===== */
+      a {
+          color: blue;
+          text-decoration: none;
+      }
+
+      a:hover {
+          color: red;
+      }
+
+      .container .sitemap {
+          margin-left: 0 !important;
+      }
+
+      /* =============================
+      SITEMAP — MATCH ABOUT PAGE ALIGNMENT
+      ============================= */
+      .container {
+          max-width: 1200px;
+          width: 100%;
+          margin: 0 auto;
+          padding: 40px 40px;
+          text-align: left;
+          /* FORCE LEFT TEXT START */
+      }
+
+      .sitemap-list {
+          list-style: disc;
+          font-weight: 700;
+          padding-left: 40px;
+          margin: 0;
+          margin-bottom: 50px;
+      }
+
+      .sitemap-list li {
+          margin-top: 10px;
+          margin-bottom: 10px;
+      }
+
+
+      /* ✅ ZOOM & SCREEN RESPONSIVENESS */
+      @media (max-width: 1200px) {
+          .hero-title h1 {
+              font-size: 42px;
+          }
+      }
+
+      @media (max-width: 992px) {
+          .top-bar {
+              flex-direction: column;
+              gap: 8px;
+          }
+
+          .nav-links {
+              justify-content: center;
+          }
+
+          .hero-title h1 {
+              font-size: 36px;
+          }
+      }
+
+      @media (max-width: 768px) {
+          .sitemap-header {
+              min-height: 280px;
+          }
+
+          .sitemap-title h1 {
+              font-size: 30px;
+          }
+
+          .sitemap-title h2 {
+              font-size: 16px;
+          }
+
+          .nav-links {
+              gap: 30px;
+          }
+      }
+
+      @media (max-width: 480px) {
+          .sitemap-header {
+              min-height: 260px;
+          }
+
+          .sitemap-title h1 {
+              font-size: 26px;
+          }
+
+          .sitemap-title h2 {
+              font-size: 14px;
+          }
+
+          .owner-name {
+              font-size: 16px;
+          }
+      }
+
+      /* =========================================
+      ENSURE FOOTER STAYS AT BOTTOM (MOBILE SAFE)
+      ========================================= */
+      html,
+      body {
+          height: 100%;
+      }
+
+      body {
+          display: flex;
+          flex-direction: column;
+      }
+
+      main,
+      .page-content,
+      .about-hero-strip {
+          flex: 1 0 auto;
+      }
+
+      footer {
+          margin-top: auto;
+      }
+
+      /* =========================================
+      SITEMAP PAGE — PREVENT HORIZONTAL SCROLL (MOBILE)
+      MATCH HOME SCREEN
+      ========================================= */
+      @media (max-width: 768px) {
+
+          html,
+          body {
+              overflow-x: hidden;
+              width: 100%;
+              position: relative;
+          }
+      }
+
+      /* ===== VIEW LINE (SECTION DIVIDER) ===== */
+      .view-line {
+          border: 0;
+          height: 1px;
+          background: #e0e0e0;
+          margin: 0px 0px 0px;
+          width: 100%;
+          opacity: 0.6;
+      }
+
+      /* ===== FOOTER CENTER ALIGN ===== */
+      footer {
+          background-color: #111111;
+          color: #ffffff;
+          width: 100%;
+          text-align: center;
+          padding: 20px 0;
+          font-size: 14px;
+          border-top: 1px solid #000000;
+          /* ✅ ADDS THE VIEW LINE */
+      }
