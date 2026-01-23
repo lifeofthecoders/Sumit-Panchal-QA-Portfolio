@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import usePageAnimations from "../hooks/usePageAnimations";
 import "../assets/css/portfolio.css";
 import "../assets/js/portfolio";
+import { Link } from "react-router-dom";
 
 export default function Portfolio() {
     // ✅ Same animation hook as About
@@ -79,7 +80,7 @@ export default function Portfolio() {
                             <p class="summary-paragraph">
                                 🔹 <b>Currently open to new opportunities</b> in QA / Manual Testing where I can contribute my skills and grow
                                 with a forward-thinking organization. You can get a better idea about my work through
-                                <a href="projects.html"><b> Projects</b></a>
+                                <Link to="/projects" className="btn-connect"><b> Projects. </b></Link>
                             </p>
 
                         </section>
@@ -220,7 +221,7 @@ export default function Portfolio() {
                             </div>
 
                             <div>
-                                <a href="contact.html" class="primary-btn"><b>Hire a Reliable Manual QA</b></a>
+                                <Link to="/contact" className="btn-connect"><b> Hire a Reliable Manual QA </b></Link>
                             </div>
 
                         </section>
@@ -232,13 +233,14 @@ export default function Portfolio() {
                                 <p class="summary-paragraph">
                                     Get to know me better as a <b>Quality Assurance Engineer</b> and how I trained as a manual testing engineer
                                     in
-                                    my past 4 years through Projects and more information about myself on <a href="about.html"
-                                        class="primary-btn"><b>About</b></a>
+                                    my past 4 years through Projects and more information about myself on <Link to="/about" className="btn-connect"><b> About </b></Link>
                                 </p>
                             </div>
 
                             <div>
-                                <a href="contact.html" class="btn-primary"><b>Let's connect and collaborate!</b></a>
+                            <Link to="/contact" className="btn-primary">
+                                <b>Let's connect and collaborate!</b>
+                            </Link> 
                             </div>
 
                         </section>

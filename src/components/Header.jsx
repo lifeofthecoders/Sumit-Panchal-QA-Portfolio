@@ -54,7 +54,7 @@ export default function Header() {
                     ? "contact-header"
                     : isSitemap
                       ? "sitemap-header"
-                  : ""
+                      : ""
         }`}
     >
       {/* TOP BAR */}
@@ -64,7 +64,7 @@ export default function Header() {
           className="owner-name logo-link logo-slide"
           onClick={() => setOpen(false)}
         >
-          <img src="/image/logo.svg" className="site-logo" alt="Logo" />
+          <img src="/Sumit-Panchal-QA-Portfolio/image/logo.svg" className="site-logo" alt="Logo" />
         </NavLink>
 
         <input
@@ -190,7 +190,7 @@ export default function Header() {
         key={`profile-${location.pathname}`}
         className="profile-badge profile-slide"
       >
-        <img src="/image/profile.jpg" alt="Profile" />
+        <img src={`${import.meta.env.BASE_URL}image/profile.jpg`} alt="Profile" />
         <span className="profile-name">
           <b>Sumit Panchal</b>
         </span>

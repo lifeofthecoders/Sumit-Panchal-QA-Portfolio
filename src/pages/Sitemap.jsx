@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import usePageAnimations from "../hooks/usePageAnimations";
 import "../assets/css/sitemap.css";
 import "../assets/js/sitemap";
+import { Link } from "react-router-dom";
 
 export default function Sitemap() {
   // ✅ Same animation hook as About
@@ -28,13 +29,13 @@ export default function Sitemap() {
 
               <div className="sitemap">
                 <ul className="sitemap-list">
-                  <li><a href="/">HOME</a></li>
-                  <li><a href="/about">ABOUT</a></li>
-                  <li><a href="/services">SERVICES</a></li>
-                  <li><a href="/projects">PROJECTS</a></li>
-                  <li><a href="/portfolio">PORTFOLIO</a></li>
-                  <li><a href="/gallery">GALLERY</a></li>
-                  <li><a href="/contact">CONTACT</a></li>
+                  <li><Link to="/">HOME</Link></li>
+                  <li><Link to="/about">ABOUT</Link></li>
+                  <li><Link to="/services">SERVICES</Link></li>
+                  <li><Link to="/projects">PROJECTS</Link></li>
+                  <li><Link to="/portfolio">PORTFOLIO</Link></li>
+                  <li><Link to="/gallery">GALLERY</Link></li>
+                  <li><Link to="/contact">CONTACT</Link></li>
                 </ul>
               </div>
 

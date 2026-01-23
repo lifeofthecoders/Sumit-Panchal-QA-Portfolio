@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import "../assets/css/about.css";
+import { Link } from "react-router-dom";
 
 export default function About() {
 
@@ -89,15 +90,15 @@ export default function About() {
     return (
         <>
             <section className="about-page">
-            {/* ABOUT HERO STRIP */}
-            <section className="about-hero-strip">
+                {/* ABOUT HERO STRIP */}
+                <section className="about-hero-strip">
                     <div className="about-overlay">
                         <div className="about-wrapper about-wrapper-anim">
 
                             {/* LEFT PROFILE IMAGE */}
                             <div className="about-left profile-card">
                                 <div className="profile-circle">
-                                    <img src="/image/profile.jpg" alt="Sumit Panchal" />
+                                    <img src="./image/profile.jpg" alt="Sumit Panchal" />
                                 </div>
 
                                 <div className="profile-info">
@@ -163,9 +164,7 @@ export default function About() {
                                     are
                                     interested in working
                                     with me or discussing professional opportunities, I would be pleased to
-                                    <a href="/contact" className="btn-link">
-                                        <b> Connect </b>
-                                    </a>
+                                    <Link to="/contact" className="btn-connect"><b> connect </b></Link>
                                     to discuss potential
                                     professional engagements.
                                 </p>
@@ -174,186 +173,186 @@ export default function About() {
 
                         </div>
                     </div>
-            </section>
+                </section>
 
-            {/* MAIN CONTENT */}
-            <main className="about">
-            <section className="container section-lg">
+                {/* MAIN CONTENT */}
+                <main className="about">
+                    <section className="container section-lg">
 
-                <hr className="view-line" />
+                        <hr className="view-line" />
 
-                {/* PROFESSIONAL OVERVIEW */}
-                <section className="about-cards">
-                    <h3 id="Professional-overview" className="heading-link">
-                        <b>🔍 Professional Overview</b>
-                        <span
-                            className="anchor-icon"
-                            data-target="Professional-overview"
-                        >
-                            🔗
-                        </span>
+                        {/* PROFESSIONAL OVERVIEW */}
+                        <section className="about-cards">
+                            <h3 id="Professional-overview" className="heading-link">
+                                <b>🔍 Professional Overview</b>
+                                <span
+                                    className="anchor-icon"
+                                    data-target="Professional-overview"
+                                >
+                                    🔗
+                                </span>
 
-                    </h3>
+                            </h3>
 
-                    <p>
-                        I am a quality-driven Manual QA professional with strong analytical and
-                        problem-solving skills, focused on delivering reliable, high-quality software.
-                    </p>
+                            <p>
+                                I am a quality-driven Manual QA professional with strong analytical and
+                                problem-solving skills, focused on delivering reliable, high-quality software.
+                            </p>
 
-                    <div className="cards-grid">
+                            <div className="cards-grid">
 
-                        {[
-                            { title: "Primary Role", value: "Manual QA Engineer" },
-                            { title: "Platforms", value: "Web · Android · iOS" },
-                            { title: "Key Focus Areas", value: "Functional, Regression & UAT" },
-                            { title: "Domains Covered", value: "Ride-Hailing, Networking, E-Com, Gaming" }
-                        ].map((item) => (
-                            <div className="overlay slide-up" key={item.title}>
-                                <div className="cards">
-                                    <div className="cards-header">
-                                        <div className="wave-bg">
-                                            <h1 className="wave-title"><b>{item.title}</b></h1>
+                                {[
+                                    { title: "Primary Role", value: "Manual QA Engineer" },
+                                    { title: "Platforms", value: "Web · Android · iOS" },
+                                    { title: "Key Focus Areas", value: "Functional, Regression & UAT" },
+                                    { title: "Domains Covered", value: "Ride-Hailing, Networking, E-Com, Gaming" }
+                                ].map((item) => (
+                                    <div className="overlay slide-up" key={item.title}>
+                                        <div className="cards">
+                                            <div className="cards-header">
+                                                <div className="wave-bg">
+                                                    <h1 className="wave-title"><b>{item.title}</b></h1>
+                                                </div>
+                                            </div>
+                                            <div className="stats">
+                                                <ul className="stats-list">
+                                                    <li><strong>{item.value}</strong></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="stats">
-                                        <ul className="stats-list">
-                                            <li><strong>{item.value}</strong></li>
-                                        </ul>
+                                ))}
+
+                            </div>
+                        </section>
+
+                        <hr className="view-line" />
+
+                        {/* CORE SKILLS */}
+                        <section className="about-cards">
+                            <h3 id="core-skills" className="heading-link">
+                                <b>🔑 Core Skills</b>
+                                <span
+                                    className="anchor-icon"
+                                    data-target="Professional-overview"
+                                >
+                                    🔗
+                                </span>
+
+                            </h3>
+
+                            <p>A skill set focused on uncovering critical defects and ensuring reliable releases.</p>
+
+                            <div className="cards-grid">
+
+                                <div className="overlay slide-up">
+                                    <div className="cards">
+                                        <div className="cards-header">
+                                            <div className="wave-bg">
+                                                <h1 className="wave-title"><b>Testing Types</b></h1>
+                                            </div>
+                                        </div>
+                                        <div className="stats">
+                                            <ul className="stats-list">
+                                                <li><strong>Manual Functional testing</strong></li>
+                                                <li><strong>Regression & Re-testing</strong></li>
+                                                <li><strong>Smoke & Sanity Testing</strong></li>
+                                                <li><strong>Integration & End-to-End Testing</strong></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
 
-                    </div>
-                </section>
-
-                <hr className="view-line" />
-
-                {/* CORE SKILLS */}
-                <section className="about-cards">
-                    <h3 id="core-skills" className="heading-link">
-                        <b>🔑 Core Skills</b>
-                        <span
-                            className="anchor-icon"
-                            data-target="Professional-overview"
-                        >
-                            🔗
-                        </span>
-
-                    </h3>
-
-                    <p>A skill set focused on uncovering critical defects and ensuring reliable releases.</p>
-
-                    <div className="cards-grid">
-
-                        <div className="overlay slide-up">
-                            <div className="cards">
-                                <div className="cards-header">
-                                    <div className="wave-bg">
-                                        <h1 className="wave-title"><b>Testing Types</b></h1>
+                                <div className="overlay slide-up">
+                                    <div className="cards">
+                                        <div className="cards-header">
+                                            <div className="wave-bg">
+                                                <h1 className="wave-title"><b>Process & Practices</b></h1>
+                                            </div>
+                                        </div>
+                                        <div className="stats">
+                                            <ul className="stats-list">
+                                                <li><strong>SDLC & STLC</strong></li>
+                                                <li><strong>Defect Life Cycle</strong></li>
+                                                <li><strong>Test Case Design & Execution</strong></li>
+                                                <li><strong>Requirement Analysis & Traceability</strong></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="stats">
-                                    <ul className="stats-list">
-                                        <li><strong>Manual Functional testing</strong></li>
-                                        <li><strong>Regression & Re-testing</strong></li>
-                                        <li><strong>Smoke & Sanity Testing</strong></li>
-                                        <li><strong>Integration & End-to-End Testing</strong></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="overlay slide-up">
-                            <div className="cards">
-                                <div className="cards-header">
-                                    <div className="wave-bg">
-                                        <h1 className="wave-title"><b>Process & Practices</b></h1>
+                                <div className="overlay slide-up">
+                                    <div className="cards">
+                                        <div className="cards-header">
+                                            <div className="wave-bg">
+                                                <h1 className="wave-title"><b>Business Workflows</b></h1>
+                                            </div>
+                                        </div>
+                                        <div className="stats">
+                                            <ul className="stats-list">
+                                                <li><strong>Booking & Real-time Tracking</strong></li>
+                                                <li><strong>Payment & Wallet Flows</strong></li>
+                                                <li><strong>Chat & Notification Systems</strong></li>
+                                                <li><strong>Admin & Moderation Panels</strong></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="stats">
-                                    <ul className="stats-list">
-                                        <li><strong>SDLC & STLC</strong></li>
-                                        <li><strong>Defect Life Cycle</strong></li>
-                                        <li><strong>Test Case Design & Execution</strong></li>
-                                        <li><strong>Requirement Analysis & Traceability</strong></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="overlay slide-up">
-                            <div className="cards">
-                                <div className="cards-header">
-                                    <div className="wave-bg">
-                                        <h1 className="wave-title"><b>Business Workflows</b></h1>
+                                <div className="overlay slide-up">
+                                    <div className="cards">
+                                        <div className="cards-header">
+                                            <div className="wave-bg">
+                                                <h1 className="wave-title"><b>Collaboration & Delivery</b></h1>
+                                            </div>
+                                        </div>
+                                        <div className="stats">
+                                            <ul className="stats-list">
+                                                <li><strong>Agile Sprint Participation</strong></li>
+                                                <li><strong>Bug Triage & Prioritization</strong></li>
+                                                <li><strong>UAT Support & Sign-off</strong></li>
+                                                <li><strong>Cross-functional Communication</strong></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="stats">
-                                    <ul className="stats-list">
-                                        <li><strong>Booking & Real-time Tracking</strong></li>
-                                        <li><strong>Payment & Wallet Flows</strong></li>
-                                        <li><strong>Chat & Notification Systems</strong></li>
-                                        <li><strong>Admin & Moderation Panels</strong></li>
-                                    </ul>
-                                </div>
+
                             </div>
-                        </div>
 
-                        <div className="overlay slide-up">
-                            <div className="cards">
-                                <div className="cards-header">
-                                    <div className="wave-bg">
-                                        <h1 className="wave-title"><b>Collaboration & Delivery</b></h1>
-                                    </div>
-                                </div>
-                                <div className="stats">
-                                    <ul className="stats-list">
-                                        <li><strong>Agile Sprint Participation</strong></li>
-                                        <li><strong>Bug Triage & Prioritization</strong></li>
-                                        <li><strong>UAT Support & Sign-off</strong></li>
-                                        <li><strong>Cross-functional Communication</strong></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                        </section>
 
-                    </div>
+                        <hr className="view-line" />
 
-                </section>
+                        {/* ACADEMIC & EXPERIENCE */}
+                        <section className="about-cards">
+                            <h3 className="heading-link"><b>Academic Qualifications</b></h3>
+                            <ul>
+                                <li>BSc (Hons) Business Information Systems - University of Westminster</li>
+                                <li>GCE Advanced Level - Ananda College Colombo</li>
+                                <li>GCE Ordinary Level - Ananda College Colombo</li>
+                            </ul>
 
-                <hr className="view-line" />
+                            <h3 className="heading-link"><b>Work Experience</b></h3>
+                            <ul>
+                                <li>Quality Assurance Engineer - ZILLIONe Business Solutions</li>
+                                <li>Test Automation Engineer - CPOS Project</li>
+                                <li>Freelance Graphic Designer</li>
+                            </ul>
 
-                {/* ACADEMIC & EXPERIENCE */}
-                <section className="about-cards">
-                    <h3 className="heading-link"><b>Academic Qualifications</b></h3>
-                    <ul>
-                        <li>BSc (Hons) Business Information Systems - University of Westminster</li>
-                        <li>GCE Advanced Level - Ananda College Colombo</li>
-                        <li>GCE Ordinary Level - Ananda College Colombo</li>
-                    </ul>
+                            <h3 id="achievements" class="heading-link">
+                                <b>Achievements & Activities</b>
+                                <a href="#achievements" class="anchor-icon" data-target="achievements" title="Copy link">🔗</a>
+                            </h3>
 
-                    <h3 className="heading-link"><b>Work Experience</b></h3>
-                    <ul>
-                        <li>Quality Assurance Engineer - ZILLIONe Business Solutions</li>
-                        <li>Test Automation Engineer - CPOS Project</li>
-                        <li>Freelance Graphic Designer</li>
-                    </ul>
+                            <ul>
+                                <li>Assistant Band Leader - Ananda College Brass Band</li>
+                                <li>Secretary - Wild Life Association</li>
+                                <li>Western Province Chess Champion</li>
+                            </ul>
+                        </section>
 
-                    <h3 id="achievements" class="heading-link">
-                        <b>Achievements & Activities</b>
-                        <a href="#achievements" class="anchor-icon" data-target="achievements" title="Copy link">🔗</a>
-                    </h3>
-
-                    <ul>
-                        <li>Assistant Band Leader - Ananda College Brass Band</li>
-                        <li>Secretary - Wild Life Association</li>
-                        <li>Western Province Chess Champion</li>
-                    </ul>
-                </section>
-
-            </section>
-            </main>
+                    </section>
+                </main>
             </section>
         </>
     );
