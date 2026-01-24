@@ -45,22 +45,27 @@ export default function Home() {
                         <h2><b>Quality Analyst Engineer</b></h2>
 
                         <p className="summary-paragraph">
-                            Detail-oriented QA Engineer with 4 years of professional experience in manual and functional testing of web
-                            and
-                            mobile applications, delivering high-quality, stable, and user-friendly software products. Proven expertise in
-                            end-to-end testing, regression testing, UAT support, and defect lifecycle management across multiple domains
-                            including taxi booking apps, fintech, real estate platforms, and SaaS products.
+                            <b>Detail-oriented QA Engineer</b> with <b>4 years 6 months of professional experience</b>
+                            in <b>manual and functional testing</b> of <b>web and mobile applications</b>,
+                            delivering <b>high-quality</b>, <b>stable</b>, and <b>user-friendly software products</b>.
+                            Proven expertise in <b>end-to-end testing</b>, <b>regression testing</b>,
+                            <b>UAT support</b>, and <b>defect lifecycle management</b> across multiple domains including
+                            <b>taxi booking applications</b>, <b>fintech platforms</b>, <b>real estate systems</b>,
+                            and <b>SaaS products</b>.
                         </p>
 
+
                         <p className="summary-paragraph">
-                            Strong understanding of the Software Testing Life Cycle (STLC) and Software Development Life Cycle (SDLC) with
-                            hands-on experience in Agile/Scrum environments. Highly skilled in test case design, requirement analysis,
-                            test
-                            execution, bug reporting, and coordination with development teams for timely defect resolution. Known for
-                            excellent attention to detail, strong analytical skills, and a proactive approach to identifying potential
-                            risks
-                            before production release.
+                            Strong understanding of the <b>Software Testing Life Cycle (STLC)</b> 
+                            and <b>Software Development Life Cycle (SDLC)</b> with hands-on experience 
+                            in <b>Agile/Scrum environments</b>. Highly skilled in <b>test case design</b>, 
+                            <b>requirement analysis</b>, <b>test execution</b>, <b>bug reporting</b>, 
+                            and <b>cross-team collaboration</b> for timely <b>defect resolution</b>. 
+                            Known for <b>excellent attention to detail</b>, <b>strong analytical skills</b>, 
+                            and a <b>proactive quality-driven approach</b> to identifying <b>potential risks</b> 
+                            before <b>production release</b>.
                         </p>
+
                     </section>
 
                     <hr className="view-line" />
@@ -73,13 +78,12 @@ export default function Home() {
                         </h3>
 
                         <ul className="skills-list">
-                            <li>Manual Testing: Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing
-                            </li>
-                            <li>Bug Tracking & Test Management: JIRA, Bugzilla, TestRail</li>
-                            <li>Version Control: Git, GitHub</li>
-                            <li>Collaboration Tools: Confluence, Slack, Microsoft Teams</li>
-                            <li>Operating Systems: Windows, macOS, Android, iOS</li>
-                            <li>Browsers: Chrome, Firefox, Safari, Edge</li>
+                            <li>Manual Testing: <b>Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing</b></li>
+                            <li>Bug Tracking & Test Management: <b>JIRA, Bugzilla, TestRail</b></li>
+                            <li>Version Control: <b>Git, GitHub</b></li>
+                            <li>Collaboration Tools: <b>Confluence, Slack, Microsoft Teams</b></li>
+                            <li>Operating Systems: <b>Windows, macOS, Android, iOS</b></li>
+                            <li>Browsers: <b>Chrome, Firefox, Safari, Edge</b></li>
                         </ul>
                     </section>
 
@@ -136,9 +140,9 @@ export default function Home() {
 
                         <div className="index-card-grid">
                             <img src={`${import.meta.env.BASE_URL}image/home4.jpg`} />
-                            <img src={`${import.meta.env.BASE_URL}image/home5.jpg`} />
-                            <img src={`${import.meta.env.BASE_URL}image/home6.jpg`} />
-                            <img src={`${import.meta.env.BASE_URL}image/home7.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/home4.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/home4.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/home4.jpg`} />
 
                         </div>
                     </section>
