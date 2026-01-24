@@ -114,58 +114,29 @@ export default function About() {
                                 <h2><b><u>SUMIT PANCHAL</u></b></h2>
 
                                 <p>
-                                    I am a highly motivated and result-driven <b>Quality Assurance Engineer with 4+ years of
-                                        professional
-                                        experience</b>
-                                    in testing <b>web and mobile applications</b>, delivering high-quality, stable, and
-                                    user-centric software
-                                    products.
-                                    I am passionate about continuous learning, adopting new technologies, and improving testing
-                                    processes to
-                                    enhance
-                                    overall product quality and business outcomes. I perform effectively both independently and
-                                    as part of
-                                    cross-functional
-                                    Agile teams.
+                                    I am a highly motivated and result-driven <b>Quality Assurance Engineer with 4 years 6 months + of professional experience</b> 
+                                    in testing <b>web and mobile applications</b>, delivering high-quality, stable, and user-centric software
+                                    products. I am passionate about continuous learning, adopting new technologies, and improving testing
+                                    processes to enhance overall product quality and business outcomes. I perform effectively both independently and
+                                    as part of cross-functional Agile teams.
                                 </p>
 
                                 <p>
-                                    I am currently working as a <b>Quality Assurance Engineer at Echoinnovate IT - Mobile App
-                                        Development & AI
-                                        Digital Transformation
-                                        Company (June 2021 - Present)</b>, where I have played a key role in testing and
-                                    delivering <b>10+ web
-                                        and
-                                        mobile applications</b> across
-                                    multiple business domains. I have successfully designed and executed <b>1,000+ test
-                                        cases</b>, reported
-                                    and
-                                    tracked <b>300+ defects</b>,
-                                    and contributed to achieving a <b>40% reduction in post-production defects</b> through
-                                    early-phase testing
-                                    and strong
-                                    regression strategies. My efforts have directly supported <b>15+ successful production
-                                        releases with zero
-                                        critical
-                                        severity issues post-deployment</b>, helping maintain a <b>99% release stability
-                                            rate.</b>
+                                    I am currently working as a <b>Quality Assurance Engineer at Echoinnovate IT - Mobile App Development & AI Digital 
+                                        Transformation Company (June 2021 - Present)</b>, where I have played a key role in testing and
+                                    delivering <b>10+ web and mobile applications</b> across multiple business domains. I have successfully designed 
+                                    and executed <b>1,000+ test cases</b>, reported and tracked <b>300+ defects</b>, and contributed to achieving a 
+                                    <b>40% reduction in post-production defects</b> through early-phase testing and strong regression strategies. My efforts 
+                                    have directly supported <b>15+ successful production releases with zero critical severity issues post-deployment</b>, helping 
+                                    maintain a <b>99% release stability rate.</b>
                                 </p>
 
                                 <p>
-                                    Known for being <b>reliable, detail-oriented, and highly accountable</b>, I consistently
-                                    meet tight
-                                    project
-                                    deadlines while
-                                    ensuring strict adherence to quality and compliance standards. I collaborate closely with
-                                    <b>developers,
-                                        product managers,
-                                        and stakeholders</b> to ensure <b>accurate defect resolution and seamless product
-                                            delivery</b>. If you
-                                    are
-                                    interested in working
-                                    with me or discussing professional opportunities, I would be pleased to
-                                    <Link to="/contact" className="btn-connect"><b> connect </b></Link>
-                                    to discuss potential
+                                    Known for being <b>reliable, detail-oriented, and highly accountable</b>, I consistently meet tight project deadlines 
+                                    while ensuring strict adherence to quality and compliance standards. I collaborate closely with 
+                                    <b>developers, product managers, and stakeholders</b> to ensure <b>accurate defect resolution and seamless 
+                                    product delivery</b>. If you are interested in working with me or discussing professional opportunities, 
+                                    I would be pleased to <Link to="/contact" className="btn-connect"><b> connect </b></Link> to discuss potential 
                                     professional engagements.
                                 </p>
 
