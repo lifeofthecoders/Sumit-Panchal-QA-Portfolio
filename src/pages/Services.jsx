@@ -82,7 +82,7 @@ export default function Services() {
                                  <a href="/#services/#qa-services" className="anchor-icon" data-target="services/#qa-services">🔗</a>                          
                             </h3>
 
-                            <p>
+                            <p className="summary-paragraph">
                                 Comprehensive manual testing services including functional,
                                 regression, usability, and exploratory testing to ensure
                                 software quality and user satisfaction.

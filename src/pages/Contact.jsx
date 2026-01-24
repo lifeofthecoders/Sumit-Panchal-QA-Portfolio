@@ -63,17 +63,17 @@ export default function Contact() {
 
                 <h4><b>(Collaboration & Communication)</b></h4>
 
-                <p className="text">
+                <p className="summary-paragraph">
                   Whether you are building a new product or strengthening an existing one, I would be glad to support your
                   quality assurance efforts and help ensure reliable, user-focused software delivery.
                 </p>
 
-                <p className="text">
+                <p className="summary-paragraph">
                   If you are looking for a <b>Manual QA Engineer</b> who can take ownership of test planning, execution, and
                   coordination across <b>web and mobile applications</b>, feel free to reach out.
                 </p>
 
-                <p className="text">
+                <p className="summary-paragraph">
                   I am open to opportunities with <b>product-based companies, startups, and service organizations</b> that
                   <b> value quality, reliability, and a strong end-user experience.</b>
                 </p>
@@ -91,7 +91,7 @@ export default function Contact() {
                   <a href="/#contact/#resume" className="anchor-icon" data-target="contact/#resume">🔗</a>
                 </h3>
 
-                <p className="section-subtitle">
+                <p className="summary-paragraph">
                   Download my latest resume to review my complete professional summary, tools, skills,
                   and detailed QA project experience.
                 </p>

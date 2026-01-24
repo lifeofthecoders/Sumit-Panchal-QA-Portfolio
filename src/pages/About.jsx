@@ -113,7 +113,7 @@ export default function About() {
                             <div className="about-right">
                                 <h2><b><u>SUMIT PANCHAL</u></b></h2>
 
-                                <p>
+                                <p className="summary-paragraph">
                                     I am a highly motivated and result-driven <b>Quality Assurance Engineer with 4 years 6 months + of professional experience</b> 
                                     in testing <b>web and mobile applications</b>, delivering high-quality, stable, and user-centric software
                                     products. I am passionate about continuous learning, adopting new technologies, and improving testing
@@ -121,7 +121,7 @@ export default function About() {
                                     as part of cross-functional Agile teams.
                                 </p>
 
-                                <p>
+                                <p className="summary-paragraph">
                                     I am currently working as a <b>Quality Assurance Engineer at Echoinnovate IT - Mobile App Development & AI Digital 
                                         Transformation Company (June 2021 - Present)</b>, where I have played a key role in testing and
                                     delivering <b>10+ web and mobile applications</b> across multiple business domains. I have successfully designed 
@@ -131,7 +131,7 @@ export default function About() {
                                     maintain a <b>99% release stability rate.</b>
                                 </p>
 
-                                <p>
+                                <p className="summary-paragraph">
                                     Known for being <b>reliable, detail-oriented, and highly accountable</b>, I consistently meet tight project deadlines 
                                     while ensuring strict adherence to quality and compliance standards. I collaborate closely with 
                                     <b>developers, product managers, and stakeholders</b> to ensure <b>accurate defect resolution and seamless 
@@ -160,7 +160,7 @@ export default function About() {
                                 <a href="/#about/#Professional-overview" className="anchor-icon" data-target="about/#Professional-overview">🔗</a>
                             </h3>
 
-                            <p>
+                            <p className="summary-paragraph">
                                 I am a quality-driven Manual QA professional with strong analytical and
                                 problem-solving skills, focused on delivering reliable, high-quality software.
                             </p>
@@ -202,7 +202,7 @@ export default function About() {
                                 <a href="/#about/#core-skills" className="anchor-icon" data-target="about/#core-skills">🔗</a>
                             </h3>
 
-                            <p>A skill set focused on uncovering critical defects and ensuring reliable releases.</p>
+                            <p className="summary-paragraph">A skill set focused on uncovering critical defects and ensuring reliable releases.</p>
 
                             <div className="cards-grid">
 
