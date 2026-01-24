@@ -14,16 +14,16 @@ export default function Home() {
                         <h2><b>Quality Analyst Engineer</b></h2>
 
                         <p className="summary-paragraph">
-                            Detail-oriented QA Engineer with 4 years of professional experience in manual and functional testing of web
+                            Detail-oriented <b>QA Engineer</b> with <b>4 years & 6 months</b> of professional experience in <b>manual and functional testing</b> of web
                             and
                             mobile applications, delivering high-quality, stable, and user-friendly software products. Proven expertise in
-                            end-to-end testing, regression testing, UAT support, and defect lifecycle management across multiple domains
-                            including taxi booking apps, fintech, real estate platforms, and SaaS products.
+                            <b>end-to-end testing, regression testing, UAT support, and defect lifecycle management across multiple domains
+                            including taxi booking apps, fintech, real estate platforms, and SaaS products.</b>
                         </p>
 
                         <p className="summary-paragraph">
-                            Strong understanding of the Software Testing Life Cycle (STLC) and Software Development Life Cycle (SDLC) with
-                            hands-on experience in Agile/Scrum environments. Highly skilled in test case design, requirement analysis,
+                            Strong understanding of the <b>Software Testing Life Cycle (STLC) and Software Development Life Cycle (SDLC) with
+                            hands-on experience in Agile/Scrum environments</b>. Highly skilled in test case design, requirement analysis,
                             test
                             execution, bug reporting, and coordination with development teams for timely defect resolution. Known for
                             excellent attention to detail, strong analytical skills, and a proactive approach to identifying potential
@@ -38,17 +38,16 @@ export default function Home() {
 
                         <h3 id="technical-skills" className="heading-link">
                             <b>🛠️ Technical Skills & Tools</b>
-                            <a href="#/technical-skills" className="anchor-icon">🔗</a>
+                            <a href="#/#technical-skills" className="anchor-icon" data-target="technical-skills">🔗</a>
                         </h3>
 
                         <ul className="skills-list">
-                            <li>Manual Testing: Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing
-                            </li>
-                            <li>Bug Tracking & Test Management: JIRA, Bugzilla, TestRail</li>
-                            <li>Version Control: Git, GitHub</li>
-                            <li>Collaboration Tools: Confluence, Slack, Microsoft Teams</li>
-                            <li>Operating Systems: Windows, macOS, Android, iOS</li>
-                            <li>Browsers: Chrome, Firefox, Safari, Edge</li>
+                            <li>Manual Testing: <b>Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing</b></li>
+                            <li>Bug Tracking & Test Management: <b>JIRA, RedmineTrello, Mentis</b></li>
+                            <li>Version Control: <b>Git, GitHub</b></li>
+                            <li>Collaboration Tools: <b>Confluence, Slack, Microsoft Teams</b></li>
+                            <li>Operating Systems: <b>Windows, macOS, Android, iOS</b></li>
+                            <li>Browsers: <b>Chrome, Firefox, Safari, Edge</b></li>
                         </ul>
                     </section>
 
