@@ -44,7 +44,7 @@ export default function Home() {
                     <section className="card animate-content">
                         <h2><b>Quality Analyst Engineer</b></h2>
 
-                        <p className="summary-paragraph">
+                        <p>
                             <b>Detail-oriented QA Engineer</b> with <b>4 years 6 months + of professional experience</b> in 
                              <b>manual and functional testing</b> of <b>web and mobile applications</b>, delivering <b>high-quality</b>, 
                              <b>stable</b>, and <b>user-friendly software products</b>. Proven expertise in <b>end-to-end testing</b>, 
@@ -53,7 +53,7 @@ export default function Home() {
                              <b>SaaS products</b>.
                         </p>
 
-                        <p className="summary-paragraph">
+                        <p>
                             Strong understanding of the <b>Software Testing Life Cycle (STLC)</b>, <b>Software Development Life Cycle (SDLC)</b> and
                              <b>Bug Defect Cycle</b> with hands-on experience in <b>Agile / Scrum environments</b>. Highly skilled in <b>test case design</b>, 
                              <b>requirement analysis</b>, <b>test execution</b>, <b>bug reporting</b>, and <b>cross-team collaboration</b> for 
