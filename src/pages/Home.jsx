@@ -45,11 +45,11 @@ export default function Home() {
                         <h2><b>Quality Analyst Engineer</b></h2>
 
                         <p className="summary-paragraph">
-                            <b>Detail-oriented QA Engineer</b> with <b>4 years 6 months of professional experience</b>
+                            <b>Detail-oriented QA Engineer</b> with <b>4 years 6 months of professional experience</b> 
                             in <b>manual and functional testing</b> of <b>web and mobile applications</b>,
                             delivering <b>high-quality</b>, <b>stable</b>, and <b>user-friendly software products</b>.
-                            Proven expertise in <b>end-to-end testing</b>, <b>regression testing</b>,
-                            <b>UAT support</b>, and <b>defect lifecycle management</b> across multiple domains including
+                            Proven expertise in <b>end-to-end testing</b>, <b>regression testing</b>, 
+                            <b>UAT support</b>, and <b>defect lifecycle management</b> across multiple domains including 
                             <b>taxi booking applications</b>, <b>fintech platforms</b>, <b>real estate systems</b>,
                             and <b>SaaS products</b>.
                         </p>
@@ -58,7 +58,7 @@ export default function Home() {
                         <p className="summary-paragraph">
                             Strong understanding of the <b>Software Testing Life Cycle (STLC)</b> 
                             and <b>Software Development Life Cycle (SDLC)</b> with hands-on experience 
-                            in <b>Agile/Scrum environments</b>. Highly skilled in <b>test case design</b>, 
+                            in <b>Agile / Scrum environments</b>. Highly skilled in <b>test case design</b>, 
                             <b>requirement analysis</b>, <b>test execution</b>, <b>bug reporting</b>, 
                             and <b>cross-team collaboration</b> for timely <b>defect resolution</b>. 
                             Known for <b>excellent attention to detail</b>, <b>strong analytical skills</b>, 
