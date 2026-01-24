@@ -49,7 +49,7 @@ export default function Home() {
                         </p>
 
                         <p className="summary-paragraph">
-                            Strong understanding of the <b>Software Testing Life Cycle (STLC)</b>, <b>Software Development Life Cycle (SDLC)</b> and <b>Bug Defect Cycle</b> with hands-on experience in <b>Agile / Scrum environments</b>. Highly skilled in <b>test case design</b>, <b>requirement analysis</b>, <b>test execution</b>, <b>bug reporting</b>, and <b>cross-team collaboration</b> for timely <b>defect resolution</b>. Known for <b>excellent attention to detail</b>, <b>strong analytical skills</b>, and a <b>proactive quality-driven approach</b> to identifying <b>potential risks</b> before <b>production release</b>.
+                            Strong understanding of the <b>Software Testing Life Cycle (STLC)</b>, <b>Software Development Life Cycle (SDLC)</b> and <b>Bug Defect Life Cycle</b> with hands-on experience in <b>Agile / Scrum environments</b>. Highly skilled in <b>test case design</b>, <b>requirement analysis</b>, <b>test execution</b>, <b>bug reporting</b>, and <b>cross-team collaboration</b> for timely <b>defect resolution</b>. Known for <b>excellent attention to detail</b>, <b>strong analytical skills</b>, and a <b>proactive quality-driven approach</b> to identifying <b>potential risks</b> before <b>production release</b>.
                         </p>
 
                     </section>
