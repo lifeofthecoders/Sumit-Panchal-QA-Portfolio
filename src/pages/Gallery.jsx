@@ -14,6 +14,34 @@ export default function Gallery() {
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+    const handleAnchorClick = (e) => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute("data-target");
+      if (!id) return;
+
+      const fullURL =
+        window.location.origin + window.location.pathname + "#" + id;
+
+      navigator.clipboard.writeText(fullURL);
+
+      e.currentTarget.innerText = "✅";
+      setTimeout(() => {
+        e.currentTarget.innerText = "🔗";
+      }, 1200);
+    };
+
+    anchorIcons.forEach((icon) =>
+      icon.addEventListener("click", handleAnchorClick)
+    );
+
+    return () => {
+      anchorIcons.forEach((icon) =>
+        icon.removeEventListener("click", handleAnchorClick)
+      );
+    };
   }, []);
 
   return (
@@ -28,7 +56,7 @@ export default function Gallery() {
 
               <h3 id="certifications" className="heading-link">
                 <b>📜 Certifications</b>
-                <span className="anchor-icon" data-target="certifications">🔗</span>
+                <a href="/#gallery/#certifications" className="anchor-icon" data-target="gallery/#certifications">🔗</a>
               </h3>
 
               <div className="gallery-grid">
@@ -52,7 +80,7 @@ export default function Gallery() {
 
               <h3 id="work-samples" className="heading-link">
                 <b>📂 Work Samples</b>
-                <span className="anchor-icon" data-target="work-samples">🔗</span>
+                <a href="/#gallery/#work-samples" className="anchor-icon" data-target="gallery/#work-samples">🔗</a>
               </h3>
 
               <div className="gallery-grid">
@@ -76,7 +104,7 @@ export default function Gallery() {
 
               <h3 id="professional-highlights" className="heading-link">
                 <b>✨ Professional Highlights</b>
-                <span className="anchor-icon" data-target="professional-highlights">🔗</span>
+                <a href="/#gallery/#professional-highlights" className="anchor-icon" data-target="gallery/#professional-highlights">🔗</a>
               </h3>
 
               <div className="gallery-grid">

@@ -12,6 +12,34 @@ export default function Portfolio() {
     // Optional: scroll to top on route change (About already does this)
     useEffect(() => {
         window.scrollTo(0, 0);
+
+        const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+        const handleAnchorClick = (e) => {
+            e.preventDefault();
+            const id = e.currentTarget.getAttribute("data-target");
+            if (!id) return;
+
+            const fullURL =
+                window.location.origin + window.location.pathname + "#" + id;
+
+            navigator.clipboard.writeText(fullURL);
+
+            e.currentTarget.innerText = "✅";
+            setTimeout(() => {
+                e.currentTarget.innerText = "🔗";
+            }, 1200);
+        };
+
+        anchorIcons.forEach((icon) =>
+            icon.addEventListener("click", handleAnchorClick)
+        );
+
+        return () => {
+            anchorIcons.forEach((icon) =>
+                icon.removeEventListener("click", handleAnchorClick)
+            );
+        };
     }, []);
 
     return (
@@ -92,7 +120,7 @@ export default function Portfolio() {
 
                             <h3 id="responsibilities" className="heading-link">
                                 <b>🧪 My core responsibilities as a Quality Assurance Engineer</b>
-                                <span className="anchor-icon" data-target="responsibilities">🔗</span>
+                                <a href="/#portfolio/#responsibilities" className="anchor-icon" data-target="portfolio/#responsibilities">🔗</a>
                             </h3>
 
                             <p class="summary-paragraph">
@@ -130,7 +158,7 @@ export default function Portfolio() {
 
                             <h3 id="achievements" className="heading-link">
                                 <b>🏆 Key Achievements</b>
-                                <span className="anchor-icon" data-target="achievements">🔗</span>
+                                <a href="/#portfolio/#achievements" className="anchor-icon" data-target="portfolio/#achievements">🔗</a>
                             </h3>
 
                             <div class="skills-list-grid">
@@ -153,9 +181,9 @@ export default function Portfolio() {
 
                             <h3 id="skills" className="heading-link">
                                 <b>🧰 Technical & Functional Skills</b>
-                                <span className="anchor-icon" data-target="skills">🔗</span>
+                                <a href="/#portfolio/#skills" className="anchor-icon" data-target="portfolio/#skills">🔗</a>
                             </h3>
-
+                        
                             <div class="skills-list-grid">
                                 <ul class="skills-list">
                                     <li><b>Testing Types:</b> Manual Testing, Functional, Regression, Smoke, Sanity, System, Integration, UAT
@@ -175,7 +203,7 @@ export default function Portfolio() {
                         <section className="portfolio-card">
                             <h3 id="why-hire-me" className="heading-link">
                                 <b>💼 Why Hire Me - Manual QA Professional</b>
-                                <span className="anchor-icon" data-target="why-hire-me">🔗</span>
+                                <a href="/#portfolio/#why-hire-me" className="anchor-icon" data-target="portfolio/#why-hire-me">🔗</a>
                             </h3>
 
                             <div class="skills-list-grid">
@@ -238,9 +266,9 @@ export default function Portfolio() {
                             </div>
 
                             <div>
-                            <Link to="/contact" className="btn-primary">
-                                <b>Let's connect and collaborate!</b>
-                            </Link> 
+                                <Link to="/contact" className="btn-primary">
+                                    <b>Let's connect and collaborate!</b>
+                                </Link>
                             </div>
 
                         </section>

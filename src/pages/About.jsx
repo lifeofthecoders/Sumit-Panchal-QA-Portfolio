@@ -183,15 +183,10 @@ export default function About() {
 
                         {/* PROFESSIONAL OVERVIEW */}
                         <section className="about-cards">
+
                             <h3 id="Professional-overview" className="heading-link">
                                 <b>🔍 Professional Overview</b>
-                                <span
-                                    className="anchor-icon"
-                                    data-target="Professional-overview"
-                                >
-                                    🔗
-                                </span>
-
+                                <a href="/#about/#Professional-overview" className="anchor-icon" data-target="about/#Professional-overview">🔗</a>
                             </h3>
 
                             <p>
@@ -230,15 +225,10 @@ export default function About() {
 
                         {/* CORE SKILLS */}
                         <section className="about-cards">
+
                             <h3 id="core-skills" className="heading-link">
                                 <b>🔑 Core Skills</b>
-                                <span
-                                    className="anchor-icon"
-                                    data-target="Professional-overview"
-                                >
-                                    🔗
-                                </span>
-
+                                <a href="/#about/#core-skills" className="anchor-icon" data-target="about/#core-skills">🔗</a>
                             </h3>
 
                             <p>A skill set focused on uncovering critical defects and ensuring reliable releases.</p>
@@ -325,23 +315,31 @@ export default function About() {
 
                         {/* ACADEMIC & EXPERIENCE */}
                         <section className="about-cards">
-                            <h3 className="heading-link"><b>Academic Qualifications</b></h3>
+                            <h3 id="academic-qualifications" className="heading-link">
+                                <b>Academic Qualifications</b>
+                                <a href="/#about/#academic-qualifications" className="anchor-icon" data-target="about/#academic-qualifications">🔗</a>
+                            </h3>
+
                             <ul>
                                 <li>BSc (Hons) Business Information Systems - University of Westminster</li>
                                 <li>GCE Advanced Level - Ananda College Colombo</li>
                                 <li>GCE Ordinary Level - Ananda College Colombo</li>
                             </ul>
 
-                            <h3 className="heading-link"><b>Work Experience</b></h3>
+                            <h3 id="work-experience" className="heading-link">
+                                <b>Work Experience</b>
+                                <a href="/#about/#work-experience" className="anchor-icon" data-target="about/#work-experience">🔗</a>
+                            </h3>
+
                             <ul>
                                 <li>Quality Assurance Engineer - ZILLIONe Business Solutions</li>
                                 <li>Test Automation Engineer - CPOS Project</li>
                                 <li>Freelance Graphic Designer</li>
                             </ul>
 
-                            <h3 id="achievements" class="heading-link">
+                            <h3 id="achievements" className="heading-link">
                                 <b>Achievements & Activities</b>
-                                <a href="#achievements" class="anchor-icon" data-target="achievements" title="Copy link">🔗</a>
+                                <a href="/#about/#achievements" className="anchor-icon" data-target="about/#achievements">🔗</a>
                             </h3>
 
                             <ul>

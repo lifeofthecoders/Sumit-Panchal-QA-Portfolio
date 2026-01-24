@@ -7,7 +7,33 @@ export default function Projects() {
     usePageAnimations(); // ✅ ADD THIS
 
     useEffect(() => {
-        // ensures JS animations bind after route change
+        const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+        const handleAnchorClick = (e) => {
+            e.preventDefault();
+            const id = e.currentTarget.getAttribute("data-target");
+            if (!id) return;
+
+            const fullURL =
+                window.location.origin + window.location.pathname + "#" + id;
+
+            navigator.clipboard.writeText(fullURL);
+
+            e.currentTarget.innerText = "✅";
+            setTimeout(() => {
+                e.currentTarget.innerText = "🔗";
+            }, 1200);
+        };
+
+        anchorIcons.forEach((icon) =>
+            icon.addEventListener("click", handleAnchorClick)
+        );
+
+        return () => {
+            anchorIcons.forEach((icon) =>
+                icon.removeEventListener("click", handleAnchorClick)
+            );
+        };
     }, []);
 
     return (
@@ -19,7 +45,7 @@ export default function Projects() {
                         <div className="services-grid">
                             <h3 id="my-projects" className="heading-link">
                                 <b>📂 My Projects</b>
-                                <span className="anchor-icon" data-target="my-projects">🔗</span>
+                                <a href="/#projects/#my-projects" className="anchor-icon" data-target="projects/#my-projects">🔗</a>
                             </h3>
 
                             <div className="projects-scroll">
@@ -354,7 +380,7 @@ export default function Projects() {
                             </div>
 
                         </div>
-                        
+
                     </section>
                 </section>
             </section>

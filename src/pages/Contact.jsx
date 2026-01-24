@@ -15,28 +15,50 @@ export default function Contact() {
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+    const handleAnchorClick = (e) => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute("data-target");
+      if (!id) return;
+
+      const fullURL =
+        window.location.origin + window.location.pathname + "#" + id;
+
+      navigator.clipboard.writeText(fullURL);
+
+      e.currentTarget.innerText = "✅";
+      setTimeout(() => {
+        e.currentTarget.innerText = "🔗";
+      }, 1200);
+    };
+
+    anchorIcons.forEach((icon) =>
+      icon.addEventListener("click", handleAnchorClick)
+    );
+
+    return () => {
+      anchorIcons.forEach((icon) =>
+        icon.removeEventListener("click", handleAnchorClick)
+      );
+    };
   }, []);
 
   return (
     <>
       {/* PAGE CONTENT */}
-      <section className="gallery-page">
-        <main className="gallery">
+      <section className="contact-page">
+        <main className="contact">
           <section className="container section-lg animate-content">
 
             {/* LET'S CONNECT */}
             <section className="contact-card">
-              <div className="Lets Connect">
-                <h3 id="contact" className="heading-link">
+              <div className="lets-connect">
+
+                <h3 id="lets-connect" className="heading-link">
                   <b>🤝 Let’s Connect</b>
-                  <a
-                    href="#contact"
-                    className="anchor-icon"
-                    data-target="contact"
-                    title="Copy link"
-                  >
-                    🔗
-                  </a>
+                  <a href="/#contact/#lets-connect" className="anchor-icon" data-target="contact/#lets-connect">🔗</a>
                 </h3>
 
                 <h4><b>(Collaboration & Communication)</b></h4>
@@ -62,9 +84,11 @@ export default function Contact() {
 
             {/* RESUME SECTION */}
             <section className="contact-card">
-              <div className="Resume-section">
+              <div className="resume-section">
+
                 <h3 id="resume" className="heading-link">
                   <b>📑 Resume</b>
+                  <a href="/#contact/#resume" className="anchor-icon" data-target="contact/#resume">🔗</a>
                 </h3>
 
                 <p className="section-subtitle">

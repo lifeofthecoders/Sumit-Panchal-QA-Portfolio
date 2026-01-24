@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import usePageAnimations from "../hooks/usePageAnimations";
 import "../assets/css/index.css";
 import { Link } from "react-router-dom";
@@ -5,6 +6,36 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
     usePageAnimations();
+
+    useEffect(() => {
+        const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+        const handleAnchorClick = (e) => {
+            e.preventDefault();
+            const id = e.currentTarget.getAttribute("data-target");
+            if (!id) return;
+
+            const fullURL =
+                window.location.origin + window.location.pathname + "#/#" + id;
+
+            navigator.clipboard.writeText(fullURL);
+
+            e.currentTarget.innerText = "✅";
+            setTimeout(() => {
+                e.currentTarget.innerText = "🔗";
+            }, 1200);
+        };
+
+        anchorIcons.forEach((icon) =>
+            icon.addEventListener("click", handleAnchorClick)
+        );
+
+        return () => {
+            anchorIcons.forEach((icon) =>
+                icon.removeEventListener("click", handleAnchorClick)
+            );
+        };
+    }, []);
 
     return (
         <section className="index-page">
@@ -14,16 +45,16 @@ export default function Home() {
                         <h2><b>Quality Analyst Engineer</b></h2>
 
                         <p className="summary-paragraph">
-                            Detail-oriented <b>QA Engineer</b> with <b>4 years & 6 months</b> of professional experience in <b>manual and functional testing</b> of web
+                            Detail-oriented QA Engineer with 4 years of professional experience in manual and functional testing of web
                             and
                             mobile applications, delivering high-quality, stable, and user-friendly software products. Proven expertise in
-                            <b>end-to-end testing, regression testing, UAT support, and defect lifecycle management across multiple domains
-                            including taxi booking apps, fintech, real estate platforms, and SaaS products.</b>
+                            end-to-end testing, regression testing, UAT support, and defect lifecycle management across multiple domains
+                            including taxi booking apps, fintech, real estate platforms, and SaaS products.
                         </p>
 
                         <p className="summary-paragraph">
-                            Strong understanding of the <b>Software Testing Life Cycle (STLC) and Software Development Life Cycle (SDLC) with
-                            hands-on experience in Agile/Scrum environments</b>. Highly skilled in test case design, requirement analysis,
+                            Strong understanding of the Software Testing Life Cycle (STLC) and Software Development Life Cycle (SDLC) with
+                            hands-on experience in Agile/Scrum environments. Highly skilled in test case design, requirement analysis,
                             test
                             execution, bug reporting, and coordination with development teams for timely defect resolution. Known for
                             excellent attention to detail, strong analytical skills, and a proactive approach to identifying potential
@@ -42,23 +73,24 @@ export default function Home() {
                         </h3>
 
                         <ul className="skills-list">
-                            <li>Manual Testing: <b>Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing</b></li>
-                            <li>Bug Tracking & Test Management: <b>JIRA, RedmineTrello, Mentis</b></li>
-                            <li>Version Control: <b>Git, GitHub</b></li>
-                            <li>Collaboration Tools: <b>Confluence, Slack, Microsoft Teams</b></li>
-                            <li>Operating Systems: <b>Windows, macOS, Android, iOS</b></li>
-                            <li>Browsers: <b>Chrome, Firefox, Safari, Edge</b></li>
+                            <li>Manual Testing: Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing
+                            </li>
+                            <li>Bug Tracking & Test Management: JIRA, Bugzilla, TestRail</li>
+                            <li>Version Control: Git, GitHub</li>
+                            <li>Collaboration Tools: Confluence, Slack, Microsoft Teams</li>
+                            <li>Operating Systems: Windows, macOS, Android, iOS</li>
+                            <li>Browsers: Chrome, Firefox, Safari, Edge</li>
                         </ul>
                     </section>
 
                     <hr className="view-line" />
 
                     <section className="card">
+
                         <h3 id="my-mission" className="heading-link">
                             <b>🎯 My Mission</b>
-                            <a href="#/my-vission" className="anchor-icon">🔗</a>
+                            <a href="#/#my-mission" className="anchor-icon" data-target="my-mission">🔗</a>
                         </h3>
-
 
                         <p className="summary-paragraph">
                             My mission is to ensure that every product I test meets the highest standards of <b>functionality,
@@ -75,7 +107,7 @@ export default function Home() {
 
                         <h3 id="my-vission" className="heading-link">
                             <b>👁️ My Vission</b>
-                            <a href="#/my-vission" className="anchor-icon">🔗</a>
+                            <a href="#/#my-vission" className="anchor-icon" data-target="my-vission">🔗</a>
                         </h3>
 
                         <p className="summary-paragraph">
@@ -93,7 +125,7 @@ export default function Home() {
 
                         <h3 id="featured-portfolio" className="heading-link">
                             <b>📂 Featured Portfolio</b>
-                            <a href="#/featured-portfolio" className="anchor-icon">🔗</a>
+                            <a href="#/#featured-portfolio" className="anchor-icon" data-target="featured-portfolio">🔗</a>
                         </h3>
 
                         <div>

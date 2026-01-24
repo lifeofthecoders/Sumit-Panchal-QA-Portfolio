@@ -6,9 +6,17 @@ export default function usePageAnimations() {
     document.querySelectorAll(".anchor-icon").forEach(icon => {
       icon.onclick = e => {
         e.preventDefault();
-        const id = icon.getAttribute("data-target");
-        const fullURL =
-          window.location.origin + window.location.pathname + "#" + id;
+        const href = icon.getAttribute("href");
+        const id = href?.replace("#", "");
+
+        if (!id) return;
+
+        const base = window.location.origin + window.location.pathname;
+
+        const fullURL = `${base}#/#${id}`;
+
+        navigator.clipboard.writeText(fullURL);
+
 
         navigator.clipboard.writeText(fullURL);
 

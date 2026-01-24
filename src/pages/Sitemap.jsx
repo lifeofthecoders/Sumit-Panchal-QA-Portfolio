@@ -12,6 +12,34 @@ export default function Sitemap() {
   // Optional: scroll to top on route change (About already does this)
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+    const handleAnchorClick = (e) => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute("data-target");
+      if (!id) return;
+
+      const fullURL =
+        window.location.origin + window.location.pathname + "#" + id;
+
+      navigator.clipboard.writeText(fullURL);
+
+      e.currentTarget.innerText = "✅";
+      setTimeout(() => {
+        e.currentTarget.innerText = "🔗";
+      }, 1200);
+    };
+
+    anchorIcons.forEach((icon) =>
+      icon.addEventListener("click", handleAnchorClick)
+    );
+
+    return () => {
+      anchorIcons.forEach((icon) =>
+        icon.removeEventListener("click", handleAnchorClick)
+      );
+    };
   }, []);
 
   return (
@@ -24,7 +52,7 @@ export default function Sitemap() {
 
               <h3 id="sitemap" className="heading-link">
                 <b>🗺️ Sitemap</b>
-                <span className="anchor-icon" data-target="sitemap">🔗</span>
+                <a href="/#sitemap/#sitemap" className="anchor-icon" data-target="sitemap/#sitemap">🔗</a>
               </h3>
 
               <div className="sitemap">

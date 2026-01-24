@@ -79,7 +79,7 @@ export default function Services() {
 
                             <h3 id="qa-services" className="heading-link">
                                 <b>🛡️ QA Services I Provide</b>
-                                <span className="anchor-icon" data-target="qa-services">🔗</span>
+                                 <a href="/#services/#qa-services" className="anchor-icon" data-target="services/#qa-services">🔗</a>                          
                             </h3>
 
                             <p>
