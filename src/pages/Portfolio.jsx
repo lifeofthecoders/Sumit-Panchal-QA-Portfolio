@@ -186,12 +186,11 @@ export default function Portfolio() {
                         
                             <div class="skills-list-grid">
                                 <ul class="skills-list">
-                                    <li><b>Testing Types:</b> Manual Testing, Functional, Regression, Smoke, Sanity, System, Integration, UAT
-                                    </li>
-                                    <li><b>Tools:</b> Jira (Bug Tracking & Test Management), Excel (Test Documentation)</li>
-                                    <li><b>Platforms:</b> Web Applications, Mobile Applications (Android & iOS)</li>
-                                    <li><b>Processes:</b> SDLC, STLC, Agile/Scrum</li>
-                                    <li><b>Other:</b> Cross-Browser Testing, UI/UX Validation, Defect Life Cycle, Test Case Documentation</li>
+                                    <li>Testing Types: <b>Manual Testing, Functional, Regression, Smoke, Sanity, System, Integration, UAT</b></li>
+                                    <li>Tools: <b>Jira (Bug Tracking & Test Management), Excel (Test Documentation)</b></li>
+                                    <li>Platforms: <b>Web Applications, Mobile Applications (Android & iOS)</b></li>
+                                    <li>Processes: <b>SDLC, STLC, Agile/Scrum</b></li>
+                                    <li>Other: <b>Cross-Browser Testing, UI/UX Validation, Defect Life Cycle, Test Case Documentation</b></li>
                                 </ul>
                             </div>
 
