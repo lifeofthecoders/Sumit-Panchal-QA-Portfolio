@@ -63,13 +63,42 @@ export default function Home() {
                             <a href="#/#technical-skills" className="anchor-icon" data-target="technical-skills">🔗</a>
                         </h3>
 
-                        <ul className="skills-list">
+                        {/* <ul className="skills-list">
                             <li>Manual Testing: <b>Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing</b></li>
                             <li>Bug Tracking & Test Management: <b>JIRA, Bugzilla, TestRail</b></li>
                             <li>Version Control: <b>Git, GitHub</b></li>
                             <li>Collaboration Tools: <b>Confluence, Slack, Microsoft Teams</b></li>
                             <li>Operating Systems: <b>Windows, macOS, Android, iOS</b></li>
                             <li>Browsers: <b>Chrome, Firefox, Safari, Edge</b></li>
+                        </ul> */}
+
+                        <ul className="skills-list">
+                            <li><b>Manual Testing Skills:</b>
+                            Functional Testing, Regression Testing, Smoke Testing, Sanity Testing, System Testing, Integration Testing, End-to-End Testing, Exploratory Testing, Compatibility Testing, UI/UX Testing, Ad-hoc Testing, User Acceptance Testing (UAT) </li>
+
+                            <li><b>Test Design & Documentation:</b>
+                            Test Case Design, Test Scenario Creation, Test Plan Preparation, Requirement Analysis, Traceability Matrix (RTM), Test Data Preparation, Test Execution Reporting</li>
+
+                            <li><b>Bug Tracking & Test Management Tools:</b>
+                            JIRA, Bugzilla, TestRail, Zephyr, ClickUp</li>
+
+                            <li><b>Agile & Process Knowledge:</b>
+                            Agile/Scrum Methodology, Sprint Planning, Daily Stand-ups, Sprint Review, Retrospective Participation, Defect Lifecycle Management, STLC, SDLC</li>
+
+                            <li><b>Collaboration & Communication Tools:</b>
+                            Confluence, Slack, Microsoft Teams, Email Communication, Documentation Collaboration</li>
+
+                            <li><b>Operating Systems & Platforms:</b>
+                            Windows, macOS, Android, iOS</li>
+
+                            <li><b>Browser & Device Testing:</b>
+                            Google Chrome, Mozilla Firefox, Microsoft Edge, Safari, Cross-browser Testing, Responsive Testing</li>  
+
+                            {/* <li><b>API & Basic Backend Testing (Manual):</b>
+                            Postman (API Validation), Request/Response Validation, Status Code Verification, Basic JSON Validation</li> */}
+
+                            <li><b>Performance & Quality Awareness:</b>
+                            Basic Performance Testing Knowledge, Usability Testing, Accessibility Awareness, Security Testing Fundamentals</li>
                         </ul>
                     </section>
 
