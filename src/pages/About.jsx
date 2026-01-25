@@ -114,7 +114,7 @@ export default function About() {
                                 <h2><b><u>SUMIT PANCHAL</u></b></h2>
 
                                 <p className="summary-paragraph">
-                                    I am a highly motivated and result-driven <b>Quality Assurance Engineer with 4 years 6 months + of professional experience</b> 
+                                    I am a highly motivated and result-driven <b>Quality Assurance Engineer with 4 years 6 months of professional experience</b> 
                                     in testing <b>web and mobile applications</b>, delivering high-quality, stable, and user-centric software
                                     products. I am passionate about continuous learning, adopting new technologies, and improving testing
                                     processes to enhance overall product quality and business outcomes. I perform effectively both independently and

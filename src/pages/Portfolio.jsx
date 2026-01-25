@@ -57,7 +57,7 @@ export default function Portfolio() {
                                 <h3><b>Quality Assurance Engineer</b></h3>
 
                                 <p className="summary-paragraph">
-                                    I’m <b>Sumit Panchal</b>, a results-driven <b>Quality Assurance Engineer</b> with over <b>4 years 6 months + of hands-on
+                                    I’m <b>Sumit Panchal</b>, a results-driven <b>Quality Assurance Engineer</b> with over <b>4 years 6 months of hands-on
                                         experience</b> in manual testing for <b>web and mobile applications.</b> I hold a <b>Bachelor of Engineering
                                             in
                                             Electronics and Communication Engineering from Silver Oak College of Engineering and Technology</b>,
