@@ -258,7 +258,7 @@ export default function Portfolio() {
                                 <p class="summary-paragraph">
                                     Get to know me better as a <b>Quality Assurance Engineer</b> and how I trained as a manual testing engineer
                                     in
-                                    my past 4 years through Projects and more information about myself on <Link to="/about" className="btn-connect"><b> About </b></Link>
+                                    my past 4 years 6 months through Projects and more information about myself on <Link to="/about" className="btn-connect"><b> About </b></Link>
                                 </p>
                             </div>
 
