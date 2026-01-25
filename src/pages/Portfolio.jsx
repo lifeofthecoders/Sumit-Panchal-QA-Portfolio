@@ -11,16 +11,6 @@ export default function Portfolio() {
 
     // Optional: scroll to top on route change (About already does this)
     useEffect(() => {
-        const handleScroll = () => {
-            const currentPath = window.location.pathname;
-            if (currentPath !== '/projects' && currentPath !== '/about') {
-                window.scrollTo(0, 0);
-            }
-        };
-
-        handleScroll(); // Call it initially
-
-
         const anchorIcons = document.querySelectorAll(".anchor-icon");
 
         const handleAnchorClick = (e) => {
