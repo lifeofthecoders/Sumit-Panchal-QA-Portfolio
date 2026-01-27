@@ -88,21 +88,9 @@ export default function Gallery() {
                   <img src={home4} alt="Work Sample" />
                 </div> */}
 
-                {/* <div className="gallery-item excel-card">
-                <a
-                  href="/Sumit-Panchal-QA-Portfolio/image/LYMÜV Test Cases.xlsx"
-                  download
-                >
-                    <div className="excel-box">
-                      <span>📊 Test Cases (Excel)</span>
-                      <p>Click to Download</p>
-                    </div>
-                  </a>
-                </div> */}
-
                 <div className="gallery-item excel-card">
                   <a
-                    href={`${process.env.PUBLIC_URL}/image/LYMUV_Test_Cases.xlsx`}
+                    href={`${import.meta.env.BASE_URL}image/LYMUV_Test_Cases.xlsx`}
                     download
                     target="_blank"
                     rel="noopener noreferrer"
@@ -114,6 +102,7 @@ export default function Gallery() {
                     </div>
                   </a>
                 </div>
+
 
                 <div className="gallery-item">
                   <img src={home4} alt="Work Sample" />
