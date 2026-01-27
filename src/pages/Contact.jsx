@@ -88,18 +88,7 @@ export default function Contact() {
 
                 <h3 id="resume" className="heading-link">
                   <b>📑 Resume</b>
-
-                  <a
-                    href={`${process.env.PUBLIC_URL}/resume/Sumit_Panchal_QA_Resume.pdf`}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <button className="download-btn">
-                      Download Resume (PDF)
-                    </button>
-                  </a>
-
+                  <a href="/#contact/#resume" className="anchor-icon" data-target="contact/#resume">🔗</a>
                 </h3>
 
                 <p className="summary-paragraph">
@@ -108,12 +97,12 @@ export default function Contact() {
                 </p>
 
                 <a
-                  href="/resume/Sumit_Panchal_QA_Resume.pdf"
-                  className="btn-primary"
-                  download="Sumit_Panchal_QA_Resume.pdf"
+                  href="/Sumit-Panchal-QA-Portfolio/resume/Sumit_Panchal_QA_Resume.pdf"
+                  download
                 >
-                  <b>Download Resume (PDF)</b>
+                  Download Resume (PDF)
                 </a>
+
               </div>
             </section>
 
