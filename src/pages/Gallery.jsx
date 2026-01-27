@@ -92,7 +92,6 @@ export default function Gallery() {
                 <a
                   href="/Sumit-Panchal-QA-Portfolio/image/LYMÜV Test Cases.xlsx"
                   download
-                  className="btn-primary"
                 >
                     <div className="excel-box">
                       <span>📊 Test Cases (Excel)</span>
