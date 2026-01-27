@@ -96,8 +96,16 @@ export default function Contact() {
                   and detailed QA project experience.
                 </p>
 
-                <a
+                {/* <a
                   href="/resume/Sumit_Panchal_QA_Resume.pdf"
+                  className="btn-primary"
+                  download="Sumit_Panchal_QA_Resume.pdf"
+                >
+                  <b>Download Resume (PDF)</b>
+                </a> */}
+
+                <a
+                  href={`${process.env.PUBLIC_URL}/assets/resume/Sumit_Panchal_QA_Resume.pdf`}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
