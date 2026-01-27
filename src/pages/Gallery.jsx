@@ -89,12 +89,11 @@ export default function Gallery() {
                 </div> */}
 
                 <div className="gallery-item excel-card">
-                  <a
-                    href={`${process.env.PUBLIC_URL}/image/LYMUV_Test_Cases.xlsx`}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                <a
+                  href="/Sumit-Panchal-QA-Portfolio/image/LYMÜV Test Cases.xlsx"
+                  download
+                  className="btn-primary"
+                >
                     <div className="excel-box">
                       <span>📊 Test Cases (Excel)</span>
                       <p>Click to Download</p>
