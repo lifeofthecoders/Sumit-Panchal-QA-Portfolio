@@ -528,6 +528,7 @@
            overflow: hidden;
            background: #fff;
            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+           height: 220px;
        }
 
        /* Image */
@@ -561,6 +562,46 @@
            transition: transform 0.4s ease;
        }
 
+             .excel-card {
+          height: 220px;
+      }
+
+      .excel-link {
+          text-decoration: none;
+          display: block;
+          height: 100%;
+      }
+
+      .excel-box {
+          height: 100%;
+          border-radius: 18px;
+          background: linear-gradient(135deg, #107c41, #21c87a);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          color: #fff;
+          font-weight: 600;
+          gap: 8px;
+          cursor: pointer;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+          transition: all 0.35s ease;
+      }
+
+      .excel-box:hover {
+          transform: translateY(-6px) scale(1.03);
+          box-shadow: 0 18px 35px rgba(0, 0, 0, 0.28);
+      }
+
+      .excel-title {
+          font-size: 18px;
+      }
+
+      .excel-subtitle {
+          font-size: 13px;
+          opacity: 0.9;
+      }
+      
        /* =========================
        RESPONSIVE
        ========================= */
