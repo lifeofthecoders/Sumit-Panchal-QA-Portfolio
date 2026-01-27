@@ -84,8 +84,22 @@ export default function Gallery() {
               </h3>
 
               <div className="gallery-grid">
-                <div className="gallery-item">
+                {/* <div className="gallery-item">
                   <img src={home4} alt="Work Sample" />
+                </div> */}
+
+                <div className="gallery-item excel-card">
+                  <a
+                    href={`${process.env.PUBLIC_URL}/image/LYMUV_Test_Cases.xlsx`}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div className="excel-box">
+                      <span>📊 Test Cases (Excel)</span>
+                      <p>Click to Download</p>
+                    </div>
+                  </a>
                 </div>
 
                 <div className="gallery-item">
