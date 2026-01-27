@@ -106,14 +106,19 @@ export default function Gallery() {
 
                 <div className="gallery-item">
                   <img
-                    src={`${import.meta.env.BASE_URL}image/Taskupdate.jpg`}
+                    src={`${import.meta.env.BASE_URL}image/Appbugs.jpg`}
                     alt="Work Sample"
                   />
                 </div>
 
+
                 <div className="gallery-item">
-                  <img src={home4} alt="Work Sample" />
+                  <img
+                    src={`${import.meta.env.BASE_URL}image/Admin_Panel_Bugs.jpg`}
+                    alt="Work Sample"
+                  />
                 </div>
+
               </div>
 
             </section>
