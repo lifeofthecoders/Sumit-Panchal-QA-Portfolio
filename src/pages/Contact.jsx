@@ -99,6 +99,7 @@ export default function Contact() {
                 <a
                   href="/Sumit-Panchal-QA-Portfolio/resume/Sumit_Panchal_QA_Resume.pdf"
                   download
+                  className="btn-primary"
                 >
                   Download Resume (PDF)
                 </a>
