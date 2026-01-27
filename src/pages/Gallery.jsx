@@ -116,11 +116,11 @@ export default function Gallery() {
                 </div>
 
                 <div className="gallery-item">
-                  <img src={home4} alt="Work Sample" />
+                  <img src={App-Bugs} alt="Work Sample" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={home4} alt="Work Sample" />
+                  <img src={Task-Update} alt="Work Sample" />
                 </div>
               </div>
 
