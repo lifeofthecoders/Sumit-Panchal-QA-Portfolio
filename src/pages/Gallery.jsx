@@ -104,21 +104,49 @@ export default function Gallery() {
                 </div>
 
 
-                <div className="gallery-item">
+                {/* <div className="gallery-item">
                   <img
                     src={`${import.meta.env.BASE_URL}image/Appbugs.jpg`}
                     alt="Work Sample"
                   />
+                </div> */}
+
+                <div className="gallery-item excel-card">
+                  <a
+                    href={`${import.meta.env.BASE_URL}image/LYMÜV_Bugs_Documentations.xlsx`}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="excel-link"
+                  >
+                    <div className="excel-box">
+                      <span className="excel-title">📊 LYMÜV Bugs Documentation (Excel)</span>
+                      <p className="excel-subtitle">Click to Download</p>
+                    </div>
+                  </a>
                 </div>
 
-
-                <div className="gallery-item">
+                {/* <div className="gallery-item">
                   <img
                     src={`${import.meta.env.BASE_URL}image/Admin_Panel_Bugs.jpg`}
                     alt="Work Sample"
                   />
-                </div>
+                </div> */}
 
+                <div className="gallery-item excel-card">
+                  <a
+                    href={`${import.meta.env.BASE_URL}image/DapMe.xlsx`}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="excel-link"
+                  >
+                    <div className="excel-box">
+                      <span className="excel-title">📊 DapMe Documentation (Excel)</span>
+                      <p className="excel-subtitle">Click to Download</p>
+                    </div>
+                  </a>
+                </div>
               </div>
 
             </section>
