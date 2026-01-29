@@ -90,14 +90,14 @@ export default function Gallery() {
 
                 <div className="gallery-item excel-card">
                   <a
-                    href={`${import.meta.env.BASE_URL}image/LYMUV_Test_Cases.xlsx`}
+                    href={`${import.meta.env.BASE_URL}image/LYMÜV_Test_Cases.xlsx`}
                     download
                     target="_blank"
                     rel="noopener noreferrer"
                     className="excel-link"
                   >
                     <div className="excel-box">
-                      <span className="excel-title">📊 Test Cases (Excel)</span>
+                      <span className="excel-title">📊 LYMÜV  Test Cases</span>
                       <p className="excel-subtitle">Click to Download</p>
                     </div>
                   </a>
@@ -120,7 +120,7 @@ export default function Gallery() {
                     className="excel-link"
                   >
                     <div className="excel-box">
-                      <span className="excel-title">📊 LYMÜV Bugs Documentation (Excel)</span>
+                      <span className="excel-title">📊 LYMÜV Bugs Documentation</span>
                       <p className="excel-subtitle">Click to Download</p>
                     </div>
                   </a>
@@ -142,7 +142,7 @@ export default function Gallery() {
                     className="excel-link"
                   >
                     <div className="excel-box">
-                      <span className="excel-title">📊 DapMe Documentation (Excel)</span>
+                      <span className="excel-title">📊 DapMe Documentation</span>
                       <p className="excel-subtitle">Click to Download</p>
                     </div>
                   </a>
