@@ -11,6 +11,7 @@ import Portfolio from "./pages/Portfolio";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Sitemap from "./pages/Sitemap";
+import FollowUs from "./components/FollowUs";
 
 function Layout() {
   return (
@@ -19,6 +20,7 @@ function Layout() {
       <ScrollToHash />
       <Header />
       <Outlet />
+      <FollowUs />
       <Footer />
     </>
   );
