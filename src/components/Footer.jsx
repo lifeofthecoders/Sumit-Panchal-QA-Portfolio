@@ -1,5 +1,5 @@
 import React from "react";
-import { FaLinkedinIn, FaInstagram, FaFacebookF, FaYoutube } from "react-icons/fa";
+import { FaLinkedinIn, FaInstagram, FaFacebookF, FaYoutube, FaDribbble, FaBehance } from "react-icons/fa";
 import "../assets/css/Footer.css";
 
 const Footer = () => {
@@ -29,6 +29,15 @@ const Footer = () => {
         <a href="https://youtube.com" target="_blank" rel="noreferrer">
           <FaYoutube />
         </a>
+
+        <a href="https://dribbble.com/" target="_blank" rel="noreferrer">
+          <FaDribbble />
+        </a>
+
+        <a href="https://www.behance.net/" target="_blank" rel="noreferrer">
+          <FaBehance />
+        </a>
+
 
       </div>
     </footer>
