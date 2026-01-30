@@ -18,11 +18,11 @@ const Footer = () => {
           <FaLinkedinIn />
         </a>
 
-        <a href="https://instagram.com" target="_blank" rel="noreferrer">
+        <a href="https://www.instagram.com/workhard2livelarge?igsh=MmM0YmZvNHc0bDZ2" target="_blank" rel="noreferrer">
           <FaInstagram />
         </a>
 
-        <a href="https://facebook.com" target="_blank" rel="noreferrer">
+        <a href="https://www.facebook.com/share/1BxMxaQsV8/" target="_blank" rel="noreferrer">
           <FaFacebookF />
         </a>
 
