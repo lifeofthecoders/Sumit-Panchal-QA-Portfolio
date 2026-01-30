@@ -1,6 +1,7 @@
 import React from "react";
 import { FaLinkedinIn, FaInstagram, FaFacebookF, FaYoutube, FaDribbble, FaBehance } from "react-icons/fa";
 import "../assets/css/Footer.css";
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
   return (
@@ -30,15 +31,17 @@ const Footer = () => {
           <FaYoutube />
         </a>
 
-        <a href="https://dribbble.com/" target="_blank" rel="noreferrer">
-          <FaDribbble />
-        </a>
-
         <a href="https://www.behance.net/" target="_blank" rel="noreferrer">
           <FaBehance />
         </a>
 
+        <a href="https://dribbble.com/" target="_blank" rel="noreferrer">
+          <FaDribbble />
+        </a>
 
+        <a href="https://x.com/" target="_blank" rel="noreferrer">
+          <FaXTwitter />
+        </a>
       </div>
     </footer>
   );
