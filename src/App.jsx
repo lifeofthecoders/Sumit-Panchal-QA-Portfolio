@@ -11,7 +11,6 @@ import Portfolio from "./pages/Portfolio";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Sitemap from "./pages/Sitemap";
-import FollowUs from "./components/FollowUs";
 
 function Layout() {
   return (
@@ -20,7 +19,6 @@ function Layout() {
       <ScrollToHash />
       <Header />
       <Outlet />
-      <FollowUs />
       <Footer />
     </>
   );
@@ -29,17 +27,19 @@ function Layout() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/sitemap" element={<Sitemap />} />
-      </Route>
-    </Routes>
+    <>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/sitemap" element={<Sitemap />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
