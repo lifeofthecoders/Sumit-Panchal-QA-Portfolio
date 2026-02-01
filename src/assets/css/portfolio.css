@@ -626,7 +626,7 @@
       }
 
       .btn-primary:hover {
-          background: #16a085;
+          background: #21C87A !important;
           color: white;
       }
 
