@@ -61,15 +61,15 @@ export default function Gallery() {
 
               <div className="gallery-grid">
                 <div className="gallery-item">
-                  <img src={home4} alt="Certification" />
+                  <img src={QA-14} alt="Certification" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={home4} alt="Certification" />
+                  <img src={QA-14} alt="Certification" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={home4} alt="Certification" />
+                  <img src={QA-14} alt="Certification" />
                 </div>
               </div>
 
@@ -161,15 +161,15 @@ export default function Gallery() {
 
               <div className="gallery-grid">
                 <div className="gallery-item">
-                  <img src={home4} alt="Highlight" />
+                  <img src={QA-14} alt="Highlight" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={home4} alt="Highlight" />
+                  <img src={QA-14} alt="Highlight" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={home4} alt="Highlight" />
+                  <img src={QA-14} alt="Highlight" />
                 </div>
               </div>
 
