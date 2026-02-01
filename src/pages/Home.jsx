@@ -145,9 +145,9 @@ export default function Home() {
                         </div>
 
                         <div className="index-card-grid">
-                            <img src={`${import.meta.env.BASE_URL}image/QA-14.jpg`} />
-                            <img src={`${import.meta.env.BASE_URL}image/QA-15.jpg`} />
-                            <img src={`${import.meta.env.BASE_URL}image/QA-16.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/QA15.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/QA16.jpg`} />
                             {/* <img src={`${import.meta.env.BASE_URL}image/home7.jpg`} /> */}
 
                         </div>

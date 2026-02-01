@@ -61,15 +61,15 @@ export default function Gallery() {
 
               <div className="gallery-grid">
                 <div className="gallery-item">
-                  <img src={QA-14} alt="Certification" />
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={QA-14} alt="Certification" />
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={QA-14} alt="Certification" />
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
                 </div>
               </div>
 
@@ -161,15 +161,15 @@ export default function Gallery() {
 
               <div className="gallery-grid">
                 <div className="gallery-item">
-                  <img src={QA-14} alt="Highlight" />
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Highlight" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={QA-14} alt="Highlight" />
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Highlight" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={QA-14} alt="Highlight" />
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Highlight" />
                 </div>
               </div>
 
