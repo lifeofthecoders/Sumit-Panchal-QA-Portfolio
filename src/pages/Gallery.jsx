@@ -98,7 +98,7 @@ export default function Gallery() {
                   >
                     <div className="excel-box">
                       <span className="excel-title">📊 LYMÜV  Test Cases</span>
-                      <p className="excel-subtitle">Click to Download</p>
+                      <p className="excel-subtitle">Click to Download ⬇️</p>
                     </div>
                   </a>
                 </div>
@@ -121,7 +121,7 @@ export default function Gallery() {
                   >
                     <div className="excel-box">
                       <span className="excel-title">📊 LYMÜV Bugs Documentation</span>
-                      <p className="excel-subtitle">Click to Download</p>
+                      <p className="excel-subtitle">Click to Download ⬇️</p>
                     </div>
                   </a>
                 </div>
@@ -143,7 +143,7 @@ export default function Gallery() {
                   >
                     <div className="excel-box">
                       <span className="excel-title">📊 DapMe Documentation</span>
-                      <p className="excel-subtitle">Click to Download</p>
+                      <p className="excel-subtitle">Click to Download ⬇️</p>
                     </div>
                   </a>
                 </div>

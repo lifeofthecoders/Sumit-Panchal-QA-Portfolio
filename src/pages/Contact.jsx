@@ -101,7 +101,7 @@ export default function Contact() {
                   download
                   className="btn-primary"
                 >
-                  Download Resume (PDF)
+                  Download Resume (PDF) ⬇️
                 </a>
 
               </div>

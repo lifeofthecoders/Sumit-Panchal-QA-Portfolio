@@ -142,12 +142,12 @@
           /* ✅ Double ring effect like left profile */
           border: 4px solid #fff;
           /* Inner white ring */
-          box-shadow: 0 0 0 4px #1abc9c;
+          box-shadow: 0 0 0 4px #19A25E;
           /* Outer green ring */
       }
 
       .profile-name {
-          background: #1abc9c;
+          background: #19A25E;
           /* ✅ Green tag like reference */
           color: #fff;
           padding: 8px 16px;
@@ -593,7 +593,7 @@
       /* ===== PRIMARY BUTTON STYLE ===== */
       .about-hero-strip .btn-primary {
           display: inline-block;
-          background: #1abc9c;
+          background: #19A25E !important;
           color: blue !important;
           padding: 12px 24px;
           border-radius: 5px;
@@ -710,7 +710,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 6px solid #1abc9c;
+          border: 6px solid #19A25E !important;
           margin-bottom: 0px;
       }
 
