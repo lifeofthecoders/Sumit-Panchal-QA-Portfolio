@@ -1,3 +1,4 @@
+import "../assets/css/blogs.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -5,14 +6,15 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
+  const isHome = location.pathname === "/";
   const isAbout = location.pathname === "/about";
   const isServices = location.pathname === "/services";
   const isProjects = location.pathname === "/projects";
   const isPortfolio = location.pathname === "/portfolio";
   const isGallery = location.pathname === "/gallery";
+  const isBlogs = location.pathname === "/blogs";
   const isContact = location.pathname === "/contact";
   const isSitemap = location.pathname === "/sitemap";
-
 
   /* =========================================
      RESET & REPLAY HEADER ANIMATIONS (SAFE)
@@ -34,31 +36,32 @@ export default function Header() {
     });
   }, [location.pathname]);
 
-  const isHome = location.pathname === "/";
-
   return (
     <header
-      className={`hero-header ${isHome
-        ? "home-header"
-        : isAbout
+      className={`hero-header ${
+        isHome
+          ? "home-header"
+          : isAbout
           ? "about-header"
           : isServices
-            ? "services-header"
-            : isProjects
-              ? "projects-header"
-              : isPortfolio
-                ? "portfolio-header"
-                : isGallery
-                  ? "gallery-header"
-                  : isContact
-                    ? "contact-header"
-                    : isSitemap
-                      ? "sitemap-header"
-                      : ""
-        }`}
+          ? "services-header"
+          : isProjects
+          ? "projects-header"
+          : isPortfolio
+          ? "portfolio-header"
+          : isGallery
+          ? "gallery-header"
+          : isBlogs
+          ? "blogs-header"
+          : isContact
+          ? "contact-header"
+          : isSitemap
+          ? "sitemap-header"
+          : ""
+      }`}
     >
       {/* TOP BAR */}
-      < div className="top-bar" >
+      <div className="top-bar">
         <NavLink
           to="/"
           className="owner-name logo-link logo-slide"
@@ -83,8 +86,9 @@ export default function Header() {
             "PROJECTS",
             "PORTFOLIO",
             "GALLERY",
+            "BLOGS",
             "CONTACT",
-            "SITEMAP"
+            "SITEMAP",
           ].map((item) => (
             <NavLink
               key={item}
@@ -96,105 +100,133 @@ export default function Header() {
             </NavLink>
           ))}
         </nav>
-      </div >
+      </div>
 
       {/* CENTER TITLE */}
-      < div
+      <div
         key={`title-${location.pathname}`}
         className="hero-title hero-animate"
       >
-        {
-          isAbout ? (
-            <>
-              <h1><b>About</b></h1>
-              <h2>
-                <b>
-                  | QA Professional | SDLC & STLC | Defect Lifecycle | Agile Teams |
-                  4+ Years Experience | Quality-Driven & Detail-Oriented |
-                </b>
-              </h2>
-            </>
-          ) : isServices ? (
-            <>
-              <h1><b>Services</b></h1>
-              <h2>
-                <b>
-                  | Functional Testing | Regression & Re-testing | Black Box
-                  Testing | Smoke & Sanity Testing |
-                </b>
-              </h2>
-              <div className="title-underline"></div>
-            </>
-          ) : isProjects ? (
-            <>
-              <h1><b>Projects</b></h1>
-              <h2>
-                <b>
-                  | Real-World QA Projects | End-to-End Testing | Functional &
-                  Regression Testing | Domain-Driven Applications |
-                </b>
-              </h2>
-              <div className="title-underline"></div>
-            </>
-          ) : isPortfolio ? (
-            <>
-              <h1><b>Portfolio</b></h1>
-              <h2>
-                <b>
-                  | Manual & UAT Testing | SDLC & STLC | Defect Lifecycle | Agile Methodology |
-                  Web & Mobile Applications | 4+ Years Experience |
-                </b>
-              </h2>
-              <div className="title-underline"></div>
-            </>
-          ) : isGallery ? (
-            <>
-              <h1><b>Gallery</b></h1>
-              <h2>
-                <b>
-                  | Certifications | Work Samples | Professional Highlights |
-                </b>
-              </h2>
-              <div className="title-underline"></div>
-            </>
-          ) : isContact ? (
-            <>
-              <h1><b>Contact</b></h1>
-              <h2>
-                <b>
-                  | Let’s Collaborate | QA Opportunities | Get in Touch |
-                </b>
-              </h2>
-              <div className="title-underline"></div>
-            </>
-          ) : isSitemap ? (
-            <>
-              <h1><b>Sitemap</b></h1>
-              <h2>
-                <b>
-                  | Complete Site Navigation | Quick Access |
-                </b>
-              </h2>
-              <div className="title-underline"></div>
-            </>
-          ) : (
-            <>
-              <h1><b>Sumit Panchal</b></h1>
-              <h2><b>| Quality Analyst Engineer |</b></h2>
-            </>
-          )}
-      </div >
+        {isAbout ? (
+          <>
+            <h1>
+              <b>About</b>
+            </h1>
+            <h2>
+              <b>
+                | QA Professional | SDLC & STLC | Defect Lifecycle | Agile Teams |
+                4+ Years Experience | Quality-Driven & Detail-Oriented |
+              </b>
+            </h2>
+          </>
+        ) : isServices ? (
+          <>
+            <h1>
+              <b>Services</b>
+            </h1>
+            <h2>
+              <b>
+                | Functional Testing | Regression & Re-testing | Black Box
+                Testing | Smoke & Sanity Testing |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : isProjects ? (
+          <>
+            <h1>
+              <b>Projects</b>
+            </h1>
+            <h2>
+              <b>
+                | Real-World QA Projects | End-to-End Testing | Functional &
+                Regression Testing | Domain-Driven Applications |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : isPortfolio ? (
+          <>
+            <h1>
+              <b>Portfolio</b>
+            </h1>
+            <h2>
+              <b>
+                | Manual & UAT Testing | SDLC & STLC | Defect Lifecycle | Agile
+                Methodology | Web & Mobile Applications | 4+ Years Experience |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : isGallery ? (
+          <>
+            <h1>
+              <b>Gallery</b>
+            </h1>
+            <h2>
+              <b>
+                | Certifications | Work Samples | Professional Highlights |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : isBlogs ? (
+          <>
+            <h1>
+              <b>Blogs</b>
+            </h1>
+            <h2>
+              <b>
+                | Insights | Experience | Knowledge Sharing | Best Practices | Testing Tips | Industry Updates |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : isContact ? (
+          <>
+            <h1>
+              <b>Contact</b>
+            </h1>
+            <h2>
+              <b>| Let's Collaborate | QA Opportunities | Get in Touch |</b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : isSitemap ? (
+          <>
+            <h1>
+              <b>Sitemap</b>
+            </h1>
+            <h2>
+              <b>| Complete Site Navigation | Quick Access |</b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : (
+          <>
+            <h1>
+              <b>Sumit Panchal</b>
+            </h1>
+            <h2>
+              <b>| Quality Analyst Engineer |</b>
+            </h2>
+          </>
+        )}
+      </div>
 
       {/* PROFILE BADGE */}
-      < div
+      <div
         key={`profile-${location.pathname}`}
         className="profile-badge profile-slide"
       >
-        <img src={`${import.meta.env.BASE_URL}image/profile.jpg`} alt="Profile" />
+        <img
+          src={`${import.meta.env.BASE_URL}image/profile.jpg`}
+          alt="Profile"
+        />
         <span className="profile-name">
           <b>Sumit Panchal</b>
         </span>
-      </div >
-    </header >
+      </div>
+    </header>
   );
 }

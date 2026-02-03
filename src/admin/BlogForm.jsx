@@ -1,0 +1,282 @@
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getBlogById, saveBlog } from "../services/blogService";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import AdminBlogHeader from "./AdminBlogHeader";
+
+export default function BlogForm() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const [formData, setFormData] = useState({
+    image: "",
+    type: "",
+    author: "",
+    profession: "",
+    date: new Date().toISOString().split("T")[0],
+    title: "",
+    description: "",
+  });
+
+  useEffect(() => {
+    if (id) {
+      const blog = getBlogById(id);
+      if (blog) {
+        setFormData(blog);
+      }
+    }
+  }, [id]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDescriptionChange = (content) => {
+    setFormData((prev) => ({
+      ...prev,
+      description: content,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const plainText = formData.description.replace(/<[^>]*>/g, "");
+    const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+
+    if (wordCount > 10000) {
+      alert("Description exceeds 10,000 words limit!");
+      return;
+    }
+
+    saveBlog({ ...formData, id: id || undefined });
+    navigate("/admin/blogs");
+  };
+
+  const plainText = formData.description.replace(/<[^>]*>/g, "");
+  const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+
+  const modules = {
+    toolbar: [
+      [{ "header": [1, 2, 3, 4, 5, 6, false] }],
+      [{ "font": [] }],
+      [{ "size": ["small", false, "large", "huge"] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ "color": [] }, { "background": [] }],
+      [{ "list": "ordered" }, { "list": "bullet" }],
+      [{ "indent": "-1" }, { "indent": "+1" }],
+      [{ "align": [] }],
+      ["link", "image", "video"],
+      ["blockquote", "code-block"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "color",
+    "background",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+    "align",
+    "blockquote",
+    "code-block",
+  ];
+
+  return (
+    <>
+      <AdminBlogHeader />
+      
+      <div style={{ padding: "40px", maxWidth: "1100px", margin: "0 auto" }}>
+        <h2 style={{ marginBottom: "30px", fontSize: "28px" }}>
+          {id ? "Edit Blog" : "Add New Blog"}
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          {/* Blog Image URL */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+              Blog Image URL <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              type="url"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+              placeholder="https://example.com/image.jpg"
+              required
+              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+            />
+            {formData.image && (
+              <img src={formData.image} alt="Preview" style={{ marginTop: "10px", maxWidth: "200px", borderRadius: "8px" }} />
+            )}
+          </div>
+
+          {/* Blog Type */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+              Blog Type <span style={{ color: "red" }}>*</span>
+            </label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+            >
+              <option value="">Select Type</option>
+              <option value="Testing">Testing</option>
+              <option value="Manual Testing">Manual Testing</option>
+              <option value="Automation Testing">Automation Testing</option>
+              <option value="Performance Testing">Performance Testing</option>
+              <option value="Selenium">Selenium</option>
+              <option value="Innovation">Innovation</option>
+              <option value="Frameworks">Frameworks</option>
+              <option value="Education">Education</option>
+              <option value="AI">AI</option>
+              <option value="DevOps">DevOps</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+
+          {/* Author */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+              Author Name <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              type="text"
+              name="author"
+              value={formData.author}
+              onChange={handleChange}
+              placeholder="Author Name"
+              required
+              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+            />
+          </div>
+
+          {/* Author's Profession */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+              Author's Profession <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              type="text"
+              name="profession"
+              value={formData.profession}
+              onChange={handleChange}
+              placeholder="Author's Profession"
+              required
+              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+            />
+          </div>
+
+          {/* Date */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+              Publish Date <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+            />
+          </div>
+
+          {/* Blog Title */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+              Blog Title <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="Enter Blog Title"
+              required
+              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+            />
+          </div>
+
+          {/* Blog Description */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+              Blog Description <span style={{ color: "red" }}>*</span> (Max 10,000 words)
+            </label>
+            <ReactQuill
+              theme="snow"
+              value={formData.description}
+              onChange={handleDescriptionChange}
+              modules={modules}
+              formats={formats}
+              placeholder="Write your blog content here..."
+              style={{ 
+                backgroundColor: "white", 
+                minHeight: "400px",
+                marginBottom: "10px"
+              }}
+            />
+            <p style={{ fontSize: "12px", color: wordCount > 10000 ? "red" : "#666", marginTop: "50px" }}>
+              Word Count: {wordCount} / 10,000
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{ display: "flex", gap: "15px", marginTop: "30px" }}>
+            <button
+              type="submit"
+              style={{
+                padding: "12px 30px",
+                fontSize: "16px",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontWeight: "600"
+              }}
+            >
+              {id ? "Update Blog" : "Publish Blog"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate("/admin/blogs")}
+              style={{
+                padding: "12px 30px",
+                fontSize: "16px",
+                backgroundColor: "#f44336",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontWeight: "600"
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
+  );
+}

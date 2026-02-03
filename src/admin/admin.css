@@ -1,0 +1,41 @@
+.blogs-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+  gap:24px;
+}
+
+.blog-card {
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 10px 20px rgba(0,0,0,.08);
+}
+
+.card-top {
+  display:flex;
+  justify-content:space-between;
+  padding:20px;
+}
+
+.card-top img {
+  width:90px;
+  border-radius:10px;
+}
+
+.tag {
+  border:1px solid #ddd;
+  padding:5px 12px;
+  border-radius:30px;
+  font-size:12px;
+}
+
+.card-body {
+  padding:20px;
+}
+
+.read-more {
+  background:none;
+  border:none;
+  color:#0a7cff;
+  cursor:pointer;
+}
