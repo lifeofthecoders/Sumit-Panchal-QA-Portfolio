@@ -9,6 +9,7 @@ export default function BlogCard({ blog }) {
   };
 
   return (
+    
     <div
       style={{
         borderRadius: "16px",
@@ -42,7 +43,7 @@ export default function BlogCard({ blog }) {
             objectFit: "cover"
           }}
         />
-        
+
         {/* Author Info Overlay */}
         <div
           style={{
@@ -103,6 +104,7 @@ export default function BlogCard({ blog }) {
         <p
           style={{
             fontSize: "14px",
+            textAlign: "justify",
             color: "#666",
             lineHeight: "1.6",
             marginBottom: "16px",
@@ -113,8 +115,12 @@ export default function BlogCard({ blog }) {
             flexGrow: 1
           }}
         >
-          {blog.description}
+          {blog.description
+            ?.replace(/<[^>]*>/g, "")
+            .replace(/&nbsp;/g, " ")
+            .trim()}
         </p>
+
 
         {/* Read More Link */}
         <div

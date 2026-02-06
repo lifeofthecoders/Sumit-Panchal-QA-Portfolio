@@ -46,7 +46,6 @@
                }
            }
 
-
            .nav-links {
                display: none;
            }
@@ -75,7 +74,6 @@
            font-size: 16px;
            padding: 10px 0;
        }
-
 
        /*================ Main CSS Structure ================*/
        body {
@@ -126,7 +124,7 @@
            line-height: 1.6;
        }
 
-       .gallery-card {
+       .blogs-card {
            /* background: #fff; */
            padding: 20px 20px;
        }
@@ -156,7 +154,7 @@
        }
 
        /* HERO HEADER */
-       .gallery-header {
+       .blogs-header {
            min-height: 320px;
            /* ✅ prevents cut on zoom */
            width: 100%;
@@ -310,12 +308,10 @@
            /* ✅ BLACK so it shows on white */
        }
 
-
        /* Hide old underline div so it doesn't interfere */
        .title-underline {
            display: none;
        }
-
 
        /* ==============================================
       HERO TITLE ANIMATION — LEFT → RIGHT Replays on scroll (same method as slide-left)
@@ -340,7 +336,6 @@
        .hero-animate h2.in-view {
            animation: heroRightToLeft 0.9s ease-out forwards;
        }
-
 
 
        @keyframes heroLeftToRight {
@@ -457,15 +452,15 @@
        }
 
        @media (max-width: 768px) {
-           .gallery-header {
+           .blogs-header {
                min-height: 280px;
            }
 
-           .gallery-title h1 {
+           .blogs-title h1 {
                font-size: 30px;
            }
 
-           .gallery-title h2 {
+           .blogs-title h2 {
                font-size: 16px;
            }
 
@@ -475,15 +470,15 @@
        }
 
        @media (max-width: 480px) {
-           .gallery-header {
+           .blogs-header {
                min-height: 260px;
            }
 
-           .gallery-title h1 {
+           .blogs-title h1 {
                font-size: 26px;
            }
 
-           .gallery-title h2 {
+           .blogs-title h2 {
                font-size: 14px;
            }
 
@@ -493,16 +488,16 @@
        }
 
        /* =========================
-       GALLERY CONTAINER
+       BLOGS CONTAINER
        ========================= */
-       .gallery-container {
+       .blogs-container {
            max-width: 1200px;
            margin: 0 auto;
            padding: 40px 40px;
        }
 
        /* Section Title */
-       .gallery-title {
+       .blogs-title {
            font-size: 18.72px;
            font-weight: bolder;
            margin: 20px 0 20px;
@@ -510,19 +505,33 @@
        }
 
        /* =========================
-       GALLERY GRID
+       BLOGS GRID
        ========================= */
-       .gallery-grid {
+       .blogs-grid {
            display: grid;
-           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+           grid-template-columns: repeat(3, 1fr);
            gap: 24px;
-           margin: 16px
+           margin: 16px;
+       }
+
+       /* Tablet */
+       @media (max-width: 1024px) {
+           .blogs-grid {
+               grid-template-columns: repeat(2, 1fr) !important;
+           }
+       }
+       
+       /* Mobile */
+       @media (max-width: 600px) {
+           .blogs-grid {
+               grid-template-columns: 1fr !important;
+           }
        }
 
        /* =========================
-       GALLERY ITEM
+       BLOGS ITEM
        ========================= */
-       .gallery-item {
+       .blogs-item {
            position: relative;
            border-radius: 16px;
            overflow: hidden;
@@ -538,7 +547,7 @@
        }
 
        /* Image */
-       .gallery-item img {
+       .blogs-item img {
            width: 100%;
            height: 100%;
            object-fit: cover;
@@ -549,18 +558,18 @@
            display: block;
        }
 
-       .gallery-item img {
+       .blogs-item img {
            transition: transform 0.3s ease;
        }
 
-       .gallery-item:hover img {
+       .blogs-item:hover img {
            transform: scale(1.05);
        }
 
        /* =========================
        AUTO NAME WATERMARK
        ========================= */
-       /* .gallery-item::after {
+       /* .blogs-item::after {
            content: "Sumit Panchal";
            position: absolute;
            bottom: 12px;
@@ -575,7 +584,7 @@
        } */
 
        /* Hover Effect */
-       /* .gallery-item:hover img {
+       /* .blogs-item:hover img {
            transform: scale(1.05);
            transition: transform 0.4s ease;
        } */
@@ -627,24 +636,23 @@
        RESPONSIVE
        ========================= */
        @media (max-width: 768px) {
-           .gallery-item img {
+           .blogs-item img {
                height: 220px;
            }
        }
 
        @media (max-width: 480px) {
-           .gallery-container {
+           .blogs-container {
                padding: 40px 1rem;
            }
 
-           .gallery-title {
+           .blogs-title {
                font-size: 22px;
            }
        }
 
-
        /* =========================================
-       GALLERY PAGE — PREVENT HORIZONTAL SCROLL (MOBILE)
+       BLOGS PAGE — PREVENT HORIZONTAL SCROLL (MOBILE)
        MATCH HOME SCREEN
        ========================================= */
        @media (max-width: 768px) {
@@ -657,6 +665,70 @@
            }
        }
 
+       /* HEADING HOVER LINK ICON */
+       .heading-link {
+           position: relative;
+           display: inline-flex;
+           align-items: center;
+           gap: 8px;
+           cursor: pointer;
+       }
+
+       .heading-link .anchor-icon {
+           font-size: 14px;
+           text-decoration: none;
+           color: #333;
+           opacity: 0;
+           transition: opacity 0.2s ease, color 0.2s ease;
+       }
+
+       .heading-link:hover .anchor-icon {
+           opacity: 1;
+       }
+
+       .heading-link .anchor-icon:hover {
+           color: #1abc9c;
+       }
+
+       /* BUTTONS */
+       .btn-primary {
+           display: inline-block;
+           background: #19A25E !important;
+           color: white !important;
+           padding: 12px 24px;
+           border-radius: 5px;
+           font-weight: bold;
+           margin: 10px;
+           margin-left: 40px;
+       }
+
+       .btn-primary:hover {
+           background: #21C87A !important;
+           color: white;
+       }
+
+       /* Hide by default */
+       .latest-blogs-heading .anchor-icon {
+           font-size: 14px;
+           text-decoration: none;
+           color: #333;
+           opacity: 0;
+           transition: opacity 0.2s ease, color 0.2s ease;
+       }
+
+       /* Show ONLY when hovering the heading */
+       .latest-blogs-heading:hover .anchor-icon {
+           opacity: 1;
+           visibility: visible;
+       }
+
+       /* Remove ugly focus border */
+       .latest-blogs-heading .anchor-icon:focus,
+       .latest-blogs-heading .anchor-icon:active {
+           outline: none;
+           box-shadow: none;
+       }
+
        /* ===== VIEW LINE (SECTION DIVIDER) ===== */
        .view-line {
            border: 0;
@@ -666,7 +738,6 @@
            width: 100%;
            opacity: 0.6;
        }
-
 
        /* ===== FOOTER CENTER ALIGN ===== */
        footer {

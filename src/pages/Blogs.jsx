@@ -23,7 +23,10 @@ export default function Blogs() {
     setBlogs(data);
   }, []);
 
-  // Scroll to top + anchor copy logic
+  // Same animation hook
+  usePageAnimations();
+
+  // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -31,17 +34,22 @@ export default function Blogs() {
 
     const handleAnchorClick = (e) => {
       e.preventDefault();
+
       const id = e.currentTarget.getAttribute("data-target");
       if (!id) return;
 
-      const fullURL =
-        window.location.origin + window.location.pathname + "#" + id;
+      // ✅ FIXED: correct format for HashRouter
+      // Example: https://domain.com/#/blogs#latest-blogs
+      const fullURL = `${window.location.origin}${window.location.pathname}#/blogs#${id}`;
 
       navigator.clipboard.writeText(fullURL);
 
       e.currentTarget.innerText = "✅";
+      e.currentTarget.style.color = "#00c853"; // green
+
       setTimeout(() => {
         e.currentTarget.innerText = "🔗";
+        e.currentTarget.style.color = ""; // reset
       }, 1200);
     };
 
@@ -58,43 +66,60 @@ export default function Blogs() {
 
   // ✅ SINGLE valid return
   return (
-    <div style={{ padding: "60px 40px", maxWidth: "1400px", margin: "0 auto" }}>
-      <h1
-        style={{
-          fontSize: "42px",
-          fontWeight: "800",
-          marginBottom: "50px",
-          textAlign: "center",
-        }}
-      >
-        Latest Blog Posts
-      </h1>
+    <section className="blogs-page">
+      <main className="blogs">
+        <section className="blogs-container">
+          {/* BLOGS */}
+          <section className="blogs-card">
 
-      <div
-        className="blogs-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
-          gap: "32px",
-        }}
-      >
-        {blogs.map((blog) => (
-          <BlogCard key={blog.id} blog={blog} />
-        ))}
-      </div>
+            {/* <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto" }}> */}
+            <div>
+              <h3
+                id="latest-blogs"
+                className="latest-blogs-heading"
+                style={{
+                  fontSize: "18.72px",
+                  fontWeight: "bolder",
+                  margin: "14px",
+                  textAlign: "left",
+                }}
+              >
+                <b>📝 Latest Blog Posts</b>{" "}
+                <a href="#latest-blogs" className="anchor-icon" data-target="latest-blogs">
+                  🔗
+                </a>
+              </h3>
 
-      {blogs.length === 0 && (
-        <p
-          style={{
-            textAlign: "center",
-            fontSize: "18px",
-            color: "#999",
-            marginTop: "60px",
-          }}
-        >
-          No blogs available yet. Check back soon!
-        </p>
-      )}
-    </div>
+              <div
+                className="blogs-grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "32px",
+                }}
+              >
+                {blogs.map((blog) => (
+                  <BlogCard key={blog.id} blog={blog} />
+                ))}
+              </div>
+
+              {blogs.length === 0 && (
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontSize: "18px",
+                    color: "#999",
+                    marginTop: "60px",
+                  }}
+                >
+                  No blogs available yet. Check back soon!
+                </p>
+              )}
+            </div>
+
+          </section>
+        </section>
+      </main>
+    </section>
   );
 }
