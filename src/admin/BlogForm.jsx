@@ -19,6 +19,10 @@ export default function BlogForm() {
     description: "",
   });
 
+  /* ✅ Hover states added — no existing logic touched */
+  const [publishHover, setPublishHover] = useState(false);
+  const [cancelHover, setCancelHover] = useState(false);
+
   useEffect(() => {
     if (id) {
       const blog = getBlogById(id);
@@ -63,14 +67,14 @@ export default function BlogForm() {
 
   const modules = {
     toolbar: [
-      [{ "header": [1, 2, 3, 4, 5, 6, false] }],
-      [{ "font": [] }],
-      [{ "size": ["small", false, "large", "huge"] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ font: [] }],
+      [{ size: ["small", false, "large", "huge"] }],
       ["bold", "italic", "underline", "strike"],
-      [{ "color": [] }, { "background": [] }],
-      [{ "list": "ordered" }, { "list": "bullet" }],
-      [{ "indent": "-1" }, { "indent": "+1" }],
-      [{ "align": [] }],
+      [{ color: [] }, { background: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ align: [] }],
       ["link", "image", "video"],
       ["blockquote", "code-block"],
       ["clean"],
@@ -101,17 +105,17 @@ export default function BlogForm() {
   return (
     <>
       <AdminBlogHeader />
-      
+
       <div style={{ padding: "40px", maxWidth: "1100px", margin: "0 auto" }}>
-        <h2 style={{ marginBottom: "30px", fontSize: "28px" }}>
-          {id ? "Edit Blog" : "Add New Blog"}
+        <h2 style={{ margin: "10px 10px 10px 0px", fontSize: "18.72px" }}>
+          <b>{id ? "Edit Blog" : "Add New Blog"}</b>
         </h2>
 
         <form onSubmit={handleSubmit}>
           {/* Blog Image URL */}
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              Blog Image URL <span style={{ color: "red" }}>*</span>
+              <b>Blog Image URL</b> <span style={{ color: "red" }}>*</span>
             </label>
             <input
               type="url"
@@ -120,29 +124,50 @@ export default function BlogForm() {
               onChange={handleChange}
               placeholder="https://example.com/image.jpg"
               required
-              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "14px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+              }}
             />
             {formData.image && (
-              <img src={formData.image} alt="Preview" style={{ marginTop: "10px", maxWidth: "200px", borderRadius: "8px" }} />
+              <img
+                src={formData.image}
+                alt="Preview"
+                style={{
+                  marginTop: "10px",
+                  maxWidth: "200px",
+                  borderRadius: "8px",
+                }}
+              />
             )}
           </div>
 
           {/* Blog Type */}
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              Blog Type <span style={{ color: "red" }}>*</span>
+              <b>Blog Type</b> <span style={{ color: "red" }}>*</span>
             </label>
             <select
               name="type"
               value={formData.type}
               onChange={handleChange}
               required
-              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "14px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+              }}
             >
-              <option value="">Select Type</option>
+              <option value="">Select Blog Type</option>
               <option value="Testing">Testing</option>
               <option value="Manual Testing">Manual Testing</option>
               <option value="Automation Testing">Automation Testing</option>
+              <option value="Software Testing">Software Testing</option>
               <option value="Performance Testing">Performance Testing</option>
               <option value="Selenium">Selenium</option>
               <option value="Innovation">Innovation</option>
@@ -157,7 +182,7 @@ export default function BlogForm() {
           {/* Author */}
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              Author Name <span style={{ color: "red" }}>*</span>
+              <b>Author Name</b> <span style={{ color: "red" }}>*</span>
             </label>
             <input
               type="text"
@@ -166,14 +191,20 @@ export default function BlogForm() {
               onChange={handleChange}
               placeholder="Author Name"
               required
-              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "14px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+              }}
             />
           </div>
 
-          {/* Author's Profession */}
+          {/* Profession */}
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              Author's Profession <span style={{ color: "red" }}>*</span>
+              <b>Author's Profession</b> <span style={{ color: "red" }}>*</span>
             </label>
             <input
               type="text"
@@ -182,14 +213,20 @@ export default function BlogForm() {
               onChange={handleChange}
               placeholder="Author's Profession"
               required
-              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "14px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+              }}
             />
           </div>
 
           {/* Date */}
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              Publish Date <span style={{ color: "red" }}>*</span>
+              <b> Publish Date</b> <span style={{ color: "red" }}>*</span>
             </label>
             <input
               type="date"
@@ -197,14 +234,20 @@ export default function BlogForm() {
               value={formData.date}
               onChange={handleChange}
               required
-              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "14px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+              }}
             />
           </div>
 
-          {/* Blog Title */}
+          {/* Title */}
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              Blog Title <span style={{ color: "red" }}>*</span>
+              <b>Blog Title</b> <span style={{ color: "red" }}>*</span>
             </label>
             <input
               type="text"
@@ -213,15 +256,22 @@ export default function BlogForm() {
               onChange={handleChange}
               placeholder="Enter Blog Title"
               required
-              style={{ width: "100%", padding: "12px", fontSize: "14px", border: "1px solid #ddd", borderRadius: "6px" }}
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "14px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+              }}
             />
           </div>
 
-          {/* Blog Description */}
+          {/* Description */}
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              Blog Description <span style={{ color: "red" }}>*</span> (Max 10,000 words)
+              <b>Blog Description</b> <span style={{ color: "red" }}>*</span> (Max 10,000 words)
             </label>
+
             <ReactQuill
               theme="snow"
               value={formData.description}
@@ -229,13 +279,20 @@ export default function BlogForm() {
               modules={modules}
               formats={formats}
               placeholder="Write your blog content here..."
-              style={{ 
-                backgroundColor: "white", 
+              style={{
+                backgroundColor: "white",
                 minHeight: "400px",
-                marginBottom: "10px"
+                marginBottom: "10px",
               }}
             />
-            <p style={{ fontSize: "12px", color: wordCount > 10000 ? "red" : "#666", marginTop: "50px" }}>
+
+            <p
+              style={{
+                fontSize: "12px",
+                color: wordCount > 10000 ? "red" : "#666",
+                marginTop: "50px",
+              }}
+            >
               Word Count: {wordCount} / 10,000
             </p>
           </div>
@@ -244,15 +301,18 @@ export default function BlogForm() {
           <div style={{ display: "flex", gap: "15px", marginTop: "30px" }}>
             <button
               type="submit"
+              onMouseEnter={() => setPublishHover(true)}
+              onMouseLeave={() => setPublishHover(false)}
               style={{
                 padding: "12px 30px",
                 fontSize: "16px",
-                backgroundColor: "#4CAF50",
+                backgroundColor: publishHover ? "#21C87A" : "#4CAF50",
                 color: "white",
                 border: "none",
                 borderRadius: "6px",
                 cursor: "pointer",
-                fontWeight: "600"
+                fontWeight: "600",
+                transition: "all 0.3s ease",
               }}
             >
               {id ? "Update Blog" : "Publish Blog"}
@@ -261,15 +321,18 @@ export default function BlogForm() {
             <button
               type="button"
               onClick={() => navigate("/admin/blogs")}
+              onMouseEnter={() => setCancelHover(true)}
+              onMouseLeave={() => setCancelHover(false)}
               style={{
                 padding: "12px 30px",
                 fontSize: "16px",
-                backgroundColor: "#f44336",
+                backgroundColor: cancelHover ? "#ff5c5c" : "#f44336",
                 color: "white",
                 border: "none",
                 borderRadius: "6px",
                 cursor: "pointer",
-                fontWeight: "600"
+                fontWeight: "600",
+                transition: "all 0.3s ease",
               }}
             >
               Cancel
