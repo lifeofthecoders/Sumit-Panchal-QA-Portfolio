@@ -7,6 +7,9 @@ export default function BlogDetail() {
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
 
+  /* ✅ Hover state added for Back button */
+  const [isHovering, setIsHovering] = useState(false);
+
   useEffect(() => {
     const foundBlog = getBlogById(id);
     if (foundBlog) {
@@ -28,35 +31,46 @@ export default function BlogDetail() {
       <main className="blog-detail">
         <section className="blog-detail-container">
 
-          {/* Blog Detail */}
           <section className="blog-detail-card">
 
             <div style={{ padding: "60px 40px", maxWidth: "900px", margin: "0 auto" }}>
+
               {/* Back Button */}
               <h3 id="back-button" style={{ marginBottom: "20px", color: "#ffffff" }}>
                 <button
                   onClick={() => navigate("/blogs")}
+
+                  /* ✅ Hover handlers added */
+                  onMouseEnter={() => setIsHovering(true)}
+                  onMouseLeave={() => setIsHovering(false)}
+
                   style={{
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+                    fontFamily:
+                      "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
                     display: "inline-block",
-                    background: "#19A25E",
+
+                    /* ✅ Same hover pattern as + Add New Blog */
+                    background: isHovering ? "#21C87A" : "#19A25E",
+
                     color: "white",
                     padding: "12px 24px",
                     borderRadius: "5px",
-                    fontWeight: "bold",     // ✅ bold text
-                    fontSize: "16px",       // ✅ size 16px
+                    fontWeight: "bold",
+                    fontSize: "16px",
                     marginLeft: "-10px",
                     marginTop: "16px",
                     marginBottom: "16px",
                     border: "none",
                     outline: "none",
                     cursor: "pointer",
+
+                    /* ✅ Smooth transition added */
+                    transition: "all 0.3s ease",
                   }}
                 >
                   ← Back to Blogs
                 </button>
               </h3>
-
 
               {/* Blog Image */}
               <img
@@ -78,8 +92,7 @@ export default function BlogDetail() {
                   alignItems: "center",
                   gap: "20px",
                   marginBottom: "20px",
-                  fontWeight: "bolder", // ✅ make meta info bolder
-                  // color: "#19A25E",     // ✅ change meta info color to green
+                  fontWeight: "bolder",
                   flexWrap: "wrap",
                 }}
               >
@@ -95,9 +108,11 @@ export default function BlogDetail() {
                 >
                   {blog.type}
                 </span>
+
                 <span style={{ fontSize: "14px", color: "#000" }}>
                   {formatDate(blog.date)}
                 </span>
+
                 <span style={{ fontSize: "14px", color: "#000" }}>
                   By <strong>{blog.author}</strong> • {blog.profession}
                 </span>
@@ -110,25 +125,25 @@ export default function BlogDetail() {
                   fontWeight: "800",
                   marginBottom: "24px",
                   lineHeight: "1.2",
-                  color: "#000", // ✅ change title color to dark gray
+                  color: "#000",
                 }}
               >
                 {blog.title}
               </h1>
 
-              {/* Blog Content - Render HTML */}
+              {/* Blog Content */}
               <div
                 className="blog-content"
                 style={{
                   fontSize: "18px",
                   lineHeight: "1.8",
                   color: "#333",
-                  textAlign: "justify", // ✅ ADDED: justify everything
+                  textAlign: "justify",
                 }}
                 dangerouslySetInnerHTML={{ __html: blog.description }}
               />
 
-              {/* Add CSS for blog content styling */}
+              {/* Content Styling */}
               <style>{`
         .blog-content h1, .blog-content h2, .blog-content h3 {
           margin-top: 30px;
@@ -139,13 +154,11 @@ export default function BlogDetail() {
         .blog-content h2 { font-size: 30px; }
         .blog-content h3 { font-size: 24px; }
 
-        /* ✅ paragraphs already justify */
         .blog-content p {
           margin-bottom: 16px;
           text-align: justify;
         }
 
-        /* ✅ lists also justify */
         .blog-content ul, .blog-content ol {
           margin-left: 30px;
           margin-bottom: 16px;

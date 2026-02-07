@@ -8,6 +8,9 @@ export default function BlogView() {
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
 
+  /* ✅ Hover state added */
+  const [isHovering, setIsHovering] = useState(false);
+
   useEffect(() => {
     const foundBlog = getBlogById(id);
     if (foundBlog) {
@@ -20,27 +23,37 @@ export default function BlogView() {
   if (!blog) return <div>Loading...</div>;
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
   return (
     <>
       <AdminBlogHeader />
-      
+
       <div style={{ padding: "60px 40px", maxWidth: "900px", margin: "0 auto" }}>
-        {/* Back Button */}
+        
+        {/* Back Button — Hover Enhanced */}
         <button
           onClick={() => navigate("/admin/blogs")}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
           style={{
             padding: "10px 20px",
             marginBottom: "30px",
-            backgroundColor: "#f0f0f0",
+
+            /* ✅ Same color + hover as Add New Blog */
+            backgroundColor: isHovering ? "#21C87A" : "#4CAF50",
+
+            color: "white",
             border: "none",
             borderRadius: "6px",
             cursor: "pointer",
             fontSize: "14px",
-            fontWeight: "600"
+            fontWeight: "600",
+
+            /* ✅ Smooth transition */
+            transition: "all 0.3s ease",
           }}
         >
           ← Back to Blog List
@@ -55,12 +68,20 @@ export default function BlogView() {
             height: "400px",
             objectFit: "cover",
             borderRadius: "16px",
-            marginBottom: "32px"
+            marginBottom: "32px",
           }}
         />
 
         {/* Blog Meta */}
-        <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px", flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "20px",
+            marginBottom: "20px",
+            flexWrap: "wrap",
+          }}
+        >
           <span
             style={{
               padding: "8px 16px",
@@ -68,21 +89,30 @@ export default function BlogView() {
               color: "white",
               borderRadius: "20px",
               fontSize: "13px",
-              fontWeight: "600"
+              fontWeight: "600",
             }}
           >
             {blog.type}
           </span>
+
           <span style={{ fontSize: "14px", color: "#666" }}>
             {formatDate(blog.date)}
           </span>
+
           <span style={{ fontSize: "14px", color: "#666" }}>
             By <strong>{blog.author}</strong> • {blog.profession}
           </span>
         </div>
 
         {/* Blog Title */}
-        <h1 style={{ fontSize: "48px", fontWeight: "800", marginBottom: "24px", lineHeight: "1.2" }}>
+        <h1
+          style={{
+            fontSize: "48px",
+            fontWeight: "800",
+            marginBottom: "24px",
+            lineHeight: "1.2",
+          }}
+        >
           {blog.title}
         </h1>
 
@@ -92,7 +122,7 @@ export default function BlogView() {
           style={{
             fontSize: "18px",
             lineHeight: "1.8",
-            color: "#333"
+            color: "#333",
           }}
           dangerouslySetInnerHTML={{ __html: blog.description }}
         />

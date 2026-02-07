@@ -19,9 +19,12 @@ export default function BlogForm() {
     description: "",
   });
 
-  /* ✅ Hover states added — no existing logic touched */
+  /* ✅ Existing hover states */
   const [publishHover, setPublishHover] = useState(false);
   const [cancelHover, setCancelHover] = useState(false);
+
+  /* ✅ NEW Back button hover */
+  const [backHover, setBackHover] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -107,8 +110,30 @@ export default function BlogForm() {
       <AdminBlogHeader />
 
       <div style={{ padding: "40px", maxWidth: "1100px", margin: "0 auto" }}>
+
+        {/* ✅ Back Button */}
+        <button
+          onClick={() => navigate("/admin/blogs")}
+          onMouseEnter={() => setBackHover(true)}
+          onMouseLeave={() => setBackHover(false)}
+          style={{
+            padding: "12px 24px",
+            backgroundColor: backHover ? "#21C87A" : "#4CAF50", // ✅ FIXED
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontSize: "16px",
+            fontWeight: "600",
+            transition: "all 0.3s ease",
+          }}
+        >
+          ← Back to Manage Blog
+        </button>
+
+
         <h2 style={{ margin: "10px 10px 10px 0px", fontSize: "18.72px" }}>
-          <b>{id ? "Edit Blog" : "Add New Blog"}</b>
+          <b>{id ? "Edit Blog" : "📝Add New Blog"}</b>
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -290,7 +315,7 @@ export default function BlogForm() {
               style={{
                 fontSize: "12px",
                 color: wordCount > 10000 ? "red" : "#666",
-                marginTop: "50px",
+                marginTop: "revert-layer",
               }}
             >
               Word Count: {wordCount} / 10,000
@@ -298,7 +323,7 @@ export default function BlogForm() {
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: "flex", gap: "15px", marginTop: "30px" }}>
+          <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
             <button
               type="submit"
               onMouseEnter={() => setPublishHover(true)}
