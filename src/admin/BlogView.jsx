@@ -31,16 +31,15 @@ export default function BlogView() {
     <>
       <AdminBlogHeader />
 
-      <div style={{ padding: "60px 40px", maxWidth: "900px", margin: "0 auto" }}>
-        
+      <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto" }}>
+
         {/* Back Button — Hover Enhanced */}
         <button
           onClick={() => navigate("/admin/blogs")}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
           style={{
-            padding: "10px 20px",
-            marginBottom: "30px",
+            padding: "16px 24px",
 
             /* ✅ Same color + hover as Add New Blog */
             backgroundColor: isHovering ? "#21C87A" : "#4CAF50",
@@ -49,7 +48,7 @@ export default function BlogView() {
             border: "none",
             borderRadius: "6px",
             cursor: "pointer",
-            fontSize: "14px",
+            fontSize: "16px",
             fontWeight: "600",
 
             /* ✅ Smooth transition */
@@ -58,6 +57,11 @@ export default function BlogView() {
         >
           ← Back to Blog List
         </button>
+
+        {/* Title — Fixed */}
+        <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
+          <b>{id ? "👁️📚 View Blog" : "➕📝 Add Blog"}</b>
+        </h2>
 
         {/* Blog Image */}
         <img

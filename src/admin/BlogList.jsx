@@ -30,17 +30,17 @@ export default function BlogList() {
     <>
       <AdminBlogHeader />
 
-      <div style={{ padding: "40px", maxWidth: "1400px", margin: "0 auto" }}>
+            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto" }}>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "30px",
+            margin: "30px 0px 30px 0px",
           }}
         >
           <h2 style={{ fontSize: "18.72px", fontWeight: "700" }}>
-            📝 Manage Blogs
+            📝Manage Blogs
           </h2>
 
           {/* ✅ Existing hover button unchanged */}
@@ -49,7 +49,7 @@ export default function BlogList() {
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             style={{
-              padding: "12px 24px",
+              padding: "16px 24px",
               backgroundColor: isHovering ? "#21C87A" : "#4CAF50",
               color: "white",
               border: "none",
@@ -173,7 +173,7 @@ export default function BlogList() {
                           onMouseEnter={() => setViewHoverId(blog.id)}
                           onMouseLeave={() => setViewHoverId(null)}
                           style={{
-                            padding: "6px 12px",
+                            padding: "10px 12px",
                             backgroundColor:
                               viewHoverId === blog.id
                                 ? "#1976d2"
@@ -195,7 +195,7 @@ export default function BlogList() {
                           onMouseEnter={() => setEditHoverId(blog.id)}
                           onMouseLeave={() => setEditHoverId(null)}
                           style={{
-                            padding: "6px 12px",
+                            padding: "10px 12px",
                             backgroundColor:
                               editHoverId === blog.id ? "#E65100" : "#FF9800",
                             color: "white",
@@ -215,7 +215,7 @@ export default function BlogList() {
                           onMouseEnter={() => setDeleteHoverId(blog.id)}
                           onMouseLeave={() => setDeleteHoverId(null)}
                           style={{
-                            padding: "6px 12px",
+                            padding: "10px 12px",
                             backgroundColor:
                               deleteHoverId === blog.id ? "#B71C1C" : "#f44336",
                             color: "white",

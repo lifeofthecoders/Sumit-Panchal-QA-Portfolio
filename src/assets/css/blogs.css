@@ -407,11 +407,11 @@
        }
 
        /* MAIN CONTENT */
-       .container {
+       /* .container {
            max-width: 1200px;
            margin: 0 auto;
            padding: 60px 2rem;
-       }
+       } */
 
        .summary-paragraph {
            text-align: justify;
@@ -490,11 +490,11 @@
        /* =========================
        BLOGS CONTAINER
        ========================= */
-       .blogs-container {
+       /* .blogs-container {
            max-width: 1200px;
            margin: 0 auto;
            padding: 40px 40px;
-       }
+       } */
 
        /* Section Title */
        .blogs-title {

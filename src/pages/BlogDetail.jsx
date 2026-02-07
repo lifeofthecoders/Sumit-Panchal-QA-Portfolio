@@ -33,7 +33,7 @@ export default function BlogDetail() {
 
           <section className="blog-detail-card">
 
-            <div style={{ padding: "60px 40px", maxWidth: "900px", margin: "0 auto" }}>
+            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto" }}>
 
               {/* Back Button */}
               <h3 id="back-button" style={{ marginBottom: "20px", color: "#ffffff" }}>
@@ -72,6 +72,11 @@ export default function BlogDetail() {
                 </button>
               </h3>
 
+              {/* Title — Fixed */}
+              <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
+                <b>{id ? "👁️📚 View Blog" : "➕📝 Add Blog"}</b>
+              </h2>
+              
               {/* Blog Image */}
               <img
                 src={blog.image}

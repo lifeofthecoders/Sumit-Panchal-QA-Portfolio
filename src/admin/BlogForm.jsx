@@ -109,7 +109,7 @@ export default function BlogForm() {
     <>
       <AdminBlogHeader />
 
-      <div style={{ padding: "40px", maxWidth: "1100px", margin: "0 auto" }}>
+      <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto" }}>
 
         {/* ✅ Back Button */}
         <button
@@ -117,7 +117,7 @@ export default function BlogForm() {
           onMouseEnter={() => setBackHover(true)}
           onMouseLeave={() => setBackHover(false)}
           style={{
-            padding: "12px 24px",
+            padding: "16px 24px",
             backgroundColor: backHover ? "#21C87A" : "#4CAF50", // ✅ FIXED
             color: "white",
             border: "none",
@@ -128,12 +128,12 @@ export default function BlogForm() {
             transition: "all 0.3s ease",
           }}
         >
-          ← Back to Manage Blog
+          ← Back to Blog List
         </button>
 
 
-        <h2 style={{ margin: "10px 10px 10px 0px", fontSize: "18.72px" }}>
-          <b>{id ? "Edit Blog" : "📝Add New Blog"}</b>
+        <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
+          <b>{id ? "✏️📚 Edit Blog" : "➕📚 Add New Blog"}</b>
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -329,7 +329,7 @@ export default function BlogForm() {
               onMouseEnter={() => setPublishHover(true)}
               onMouseLeave={() => setPublishHover(false)}
               style={{
-                padding: "12px 30px",
+                padding: "16px 30px",
                 fontSize: "16px",
                 backgroundColor: publishHover ? "#21C87A" : "#4CAF50",
                 color: "white",
@@ -349,7 +349,7 @@ export default function BlogForm() {
               onMouseEnter={() => setCancelHover(true)}
               onMouseLeave={() => setCancelHover(false)}
               style={{
-                padding: "12px 30px",
+                padding: "16px 30px",
                 fontSize: "16px",
                 backgroundColor: cancelHover ? "#ff5c5c" : "#f44336",
                 color: "white",
