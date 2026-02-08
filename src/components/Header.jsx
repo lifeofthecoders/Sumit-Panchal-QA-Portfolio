@@ -12,9 +12,15 @@ export default function Header() {
   const isProjects = location.pathname === "/projects";
   const isPortfolio = location.pathname === "/portfolio";
   const isGallery = location.pathname === "/gallery";
-  const isBlogs = location.pathname === "/blogs";
+
+  /* ✅ FIX — Covers /blogs AND /blogs/:id */
+  const isBlogs =
+    location.pathname === "/blogs" ||
+    location.pathname.startsWith("/blogs/");
+
   const isContact = location.pathname === "/contact";
   const isSitemap = location.pathname === "/sitemap";
+
 
   /* =========================================
      RESET & REPLAY HEADER ANIMATIONS (SAFE)
@@ -38,27 +44,26 @@ export default function Header() {
 
   return (
     <header
-      className={`hero-header ${
-        isHome
-          ? "home-header"
-          : isAbout
+      className={`hero-header ${isHome
+        ? "home-header"
+        : isAbout
           ? "about-header"
           : isServices
-          ? "services-header"
-          : isProjects
-          ? "projects-header"
-          : isPortfolio
-          ? "portfolio-header"
-          : isGallery
-          ? "gallery-header"
-          : isBlogs
-          ? "blogs-header"
-          : isContact
-          ? "contact-header"
-          : isSitemap
-          ? "sitemap-header"
-          : ""
-      }`}
+            ? "services-header"
+            : isProjects
+              ? "projects-header"
+              : isPortfolio
+                ? "portfolio-header"
+                : isGallery
+                  ? "gallery-header"
+                  : isBlogs
+                    ? "blogs-header"
+                    : isContact
+                      ? "contact-header"
+                      : isSitemap
+                        ? "sitemap-header"
+                        : ""
+        }`}
     >
       {/* TOP BAR */}
       <div className="top-bar">

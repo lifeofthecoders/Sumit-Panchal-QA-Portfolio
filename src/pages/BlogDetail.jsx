@@ -1,8 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { getBlogById } from "../services/blogService";
 import { useEffect, useState } from "react";
+import "../assets/css/blogs.css";
+import usePageAnimations from "../hooks/usePageAnimations";
 
 export default function BlogDetail() {
+  // Animation hook for header and page animations
+  usePageAnimations();
+
   const { id } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
@@ -11,6 +16,9 @@ export default function BlogDetail() {
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
+    // Scroll to top when blog detail page loads
+    window.scrollTo(0, 0);
+
     const foundBlog = getBlogById(id);
     if (foundBlog) {
       setBlog(foundBlog);
@@ -27,13 +35,13 @@ export default function BlogDetail() {
   };
 
   return (
-    <section className="blog-detail-page">
-      <main className="blog-detail">
-        <section className="blog-detail-container">
+    <section className="blogs-page">
+      <main className="blogs">
+        <section className="blogs-container">
 
-          <section className="blog-detail-card">
+          <section className="blogs-card">
 
-            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto" }}>
+            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto", boxSizing: "border-box", width: "100%" }}>
 
               {/* Back Button */}
               <h3 id="back-button" style={{ marginBottom: "20px", color: "#ffffff" }}>
@@ -76,7 +84,7 @@ export default function BlogDetail() {
               <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
                 <b>{id ? "👁️📚 View Blog" : "➕📝 Add Blog"}</b>
               </h2>
-              
+
               {/* Blog Image */}
               <img
                 src={blog.image}
@@ -131,6 +139,10 @@ export default function BlogDetail() {
                   marginBottom: "24px",
                   lineHeight: "1.2",
                   color: "#000",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  maxWidth: "100%",
+                  textAlign: "justify",
                 }}
               >
                 {blog.title}
@@ -150,66 +162,66 @@ export default function BlogDetail() {
 
               {/* Content Styling */}
               <style>{`
-        .blog-content h1, .blog-content h2, .blog-content h3 {
-          margin-top: 30px;
-          margin-bottom: 15px;
-          font-weight: 700;
-        }
-        .blog-content h1 { font-size: 36px; }
-        .blog-content h2 { font-size: 30px; }
-        .blog-content h3 { font-size: 24px; }
+              .blog-content h1, .blog-content h2, .blog-content h3 {
+                margin-top: 30px;
+                margin-bottom: 15px;
+                font-weight: 700;
+              }
+              .blog-content h1 { font-size: 36px; }
+              .blog-content h2 { font-size: 30px; }
+              .blog-content h3 { font-size: 24px; }
 
-        .blog-content p {
-          margin-bottom: 16px;
-          text-align: justify;
-        }
+              .blog-content p {
+                margin-bottom: 16px;
+                text-align: justify;
+              }
 
-        .blog-content ul, .blog-content ol {
-          margin-left: 30px;
-          margin-bottom: 16px;
-          text-align: justify;
-        }
+              .blog-content ul, .blog-content ol {
+                margin-left: 30px;
+                margin-bottom: 16px;
+                text-align: justify;
+              }
 
-        .blog-content li {
-          margin-bottom: 8px;
-        }
+              .blog-content li {
+                margin-bottom: 8px;
+              }
 
-        .blog-content img {
-          max-width: 100%;
-          height: auto;
-          border-radius: 8px;
-          margin: 20px 0;
-        }
+              .blog-content img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                margin: 20px 0;
+              }
 
-        .blog-content blockquote {
-          border-left: 4px solid #6366f1;
-          padding-left: 20px;
-          margin: 20px 0;
-          font-style: italic;
-          color: #555;
-          text-align: justify;
-        }
+              .blog-content blockquote {
+                border-left: 4px solid #6366f1;
+                padding-left: 20px;
+                margin: 20px 0;
+                font-style: italic;
+                color: #555;
+                text-align: justify;
+              }
 
-        .blog-content code {
-          background-color: #f5f5f5;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-family: monospace;
-        }
+              .blog-content code {
+                background-color: #f5f5f5;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: monospace;
+              }
 
-        .blog-content pre {
-          background-color: #f5f5f5;
-          padding: 15px;
-          border-radius: 8px;
-          overflow-x: auto;
-          margin: 20px 0;
-        }
+              .blog-content pre {
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 8px;
+                overflow-x: auto;
+                margin: 20px 0;
+              }
 
-        .blog-content a {
-          color: #6366f1;
-          text-decoration: underline;
-        }
-      `}</style>
+              .blog-content a {
+                color: #6366f1;
+                text-decoration: underline;
+              }
+            `}</style>
             </div>
 
           </section>

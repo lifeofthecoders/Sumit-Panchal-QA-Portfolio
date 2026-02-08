@@ -72,7 +72,7 @@ export default function Blogs() {
           {/* BLOGS */}
           <section className="blogs-card">
 
-            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto" }}>
+            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto", boxSizing: "border-box", width: "100%" }}>
             <div>
               <h3
                 id="latest-blogs"

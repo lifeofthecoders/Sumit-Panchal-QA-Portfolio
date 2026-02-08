@@ -79,7 +79,13 @@
        body {
            font-family: Arial, sans-serif;
            line-height: 1.6;
-           margin: 40px;
+           margin: 0;
+       }
+
+       .blogs-page,
+       .blogs {
+           width: 100%;
+           overflow-x: hidden;
        }
 
        h1 {
