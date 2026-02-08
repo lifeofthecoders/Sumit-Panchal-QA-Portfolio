@@ -636,6 +636,40 @@
           }
       }
 
+      .lets-connect-section {
+          margin-top: 20px;
+          line-height: 1.8;
+          color: #444;
+      }
+
+      .section-title {
+          font-size: 22px;
+          font-weight: 700;
+          margin-bottom: 5px;
+      }
+
+      .section-subtitle {
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 15px;
+          color: #666;
+      }
+
+      .lets-connect-section p {
+          margin-bottom: 14px;
+          font-size: 15px;
+      }
+
+      .lets-connect-section strong {
+          color: #000;
+          /* Brand Green Highlight */
+          font-weight: bolder;
+      }
+
+      .sign-off {
+          margin-top: 18px;
+      }
+
       /* HEADING HOVER LINK ICON */
       .heading-link {
           position: relative;

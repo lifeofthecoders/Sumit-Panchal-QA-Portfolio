@@ -91,7 +91,7 @@ export default function BlogDetail() {
                 alt={blog.title}
                 style={{
                   width: "100%",
-                  height: "400px",
+                  height: "100%",
                   objectFit: "cover",
                   borderRadius: "16px",
                   marginBottom: "32px",

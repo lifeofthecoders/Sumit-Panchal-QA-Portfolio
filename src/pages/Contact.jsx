@@ -63,12 +63,12 @@ export default function Contact() {
 
                 <h4><b>(Collaboration & Communication)</b></h4>
 
-                <p className="summary-paragraph">
+                {/* <p className="summary-paragraph">
                   Whether you are building a new product or strengthening an existing one, I would be glad to support your
                   quality assurance efforts and help ensure reliable, user-focused software delivery.
-                </p>
+                </p> */}
 
-                <p className="summary-paragraph">
+                {/* <p className="summary-paragraph">
                   If you are looking for a <b>Manual QA Engineer</b> who can take ownership of test planning, execution, and
                   coordination across <b>web and mobile applications</b>, feel free to reach out.
                 </p>
@@ -76,7 +76,61 @@ export default function Contact() {
                 <p className="summary-paragraph">
                   I am open to opportunities with <b>product-based companies, startups, and service organizations</b> that
                   <b> value quality, reliability, and a strong end-user experience.</b>
-                </p>
+                </p> */}
+
+                <div className="lets-connect-section">
+
+                  <p className="summary-paragraph">
+                    Whether you’re building a new product or enhancing an existing application,
+                    I’d be glad to support your{" "}
+                    <strong>Quality Assurance initiatives</strong> and help ensure{" "}
+                    <strong>reliable, high-performance, and user-centric software delivery</strong>.
+                  </p>
+
+                  <p className="summary-paragraph">
+                    Witness how a <strong>meticulous testing approach</strong>,{" "}
+                    <strong>structured validation processes</strong>, and{" "}
+                    <strong>modern QA solutions</strong> can elevate product quality to the next level.
+                    My work emphasizes <strong>defect prevention</strong>,{" "}
+                    <strong>usability validation</strong>, and{" "}
+                    <strong>continuous quality improvement</strong> across releases.
+                  </p>
+
+                  <p className="summary-paragraph">
+                    If you’d like to explore my <strong>testing toolkit</strong>,{" "}
+                    <strong>frameworks</strong>, and{" "}
+                    <strong>technical capabilities</strong> in detail, feel free to review the{" "}
+                    <strong>Tools & Technologies</strong> and{" "}
+                    <strong>QA Services</strong> sections of my portfolio.
+                  </p>
+
+                  <p className="summary-paragraph">
+                    If you are looking for a <strong>Manual QA Engineer</strong> who can take
+                    ownership of <strong>test planning</strong>,{" "}
+                    <strong>test execution</strong>,{" "}
+                    <strong>defect management</strong>, and{" "}
+                    <strong>cross-platform validation</strong> across{" "}
+                    <strong>web and mobile applications</strong>, feel free to reach out.
+                  </p>
+
+                  <p className="summary-paragraph">
+                    I am open to collaborating with{" "}
+                    <strong>product-based companies</strong>,{" "}
+                    <strong>startups</strong>, and{" "}
+                    <strong>service organizations</strong> that value{" "}
+                    <strong>quality</strong>,{" "}
+                    <strong>reliability</strong>, and an exceptional{" "}
+                    <strong>end-user experience</strong>.
+                  </p>
+
+                  <p className="sign-off">
+                    <strong>Happy Testing 🙂</strong>
+                  </p>
+
+                </div>
+
+
+
               </div>
             </section>
 
