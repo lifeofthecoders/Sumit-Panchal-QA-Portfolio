@@ -182,7 +182,7 @@ export default function Header() {
             </h1>
             <h2>
               <b>
-                | Insights | Experience | Knowledge Sharing | Best Practices | Testing Tips | Industry Updates |
+                | Blogs | Thoughts | Experience | Insights | Expertise | Knowledge Sharing |
               </b>
             </h2>
             <div className="title-underline"></div>
