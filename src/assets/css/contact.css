@@ -1,0 +1,862 @@
+      /* ================= HAMBURGER ================= */
+      #menu-toggle {
+          display: none;
+      }
+
+      .hamburger {
+          display: none;
+          cursor: pointer;
+      }
+
+      .hamburger::before {
+          content: "☰";
+          font-size: 19px;
+      }
+
+      #menu-toggle:checked+.hamburger::before {
+          content: "✕";
+      }
+
+      /* ================= MOBILE MENU ================= */
+      @media (max-width: 768px) {
+
+          /* ✅ hide desktop nav ONLY on mobile */
+          .nav-links {
+              display: none;
+          }
+
+          .hamburger {
+              display: block;
+              position: absolute;
+              top: 50px;
+              left: 15px;
+              background: #fff;
+              padding: 6px 10px;
+              border-radius: 4px;
+              z-index: 10001;
+          }
+
+          /* When menu is open, keep hamburger fixed */
+          @media (max-width: 768px) {
+              #menu-toggle:checked+.hamburger {
+                  position: fixed;
+                  /* ✅ fixed ONLY when open */
+                  top: 50px;
+                  left: 15px;
+              }
+          }
+
+          .nav-links {
+              display: none;
+          }
+
+          .nav {
+              position: fixed;
+              top: -350px;
+              left: -305px;
+              width: 300px;
+              height: 150%;
+              background: #fff;
+              padding: 80px 20px;
+              box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+              transition: left 0.4s ease;
+              z-index: 10000;
+              display: flex;
+              flex-direction: column;
+          }
+
+          #menu-toggle:checked~.nav {
+              left: 0;
+          }
+      }
+
+      .nav a {
+          font-size: 16px;
+          padding: 10px 0;
+      }
+
+      /*================ Main CSS Structure ================*/
+      body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          margin: 40px;
+      }
+
+      h1 {
+          font-size: 43px;
+          margin-bottom: 10px;
+      }
+
+      h2 {
+          font-size: 24px;
+          font-weight: bold;
+          margin: 10px;
+      }
+
+      h3 {
+          font-size: 18.72px;
+          font-weight: bold;
+          margin: 10px;
+      }
+
+      h4 {
+          font-size: 16px;
+          font-weight: bold;
+          margin: 10px;
+      }
+
+      .summary-paragraph {
+          text-align: justify;
+          text-indent: 2em;
+          margin-bottom: 20px;
+          margin-bottom: 20px;
+      }
+
+      .contact-card {
+          /* background: #fff; */
+          padding: 20px 20px;
+      }
+
+      /* ===== PROFILE BADGE ON HERO BOTTOM ===== */
+      .profile-badge {
+          position: absolute;
+          bottom: -35px;
+          /* ✅ Pushes it outside the hero */
+          left: 80px;
+          /* ✅ Adjust left position */
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: transparent;
+          z-index: 10;
+      }
+
+      .profile-badge img {
+          width: 72px;
+          height: 72px;
+          border-radius: 50%;
+          object-fit: cover;
+          background: #fff;
+
+          /* ✅ Double ring effect like left profile */
+          border: 4px solid #fff;
+          /* Inner white ring */
+          box-shadow: 0 0 0 4px #19A25E;
+          /* Outer green ring */
+      }
+
+
+      .profile-name {
+          background: #19A25E;
+          /* ✅ Green tag like reference */
+          color: #fff;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 16px;
+          font-weight: bolder;
+          white-space: nowrap;
+      }
+
+      /* ✅ Responsive fix */
+      @media (max-width: 768px) {
+          .profile-badge {
+              left: 20px;
+              bottom: -30px;
+          }
+
+          .profile-badge img {
+              width: 60px;
+              height: 60px;
+          }
+
+          .profile-name {
+              font-size: 13px;
+              padding: 6px 14px;
+          }
+      }
+
+      /* =====================================================
+        PROFILE BADGE — RIGHT → LEFT SCROLL ANIMATION
+        ===================================================== */
+
+      /* Initial hidden state */
+      .profile-slide {
+          opacity: 0;
+          transform: translateX(120px);
+          /* start from right side */
+          will-change: opacity, transform;
+          transition:
+              transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.9s ease;
+      }
+
+      /* When visible */
+      .profile-slide.in-view {
+          opacity: 1;
+          transform: translateX(0);
+      }
+
+      /* CENTER TITLE animation */
+      .animate-title h1 {
+          opacity: 0;
+          transform: translateX(-80px);
+          will-change: transform, opacity;
+      }
+
+      .animate-title.in-view h1 {
+          animation: titleLeftToRight 0.9s ease-out forwards;
+      }
+
+      @keyframes titleLeftToRight {
+          0% {
+              opacity: 0;
+              transform: translateX(-80px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateX(10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+
+      /* CONTENT SECTION animation */
+      .animate-content {
+          opacity: 0;
+          transform: translateY(80px);
+          will-change: transform, opacity;
+      }
+
+      .animate-content.in-view {
+          animation: contentBottomToTop 0.9s ease-out forwards;
+      }
+
+      @keyframes contentBottomToTop {
+          0% {
+              opacity: 0;
+              transform: translateY(80px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateY(-10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateY(0);
+          }
+      }
+
+
+      /* ==============================================
+      HERO TITLE ANIMATION — LEFT → RIGHT Replays on scroll (same method as slide-left)
+      ============================================== */
+
+      .hero-animate h1 {
+          opacity: 0;
+          transform: translateX(-80px);
+          will-change: transform, opacity;
+      }
+
+      .hero-animate h1.in-view {
+          animation: heroLeftToRight 0.9s ease-out forwards;
+      }
+
+      .hero-animate h2 {
+          opacity: 0;
+          transform: translateX(80px);
+          will-change: transform, opacity;
+      }
+
+      .hero-animate h2.in-view {
+          animation: heroRightToLeft 0.9s ease-out forwards;
+      }
+
+      @keyframes heroLeftToRight {
+          0% {
+              opacity: 0;
+              transform: translateX(-80px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateX(10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+      @keyframes heroRightToLeft {
+          0% {
+              opacity: 0;
+              transform: translateX(80px);
+              /* from right */
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateX(-10px);
+              /* slight overshoot */
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+      /* GLOBAL RESET */
+      * {
+          box-sizing: border-box;
+          margin-bottom: revert-layer;
+      }
+
+      body {
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+              "Roboto", "Helvetica Neue", Arial, sans-serif;
+          line-height: 1.6;
+      }
+
+      html,
+      body {
+          height: 100%;
+      }
+
+      body {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+      }
+
+      .container {
+          flex: 1;
+      }
+
+      /* ===== LOGO TITLE ===== */
+      .logo-link {
+          display: flex;
+          align-items: center;
+      }
+
+      .site-logo {
+          height: 65px;
+          width: auto;
+          border-radius: 35px;
+          object-fit: contain;
+          transition: transform 0.3s ease;
+      }
+
+      /* Hover animation stays consistent with text behavior */
+      .logo-link:hover .site-logo {
+          transform: scale(1.05);
+      }
+
+      /* Disable underline animation for logo only */
+      .logo-link::after {
+          display: none !important;
+      }
+
+      /* LOGO BASE STATE */
+      .logo-slide {
+          opacity: 1;
+      }
+
+      /* animation trigger */
+      .logo-animate {
+          animation: logoRightToLeft 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+
+      @keyframes logoRightToLeft {
+          0% {
+              opacity: 0;
+              transform: translateX(120px);
+          }
+
+          60% {
+              opacity: 1;
+              transform: translateX(-10px);
+          }
+
+          100% {
+              opacity: 1;
+              transform: translateX(0);
+          }
+      }
+
+      /* HERO HEADER */
+      .contact-header {
+          min-height: 320px;
+          /* ✅ prevents cut on zoom */
+          width: 100%;
+          background-image: url("/image/navbar.jpg");
+          background-size: cover;
+          background-position: center;
+          position: relative;
+          color: #111;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding-top: 90px;
+          /* ✅ prevents top bar overlap */
+          padding-bottom: 40px;
+      }
+
+      /* TOP BAR */
+      .top-bar {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          padding: 12px 3vw;
+          /* ✅ responsive padding */
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          /* ✅ prevents breaking on zoom */
+      }
+
+      /* OWNER NAME */
+      .owner-name {
+          font-size: 14px;
+          font-weight: 600;
+          letter-spacing: 0.67px;
+          white-space: nowrap;
+          text-decoration: none;
+          /* ✅ REMOVES DEFAULT UNDERLINE */
+      }
+
+      /* =====================================================
+      NAV LINKS
+      ===================================================== */
+      .nav-links {
+          display: flex;
+          gap: 19px;
+          flex-wrap: wrap;
+      }
+
+      /* ---- BASE LINK ---- */
+      .nav-links a {
+          position: relative;
+          padding: 4px 10px;
+          border-radius: 999px;
+          font-size: 14px;
+          font-weight: 800;
+          letter-spacing: 1px;
+          color: #1a1a1a;
+          transition:
+              color 0.3s ease,
+              background 0.3s ease,
+              box-shadow 0.3s ease;
+      }
+
+      /* ---- SHARED UNDERLINE / DOT ---- */
+      .nav-links a::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          bottom: -12px;
+          width: 0;
+          height: 2px;
+          background: #e53935;
+          transform: translateX(-50%);
+          transition:
+              width 0.3s ease,
+              height 0.3s ease,
+              border-radius 0.3s ease;
+      }
+
+      /* ---- ACTIVE TAB ---- */
+      .nav-links a.active {
+          color: #e53935;
+          background: rgba(229, 57, 53, 0.08);
+          box-shadow: inset 0 0 0 1px rgba(229, 57, 53, 0.18);
+      }
+
+      .nav-links a.active::after {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.18);
+      }
+
+      /* ---- HOVER (ACTIVE + INACTIVE) ---- */
+      .nav-links a:hover {
+          color: #e53935;
+          background: rgba(229, 57, 53, 0.08);
+          box-shadow: inset 0 0 0 1px rgba(229, 57, 53, 0.18);
+      }
+
+      .nav-links a:hover::after {
+          width: 80%;
+          height: 3px;
+          border-radius: 50%;
+          box-shadow: 0 0 0 4px rgba(229, 57, 53, 0.18);
+      }
+
+      /* CENTER TITLE */
+      .hero-title {
+          text-align: center;
+          max-width: 90%;
+      }
+
+      .hero-title h1 {
+          font-size: 48px;
+          letter-spacing: 4px;
+          margin: 10px 0 10px;
+      }
+
+      .hero-title h2 {
+          font-family: Arial, sans-serif;
+          margin: 10px 0 10px;
+          font-size: 18px;
+          font-weight: 600;
+          letter-spacing: 3px;
+      }
+
+      /* ✅ UNDERLINE - EXACTLY UNDER HERO TITLE BLOCK */
+
+      .hero-title {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      .hero-title h1 {
+          position: relative;
+      }
+
+      .hero-title h1::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          bottom: 0;
+          transform: translateX(-50%);
+          width: 90px;
+          height: 5px;
+          background: #000;
+          /* ✅ BLACK so it shows on white */
+      }
+
+
+      /* Hide old underline div so it doesn't interfere */
+      .title-underline {
+          display: none;
+      }
+
+
+      /* MAIN CONTENT */
+      .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 40px 40px;
+      }
+
+      .summary-paragraph {
+          text-align: justify;
+          text-indent: 2em;
+          margin-bottom: 20px;
+      }
+
+      /* ===== GLOBAL LINK STYLING ===== */
+      a {
+          color: blue;
+          text-decoration: none;
+      }
+
+      a:hover {
+          color: red;
+      }
+
+      /* ✅ ZOOM & SCREEN RESPONSIVENESS */
+      @media (max-width: 1200px) {
+          .hero-title h1 {
+              font-size: 42px;
+          }
+      }
+
+      @media (max-width: 992px) {
+          .top-bar {
+              flex-direction: column;
+              gap: 8px;
+          }
+
+          .nav-links {
+              justify-content: center;
+          }
+
+          .hero-title h1 {
+              font-size: 36px;
+          }
+      }
+
+      @media (max-width: 768px) {
+          .contact-header {
+              min-height: 280px;
+          }
+
+          .contact-title h1 {
+              font-size: 30px;
+          }
+
+          .contact-title h2 {
+              font-size: 16px;
+          }
+
+          .nav-links {
+              gap: 30px;
+          }
+      }
+
+      @media (max-width: 480px) {
+          .contact-header {
+              min-height: 260px;
+          }
+
+          .contact-title h1 {
+              font-size: 26px;
+          }
+
+          .contact-title h2 {
+              font-size: 14px;
+          }
+
+          .owner-name {
+              font-size: 16px;
+          }
+      }
+
+      .lets-connect-section {
+          margin-top: 20px;
+          line-height: 1.8;
+          color: #000;
+      }
+
+      .section-title {
+          font-size: 22px;
+          font-weight: 700;
+          margin-bottom: 5px;
+      }
+
+      .section-subtitle {
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 15px;
+          color: #000;
+      }
+
+      .lets-connect-section p {
+          margin-bottom: 14px;
+          font-size: 16px;
+      }
+
+      .lets-connect-section strong {
+          color: #000;
+          /* Brand Green Highlight */
+          font-weight: bolder;
+      }
+
+      .sign-off {
+          margin-top: 18px;
+      }
+
+      /* HEADING HOVER LINK ICON */
+      .heading-link {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          margin-top: 8px;
+          margin-bottom: 8px;
+          gap: 8px;
+          cursor: pointer;
+      }
+
+      .heading-link .anchor-icon {
+          font-size: 14px;
+          text-decoration: none;
+          color: #333;
+          opacity: 0;
+          transition: opacity 0.2s ease, color 0.2s ease;
+      }
+
+      .heading-link:hover .anchor-icon {
+          opacity: 1;
+      }
+
+      .heading-link .anchor-icon:hover {
+          color: #1abc9c;
+      }
+
+      /* BUTTONS */
+      .btn-primary {
+          display: inline-block;
+          background: #19A25E !important;
+          color: white !important;
+          padding: 12px 24px;
+          border-radius: 5px;
+          font-weight: bold;
+          margin-top: 16px;
+          margin-bottom: 16px;
+      }
+
+      .btn-primary:hover {
+          background: #21C87A !important;
+          color: white;
+      }
+
+      /* LinkedIn icon next to label */
+      .contact-label .icon {
+          width: 16px;
+          height: 16px;
+          margin-left: 4px;
+          margin-right: 2px;
+          vertical-align: -1px;
+      }
+
+      /* Apply underline only to contact values */
+      .contact-value a {
+          color: blue;
+          text-decoration: none;
+          transition: color 0.25s ease, text-decoration 0.25s ease;
+      }
+
+      .contact-value a:hover {
+          color: red;
+          text-decoration: underline;
+      }
+
+      .contact-value:hover {
+          text-decoration: underline;
+      }
+
+      .contact-info {
+          display: grid;
+          gap: 1rem;
+      }
+
+      /* EACH ROW — FORCE SINGLE HORIZONTAL LINE */
+      .contact-row {
+          display: grid;
+          grid-template-columns: 75px 40px 40px auto;
+          align-items: center;
+          white-space: nowrap;
+          /* 👈 prevents line breaks */
+      }
+
+      /* LABEL */
+      .contact-label {
+          font-size: 18px;
+          color: var(--text-muted);
+      }
+
+      /* ICON COLUMN */
+      .contact-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+      }
+
+      /* SVG ICON SIZE */
+      .contact-icon .icon {
+          width: 18px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          font-weight: bold;
+      }
+
+      /* DASH COLUMN */
+      .contact-separator {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+      }
+
+      /* VALUE */
+      .contact-value {
+          font-weight: 500;
+          overflow: hidden;
+          text-overflow: ellipsis;
+      }
+
+      /* LINKS */
+      .contact-value a {
+          color: blue;
+          text-decoration: none;
+          transition: color 0.25s ease;
+      }
+
+      .contact-value a:hover {
+          color: red;
+          cursor: pointer;
+          text-decoration: underline;
+      }
+
+      /* LINKS + HOVER (with red on hover) */
+      .contact-value a {
+          color: blue;
+          /* default link color */
+          transition: color 0.25s ease;
+      }
+
+      .contact-value a:hover {
+          color: red;
+          /* red on hover */
+          cursor: pointer;
+      }
+
+      /* RESPONSIVE (already have) */
+      @media (max-width: 900px) {
+          .contact-card {
+              grid-template-columns: 1fr;
+          }
+      }
+
+      /* ===== VIEW LINE (SECTION DIVIDER) ===== */
+      .view-line {
+          border: 0;
+          height: 1px;
+          background: #e0e0e0;
+          margin: 0px 0px 0px;
+          width: 100%;
+          opacity: 0.6;
+      }
+
+      /* =========================================
+      CONTACT PAGE — PREVENT HORIZONTAL SCROLL (MOBILE)
+      MATCH HOME SCREEN
+      ========================================= */
+      @media (max-width: 768px) {
+
+          html,
+          body {
+              overflow-x: hidden;
+              width: 100%;
+              position: relative;
+          }
+      }
+
+
+      /* ===== FOOTER CENTER ALIGN ===== */
+      footer {
+          background-color: #111111;
+          color: #ffffff;
+          width: 100%;
+          text-align: center;
+          padding: 20px 0;
+          font-size: 14px;
+          border-top: 1px solid #000000;
+          /* ✅ ADDS THE VIEW LINE */
+      }

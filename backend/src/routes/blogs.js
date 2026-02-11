@@ -1,0 +1,79 @@
+import express from "express";
+import Blog from "../models/Blog.js";
+
+const router = express.Router();
+
+/**
+ * GET /api/blogs
+ * Returns all blogs, latest first
+ */
+router.get("/", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch blogs" });
+  }
+});
+
+/**
+ * GET /api/blogs/:id
+ */
+router.get("/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+    res.json(blog);
+  } catch (err) {
+    res.status(400).json({ message: "Invalid blog id" });
+  }
+});
+
+/**
+ * POST /api/blogs
+ */
+router.post("/", async (req, res) => {
+  try {
+    const payload = req.body;
+
+    const blog = await Blog.create(payload);
+    res.status(201).json(blog);
+  } catch (err) {
+    res.status(400).json({ message: "Failed to create blog", error: err.message });
+  }
+});
+
+/**
+ * PUT /api/blogs/:id
+ */
+router.put("/:id", async (req, res) => {
+  try {
+    const payload = req.body;
+
+    const updated = await Blog.findByIdAndUpdate(req.params.id, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updated) return res.status(404).json({ message: "Blog not found" });
+
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ message: "Failed to update blog", error: err.message });
+  }
+});
+
+/**
+ * DELETE /api/blogs/:id
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await Blog.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Blog not found" });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(400).json({ message: "Failed to delete blog" });
+  }
+});
+
+export default router;
