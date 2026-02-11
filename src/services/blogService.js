@@ -1,28 +1,73 @@
+// src/services/blogService.js
+
+/**
+ * IMPORTANT:
+ * - Local:  http://localhost:5000
+ * - Live:   use VITE_API_BASE_URL in GitHub Pages build
+ *
+ * Example:
+ * VITE_API_BASE_URL=https://your-backend.onrender.com
+ */
+
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
+  "http://localhost:5000";
+
+/**
+ * Helper to handle API errors cleanly
+ */
+const handleResponse = async (res) => {
+  const contentType = res.headers.get("content-type") || "";
+
+  let data = null;
+  if (contentType.includes("application/json")) {
+    data = await res.json().catch(() => null);
+  } else {
+    data = await res.text().catch(() => null);
+  }
+
+  if (!res.ok) {
+    const message =
+      (data && data.message) ||
+      (typeof data === "string" && data) ||
+      `Request failed (${res.status})`;
+    throw new Error(message);
+  }
+
+  return data;
+};
 
 /**
  * GET all blogs (latest first)
  */
 export const getBlogs = async () => {
-  const res = await fetch(`${API_BASE_URL}/api/blogs`);
-  if (!res.ok) throw new Error("Failed to fetch blogs");
-  return await res.json();
+  const res = await fetch(`${API_BASE_URL}/api/blogs`, {
+    method: "GET",
+  });
+
+  return await handleResponse(res);
 };
 
 /**
  * GET single blog
  */
 export const getBlogById = async (id) => {
-  const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`);
+  if (!id) return null;
+
+  const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`, {
+    method: "GET",
+  });
+
   if (!res.ok) return null;
-  return await res.json();
+  return await handleResponse(res);
 };
 
 /**
  * Create or Update blog
  */
 export const saveBlog = async (blog) => {
+  if (!blog) throw new Error("Blog data is required");
+
   // Update
   if (blog.id) {
     const res = await fetch(`${API_BASE_URL}/api/blogs/${blog.id}`, {
@@ -31,8 +76,7 @@ export const saveBlog = async (blog) => {
       body: JSON.stringify(blog),
     });
 
-    if (!res.ok) throw new Error("Failed to update blog");
-    return await res.json();
+    return await handleResponse(res);
   }
 
   // Create
@@ -45,18 +89,19 @@ export const saveBlog = async (blog) => {
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) throw new Error("Failed to create blog");
-  return await res.json();
+  return await handleResponse(res);
 };
 
 /**
  * Delete blog
  */
 export const deleteBlog = async (id) => {
+  if (!id) throw new Error("Blog id is required");
+
   const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`, {
     method: "DELETE",
   });
 
-  if (!res.ok) throw new Error("Failed to delete blog");
+  await handleResponse(res);
   return true;
 };
