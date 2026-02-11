@@ -103,6 +103,8 @@ export default function Blogs() {
                   >
                     🔗
                   </a>
+                  <a href="/#blogs/#latest-blogs" className="anchor-icon" data-target="blogs/#latest-blogs">🔗</a>
+
                 </h3>
 
                 <div
