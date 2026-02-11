@@ -96,15 +96,7 @@ export default function Blogs() {
                   }}
                 >
                   <b>📚 Latest Blog Posts</b>{" "}
-                  <a
-                    href="#latest-blogs"
-                    className="anchor-icon"
-                    data-target="latest-blogs"
-                  >
-                    🔗
-                  </a>
                   <a href="/#blogs/#latest-blogs" className="anchor-icon" data-target="blogs/#latest-blogs">🔗</a>
-
                 </h3>
 
                 <div
