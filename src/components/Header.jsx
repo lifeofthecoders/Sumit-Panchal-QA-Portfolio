@@ -178,7 +178,7 @@ export default function Header() {
         ) : isBlogs ? (
           <>
             <h1>
-              <b>Blogs</b>
+              <b>Blogss</b>
             </h1>
             <h2>
               <b>
