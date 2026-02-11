@@ -17,16 +17,23 @@ export default function BlogDetail() {
 
   useEffect(() => {
     const loadBlog = async () => {
-    // Scroll to top when blog detail page loads
-    window.scrollTo(0, 0);
+      // Scroll to top when blog detail page loads
+      window.scrollTo(0, 0);
 
-    const foundBlog = await getBlogById(id);
-    if (foundBlog) {
-      setBlog(foundBlog);
-    } else {
-      navigate("/blogs");
-    }
-      };
+      try {
+        const foundBlog = await getBlogById(id);
+
+        // ✅ FIX: handle empty or invalid response safely
+        if (foundBlog && (foundBlog._id || foundBlog.id)) {
+          setBlog(foundBlog);
+        } else {
+          navigate("/blogs");
+        }
+      } catch (error) {
+        console.error("Failed to load blog:", error);
+        navigate("/blogs");
+      }
+    };
 
     loadBlog();
   }, [id, navigate]);
@@ -42,28 +49,30 @@ export default function BlogDetail() {
     <section className="blogs-page">
       <main className="blogs">
         <section className="blogs-container">
-
           <section className="blogs-card">
-
-            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto", boxSizing: "border-box", width: "100%" }}>
-
+            <div
+              style={{
+                padding: "40px 40px",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                boxSizing: "border-box",
+                width: "100%",
+              }}
+            >
               {/* Back Button */}
-              <h3 id="back-button" style={{ marginBottom: "20px", color: "#ffffff" }}>
+              <h3
+                id="back-button"
+                style={{ marginBottom: "20px", color: "#ffffff" }}
+              >
                 <button
                   onClick={() => navigate("/blogs")}
-
-                  /* ✅ Hover handlers added */
                   onMouseEnter={() => setIsHovering(true)}
                   onMouseLeave={() => setIsHovering(false)}
-
                   style={{
                     fontFamily:
                       "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
                     display: "inline-block",
-
-                    /* ✅ Same hover pattern as + Add New Blog */
                     background: isHovering ? "#21C87A" : "#19A25E",
-
                     color: "white",
                     padding: "12px 24px",
                     borderRadius: "5px",
@@ -75,8 +84,6 @@ export default function BlogDetail() {
                     border: "none",
                     outline: "none",
                     cursor: "pointer",
-
-                    /* ✅ Smooth transition added */
                     transition: "all 0.3s ease",
                   }}
                 >
@@ -84,7 +91,7 @@ export default function BlogDetail() {
                 </button>
               </h3>
 
-              {/* Title — Fixed */}
+              {/* Title */}
               <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
                 <b>{id ? "👁️📚 View Blog" : "➕📚 Add Blog"}</b>
               </h2>
@@ -166,68 +173,67 @@ export default function BlogDetail() {
 
               {/* Content Styling */}
               <style>{`
-              .blog-content h1, .blog-content h2, .blog-content h3 {
-                margin-top: 30px;
-                margin-bottom: 15px;
-                font-weight: 700;
-              }
-              .blog-content h1 { font-size: 36px; }
-              .blog-content h2 { font-size: 30px; }
-              .blog-content h3 { font-size: 24px; }
+                .blog-content h1, .blog-content h2, .blog-content h3 {
+                  margin-top: 30px;
+                  margin-bottom: 15px;
+                  font-weight: 700;
+                }
+                .blog-content h1 { font-size: 36px; }
+                .blog-content h2 { font-size: 30px; }
+                .blog-content h3 { font-size: 24px; }
 
-              .blog-content p {
-                margin-bottom: 16px;
-                text-align: justify;
-              }
+                .blog-content p {
+                  margin-bottom: 16px;
+                  text-align: justify;
+                }
 
-              .blog-content ul, .blog-content ol {
-                margin-left: 30px;
-                margin-bottom: 16px;
-                text-align: justify;
-              }
+                .blog-content ul, .blog-content ol {
+                  margin-left: 30px;
+                  margin-bottom: 16px;
+                  text-align: justify;
+                }
 
-              .blog-content li {
-                margin-bottom: 8px;
-              }
+                .blog-content li {
+                  margin-bottom: 8px;
+                }
 
-              .blog-content img {
-                max-width: 100%;
-                height: auto;
-                border-radius: 8px;
-                margin: 20px 0;
-              }
+                .blog-content img {
+                  max-width: 100%;
+                  height: auto;
+                  border-radius: 8px;
+                  margin: 20px 0;
+                }
 
-              .blog-content blockquote {
-                border-left: 4px solid #6366f1;
-                padding-left: 20px;
-                margin: 20px 0;
-                font-style: italic;
-                color: #555;
-                text-align: justify;
-              }
+                .blog-content blockquote {
+                  border-left: 4px solid #6366f1;
+                  padding-left: 20px;
+                  margin: 20px 0;
+                  font-style: italic;
+                  color: #555;
+                  text-align: justify;
+                }
 
-              .blog-content code {
-                background-color: #f5f5f5;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-family: monospace;
-              }
+                .blog-content code {
+                  background-color: #f5f5f5;
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  font-family: monospace;
+                }
 
-              .blog-content pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 8px;
-                overflow-x: auto;
-                margin: 20px 0;
-              }
+                .blog-content pre {
+                  background-color: #f5f5f5;
+                  padding: 15px;
+                  border-radius: 8px;
+                  overflow-x: auto;
+                  margin: 20px 0;
+                }
 
-              .blog-content a {
-                color: #6366f1;
-                text-decoration: underline;
-              }
-            `}</style>
+                .blog-content a {
+                  color: #6366f1;
+                  text-decoration: underline;
+                }
+              `}</style>
             </div>
-
           </section>
         </section>
       </main>
