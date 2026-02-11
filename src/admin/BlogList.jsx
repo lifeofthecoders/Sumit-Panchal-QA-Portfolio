@@ -21,8 +21,19 @@ export default function BlogList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBlogId, setSelectedBlogId] = useState(null);
 
+  // ✅ FIX: load blogs properly (async)
+  const loadBlogs = async () => {
+    try {
+      const data = await getBlogs();
+      setBlogs(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to load blogs:", error);
+      setBlogs([]);
+    }
+  };
+
   useEffect(() => {
-    setBlogs(getBlogs());
+    loadBlogs();
   }, []);
 
   /* ================= DELETE HANDLERS ================= */
@@ -37,9 +48,14 @@ export default function BlogList() {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
-    deleteBlog(selectedBlogId);
-    setBlogs(getBlogs());
+  // ✅ FIX: confirmDelete must await deleteBlog + reload
+  const confirmDelete = async () => {
+    try {
+      await deleteBlog(selectedBlogId);
+      await loadBlogs();
+    } catch (error) {
+      console.error("Failed to delete blog:", error);
+    }
 
     /* ✅ FIX — RESET HOVER STATES */
     setCancelHover(false);
@@ -136,10 +152,14 @@ export default function BlogList() {
                   <th style={{ padding: "15px", textAlign: "center" }}>Image</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Type</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Author</th>
-                  <th style={{ padding: "15px", textAlign: "center" }}>Profession</th>
+                  <th style={{ padding: "15px", textAlign: "center" }}>
+                    Profession
+                  </th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Date</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Title</th>
-                  <th style={{ padding: "15px", textAlign: "center" }}>Actions</th>
+                  <th style={{ padding: "15px", textAlign: "center" }}>
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
@@ -147,9 +167,21 @@ export default function BlogList() {
                 {blogs.map((blog, index) => {
                   const srNo = blogs.length - index;
 
+                  // ✅ FIX: Support both MongoDB (_id) and old (id)
+                  const blogId = blog._id || blog.id;
+
                   return (
-                    <tr key={blog.id} style={{ borderBottom: "1px solid #eee" }}>
-                      <td style={{ padding: "15px", fontWeight: "600", textAlign: "center" }}>
+                    <tr
+                      key={blogId}
+                      style={{ borderBottom: "1px solid #eee" }}
+                    >
+                      <td
+                        style={{
+                          padding: "15px",
+                          fontWeight: "600",
+                          textAlign: "center",
+                        }}
+                      >
                         {srNo}
                       </td>
 
@@ -166,22 +198,40 @@ export default function BlogList() {
                         />
                       </td>
 
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.type}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.author}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.profession}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.date}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.title}</td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.type}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.author}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.profession}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.date}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.title}
+                      </td>
 
                       <td style={{ padding: "15px", textAlign: "center" }}>
-                        <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "8px",
+                            justifyContent: "center",
+                          }}
+                        >
                           <button
-                            onClick={() => navigate(`/admin/blogs/view/${blog.id}`)}
-                            onMouseEnter={() => setViewHoverId(blog.id)}
+                            onClick={() =>
+                              navigate(`/admin/blogs/view/${blogId}`)
+                            }
+                            onMouseEnter={() => setViewHoverId(blogId)}
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                viewHoverId === blog.id ? "#1565C0" : "#2196F3",
+                                viewHoverId === blogId ? "#1565C0" : "#2196F3",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -192,13 +242,15 @@ export default function BlogList() {
                           </button>
 
                           <button
-                            onClick={() => navigate(`/admin/blogs/edit/${blog.id}`)}
-                            onMouseEnter={() => setEditHoverId(blog.id)}
+                            onClick={() =>
+                              navigate(`/admin/blogs/edit/${blogId}`)
+                            }
+                            onMouseEnter={() => setEditHoverId(blogId)}
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                editHoverId === blog.id ? "#E65100" : "#FF9800",
+                                editHoverId === blogId ? "#E65100" : "#FF9800",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -209,13 +261,15 @@ export default function BlogList() {
                           </button>
 
                           <button
-                            onClick={() => handleDeleteClick(blog.id)}
-                            onMouseEnter={() => setDeleteHoverId(blog.id)}
+                            onClick={() => handleDeleteClick(blogId)}
+                            onMouseEnter={() => setDeleteHoverId(blogId)}
                             onMouseLeave={() => setDeleteHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                deleteHoverId === blog.id ? "#B71C1C" : "#f44336",
+                                deleteHoverId === blogId
+                                  ? "#B71C1C"
+                                  : "#f44336",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -284,9 +338,7 @@ export default function BlogList() {
                 onMouseLeave={() => setModalDeleteHover(false)}
                 style={{
                   ...deleteBtn,
-                  backgroundColor: modalDeleteHover
-                    ? "#B71C1C"
-                    : "#f44336",
+                  backgroundColor: modalDeleteHover ? "#B71C1C" : "#f44336",
                 }}
               >
                 Delete

@@ -14,21 +14,23 @@ export default function Blogs() {
   // Same animation hook
   usePageAnimations();
 
-  // ✅ blogs state (was missing)
+  // blogs state
   const [blogs, setBlogs] = useState([]);
 
   // Load blogs once
   useEffect(() => {
     const loadBlogs = async () => {
-      const data = await getBlogs();
-      setBlogs(data);
+      try {
+        const data = await getBlogs();
+        setBlogs(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to load blogs:", error);
+        setBlogs([]);
+      }
     };
 
     loadBlogs();
   }, []);
-
-  // Same animation hook
-  usePageAnimations();
 
   // Scroll to top on page load
   useEffect(() => {
@@ -43,7 +45,6 @@ export default function Blogs() {
       if (!id) return;
 
       // ✅ FIXED: correct format for HashRouter
-      // Example: https://domain.com/#/blogs#latest-blogs
       const fullURL = `${window.location.origin}${window.location.pathname}#/blogs#${id}`;
 
       navigator.clipboard.writeText(fullURL);
@@ -68,58 +69,69 @@ export default function Blogs() {
     };
   }, []);
 
-  // ✅ SINGLE valid return
   return (
     <section className="blogs-page">
       <main className="blogs">
         <section className="blogs-container">
           {/* BLOGS */}
           <section className="blogs-card">
-
-            <div style={{ padding: "40px 40px", maxWidth: "1200px", margin: "0 auto", boxSizing: "border-box", width: "100%" }}>
-            <div>
-              <h3
-                id="latest-blogs"
-                className="latest-blogs-heading"
-                style={{
-                  fontSize: "18.72px",
-                  fontWeight: "bolder",
-                  margin: "20px 20px 20px 0px",
-                  textAlign: "left",
-                }}
-              >
-                <b>📚 Latest Blog Posts</b>{" "}
-                <a href="#latest-blogs" className="anchor-icon" data-target="latest-blogs">
-                  🔗
-                </a>
-              </h3>
-
-              <div
-                className="blogs-grid"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: "32px",
-                }}
-              >
-                {blogs.map((blog) => (
-                  <BlogCard key={blog.id} blog={blog} />
-                ))}
-              </div>
-
-              {blogs.length === 0 && (
-                <p
+            <div
+              style={{
+                padding: "40px 40px",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                boxSizing: "border-box",
+                width: "100%",
+              }}
+            >
+              <div>
+                <h3
+                  id="latest-blogs"
+                  className="latest-blogs-heading"
                   style={{
-                    textAlign: "center",
-                    fontSize: "18px",
-                    color: "#999",
-                    marginTop: "60px",
+                    fontSize: "18.72px",
+                    fontWeight: "bolder",
+                    margin: "20px 20px 20px 0px",
+                    textAlign: "left",
                   }}
                 >
-                  No blogs available yet. Check back soon!
-                </p>
-              )}
-            </div>
+                  <b>📚 Latest Blog Posts</b>{" "}
+                  <a
+                    href="#latest-blogs"
+                    className="anchor-icon"
+                    data-target="latest-blogs"
+                  >
+                    🔗
+                  </a>
+                </h3>
+
+                <div
+                  className="blogs-grid"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "32px",
+                  }}
+                >
+                  {blogs.map((blog) => {
+                    const blogId = blog._id || blog.id;
+                    return <BlogCard key={blogId} blog={blog} />;
+                  })}
+                </div>
+
+                {blogs.length === 0 && (
+                  <p
+                    style={{
+                      textAlign: "center",
+                      fontSize: "18px",
+                      color: "#999",
+                      marginTop: "60px",
+                    }}
+                  >
+                    No blogs available yet. Check back soon!
+                  </p>
+                )}
+              </div>
             </div>
           </section>
         </section>
