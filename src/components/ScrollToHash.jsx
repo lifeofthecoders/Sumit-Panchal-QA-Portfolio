@@ -2,39 +2,25 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function ScrollToHash() {
-  const { hash } = useLocation();
+  const { search } = useLocation();
 
   useEffect(() => {
-    if (!hash) return;
+    if (!search) return;
 
-    // Extract ID from hash formats:
-    // Format 1: #/page#id (when navigating from different page)
-    // Format 2: #id (when on same page with direct anchor)
-    let id = hash;
-    
-    // Remove leading # if present
-    if (id.startsWith("#")) {
-      id = id.substring(1);
-    }
-    
-    // Remove route path if present (e.g., "/blogs")
-    const lastHashIndex = id.lastIndexOf("#");
-    if (lastHashIndex > 0) {
-      id = id.substring(lastHashIndex + 1);
-    } else if (id.startsWith("/")) {
-      // If it starts with /, remove the entire route path
-      const parts = id.split("#");
-      id = parts[1] || "";
-    }
+    // Extract the section ID from query parameters
+    const params = new URLSearchParams(search);
+    const sectionId = params.get("section");
+
+    if (!sectionId) return;
 
     // Wait longer to ensure content has loaded before scrolling
     setTimeout(() => {
-      const el = document.getElementById(id);
+      const el = document.getElementById(sectionId);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, 300);
-  }, [hash]);
+  }, [search]);
 
   return null;
 }
