@@ -40,11 +40,12 @@ export default function Blogs() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Handle scroll to hash section
+  // ✅ Handle scroll to hash section (FIXED for /#/blogs/#latest-blogs format)
   useEffect(() => {
     if (!hash) return;
 
-    const id = hash.replace("#", "");
+    // ✅ FIX: Works even if hash is "#/blogs/#latest-blogs"
+    const id = hash.split("#").pop();
     if (!id) return;
 
     setTimeout(() => {
@@ -64,9 +65,9 @@ export default function Blogs() {
       const id = e.currentTarget.getAttribute("data-target");
       if (!id) return;
 
-      // ✅ FIXED: Correct URL format for HashRouter
-      // Example: https://domain.com/#/blogs#latest-blogs
-      const fullURL = `${window.location.origin}${window.location.pathname}#/blogs#${id}`;
+      // ✅ FIXED: Output EXACTLY like you want
+      // Example: https://domain.com/#/blogs/#latest-blogs
+      const fullURL = `${window.location.origin}${window.location.pathname}#/${id}`;
 
       navigator.clipboard.writeText(fullURL);
 
@@ -113,8 +114,14 @@ export default function Blogs() {
               }}
             >
               <b>📚 Latest Blog Posts</b>{" "}
-              {/* ✅ FIXED: Correct href + correct data-target */}
-              <a href="/#blogs/#latest-blogs" className="anchor-icon" data-target="blogs/#latest-blogs">🔗</a>
+              {/* ✅ SAME TO SAME AS YOU WANT */}
+              <a
+                href="/#/blogs/#latest-blogs"
+                className="anchor-icon"
+                data-target="blogs/#latest-blogs"
+              >
+                🔗
+              </a>
             </h3>
 
             <div
