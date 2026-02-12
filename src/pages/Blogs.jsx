@@ -96,12 +96,7 @@ export default function Blogs() {
                   }}
                 >
                   <b>📚 Latest Blog Posts</b>{" "}
-                  <a
-                    href={`${window.location.origin}/Sumit-Panchal-QA-Portfolio/#/blogs/#latest-blogs`}
-                    className="anchor-icon"
-                  >
-                    🔗
-                  </a>
+                  <a href="/#blogs/#latest-blogs" className="anchor-icon" data-target="blogs/#latest-blogs">🔗</a>
 
                 </h3>
 
