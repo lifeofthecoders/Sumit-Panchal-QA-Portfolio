@@ -44,7 +44,7 @@ export default function Blogs() {
   useEffect(() => {
     if (!hash) return;
 
-    const id = hash.split("#").pop();
+    const id = hash.replace("#", "");
     if (!id) return;
 
     setTimeout(() => {
@@ -64,8 +64,9 @@ export default function Blogs() {
       const id = e.currentTarget.getAttribute("data-target");
       if (!id) return;
 
-      const fullURL =
-        window.location.origin + window.location.pathname + "#" + id;
+      // ✅ FIXED: Correct URL format for HashRouter
+      // Example: https://domain.com/#/blogs#latest-blogs
+      const fullURL = `${window.location.origin}${window.location.pathname}#/blogs#${id}`;
 
       navigator.clipboard.writeText(fullURL);
 
@@ -91,13 +92,16 @@ export default function Blogs() {
       <main className="blogs">
         <section className="blogs-container">
           {/* BLOGS */}
-          <section className="blogs-card" style={{
-            padding: "40px 40px",
-            maxWidth: "1200px",
-            margin: "0 auto",
-            boxSizing: "border-box",
-            width: "100%",
-          }}>
+          <section
+            className="blogs-card"
+            style={{
+              padding: "40px 40px",
+              maxWidth: "1200px",
+              margin: "0 auto",
+              boxSizing: "border-box",
+              width: "100%",
+            }}
+          >
             <h3
               id="latest-blogs"
               className="latest-blogs-heading heading-link"
@@ -109,7 +113,14 @@ export default function Blogs() {
               }}
             >
               <b>📚 Latest Blog Posts</b>{" "}
-              <a href="/#blogs/#latest-blogs" className="anchor-icon" data-target="blogs/#latest-blogs">🔗</a>
+              {/* ✅ FIXED: Correct href + correct data-target */}
+              <a
+                href="#latest-blogs"
+                className="anchor-icon"
+                data-target="latest-blogs"
+              >
+                🔗
+              </a>
             </h3>
 
             <div
