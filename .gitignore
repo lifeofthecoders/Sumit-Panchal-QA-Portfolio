@@ -1,5 +1,6 @@
 .env
 backend/.env
+
 # Logs
 logs
 *.log
@@ -10,6 +11,9 @@ pnpm-debug.log*
 lerna-debug.log*
 .env.*
 backend/.env.*
+
+.env*
+backend/.env*
 
 node_modules
 dist
@@ -26,4 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3f68b9e761c63ab896ec61e04914f6fbb3d2d02d
