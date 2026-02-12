@@ -40,14 +40,11 @@ export default function Blogs() {
 
     const handleAnchorClick = (e) => {
       e.preventDefault();
-
       const id = e.currentTarget.getAttribute("data-target");
       if (!id) return;
 
-      // Get current location with hash and append anchor
-      const baseURL = window.location.href.split("#")[0];
-      const currentHash = window.location.hash || "#/blogs";
-      const fullURL = baseURL + currentHash + "#" + id;
+      const fullURL =
+        window.location.origin + window.location.pathname + "#" + id;
 
       navigator.clipboard.writeText(fullURL);
 
@@ -95,13 +92,7 @@ export default function Blogs() {
                   }}
                 >
                   <b>📚 Latest Blog Posts</b>{" "}
-                  <a
-                    href="/#blogs/#latest-blogs"
-                    className="anchor-icon"
-                    data-target="latest-blogs"
-                  >
-                    🔗
-                  </a>
+                  <a href="/#blogs/#latest-blogs" className="anchor-icon" data-target="blogs/#latest-blogs">🔗</a>
                 </h3>
 
 
