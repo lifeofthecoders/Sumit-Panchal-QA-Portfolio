@@ -97,15 +97,16 @@ export default function Blogs() {
                 >
                   <b>📚 Latest Blog Posts</b>{" "}
                   <a
-                    href="#"
+                    href="#/blogs/#latest-blogs"
                     className="anchor-icon"
                     onClick={(e) => {
                       e.preventDefault();
-                      navigate("/blogs/#latest-blogs");
+                      window.location.hash = "/blogs/#latest-blogs";
                     }}
                   >
                     🔗
                   </a>
+
                 </h3>
 
                 <div
