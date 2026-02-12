@@ -44,17 +44,13 @@ export default function Blogs() {
       const id = e.currentTarget.getAttribute("data-target");
       if (!id) return;
 
-      // ✅ FIXED: correct format for HashRouter
-      const fullURL = `${window.location.origin}${window.location.pathname}#/blogs#${id}`;
+      const fullURL = window.location.origin + window.location.pathname + "#" + id;
 
       navigator.clipboard.writeText(fullURL);
 
       e.currentTarget.innerText = "✅";
-      e.currentTarget.style.color = "#00c853"; // green
-
       setTimeout(() => {
         e.currentTarget.innerText = "🔗";
-        e.currentTarget.style.color = ""; // reset
       }, 1200);
     };
 
@@ -97,15 +93,9 @@ export default function Blogs() {
                 >
                   <b>📚 Latest Blog Posts</b>{" "}
                   <a
-                    href="#/blogs?section=latest-blogs"
+                    href="/#blogs/#latest-blogs"
                     className="anchor-icon"
-                    onClick={(e) => {
-                      e.preventDefault();
-
-                      const link = `${window.location.origin}${window.location.pathname}#/blogs?section=latest-blogs`;
-
-                      navigator.clipboard.writeText(link);
-                    }}
+                    data-target="blogs/#latest-blogs"
                   >
                     🔗
                   </a>
