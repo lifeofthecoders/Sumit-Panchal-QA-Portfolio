@@ -102,7 +102,7 @@ export default function Blogs() {
                     onClick={(e) => {
                       e.preventDefault();
 
-                      const link = `${window.location.origin}/Sumit-Panchal-QA-Portfolio/#/blogs/#latest-blogs`;
+                      const link = `${window.location.origin}${window.location.pathname}#/blogs#latest-blogs`;
 
                       navigator.clipboard.writeText(link).then(() => {
                         alert("Link copied!");
