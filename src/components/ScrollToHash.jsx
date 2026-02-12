@@ -27,12 +27,13 @@ export default function ScrollToHash() {
       id = parts[1] || "";
     }
 
+    // Wait longer to ensure content has loaded before scrolling
     setTimeout(() => {
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-    }, 100);
+    }, 300);
   }, [hash]);
 
   return null;

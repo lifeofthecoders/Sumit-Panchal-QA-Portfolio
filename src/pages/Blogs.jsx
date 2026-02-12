@@ -104,9 +104,7 @@ export default function Blogs() {
 
                       const link = `${window.location.origin}${window.location.pathname}#/blogs#latest-blogs`;
 
-                      navigator.clipboard.writeText(link).then(() => {
-                        alert("Link copied!");
-                      });
+                      navigator.clipboard.writeText(link);
                     }}
                   >
                     🔗
