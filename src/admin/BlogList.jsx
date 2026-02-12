@@ -2,10 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getBlogs, deleteBlog } from "../services/blogService";
 import AdminBlogHeader from "./AdminBlogHeader";
+import Loader from "../components/Loader";
 
 export default function BlogList() {
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   /* Existing hover states */
   const [isHovering, setIsHovering] = useState(false);
@@ -77,6 +79,8 @@ export default function BlogList() {
   return (
     <>
       <AdminBlogHeader />
+
+      {isLoading && <Loader text="Loading blogs..." />}
 
       <div
         style={{

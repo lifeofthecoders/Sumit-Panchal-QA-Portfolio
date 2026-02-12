@@ -10,6 +10,7 @@ import home4 from "/image/home4.jpg";
 
 // ✅ IMPORT animation hook (required)
 import usePageAnimations from "../hooks/usePageAnimations";
+import Loader from "../components/Loader";
 
 export default function Blogs() {
   // Same animation hook
@@ -19,6 +20,7 @@ export default function Blogs() {
 
   // blogs state
   const [blogs, setBlogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // ✅ Prevent multiple scroll triggers
   const hasScrolledRef = useRef(false);
@@ -27,11 +29,14 @@ export default function Blogs() {
   useEffect(() => {
     const loadBlogs = async () => {
       try {
+        setIsLoading(true);
         const data = await getBlogs();
         setBlogs(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to load blogs:", error);
         setBlogs([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -92,6 +97,7 @@ export default function Blogs() {
       icon.addEventListener("click", handleAnchorClick)
     );
 
+    // ✅ Cleanup must return only a function (NOT JSX)
     return () => {
       anchorIcons.forEach((icon) =>
         icon.removeEventListener("click", handleAnchorClick)
@@ -100,70 +106,75 @@ export default function Blogs() {
   }, []);
 
   return (
-    <section className="blogs-page">
-      <main className="blogs">
-        <section className="blogs-container">
-          {/* BLOGS */}
-          <section
-            className="blogs-card"
-            style={{
-              padding: "40px 40px",
-              maxWidth: "1200px",
-              margin: "0 auto",
-              boxSizing: "border-box",
-              width: "100%",
-            }}
-          >
-            <h3
-              id="latest-blogs"
-              className="latest-blogs-heading heading-link"
+    <>
+      {isLoading && <Loader text="Loading blogs..." />}
+
+      <section className="blogs-page">
+        <main className="blogs">
+          <section className="blogs-container">
+            {/* BLOGS */}
+            <section
+              className="blogs-card"
               style={{
-                fontSize: "18.72px",
-                fontWeight: "bolder",
-                margin: "20px 20px 20px 0px",
-                textAlign: "left",
+                padding: "40px 40px",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                boxSizing: "border-box",
+                width: "100%",
               }}
             >
-              <b>📚 Latest Blog Posts</b>{" "}
-              {/* ✅ DO NOT CHANGE THIS LINK */}
-              <a
-                href="/#/blogs/#latest-blogs"
-                className="anchor-icon"
-                data-target="blogs/#latest-blogs"
-              >
-                🔗
-              </a>
-            </h3>
-
-            <div
-              className="blogs-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "32px",
-              }}
-            >
-              {blogs.map((blog) => {
-                const blogId = blog._id || blog.id;
-                return <BlogCard key={blogId} blog={blog} />;
-              })}
-            </div>
-
-            {blogs.length === 0 && (
-              <p
+              <h3
+                id="latest-blogs"
+                className="latest-blogs-heading heading-link"
                 style={{
-                  textAlign: "center",
-                  fontSize: "18px",
-                  color: "#999",
-                  marginTop: "60px",
+                  fontSize: "18.72px",
+                  fontWeight: "bolder",
+                  margin: "20px 20px 20px 0px",
+                  textAlign: "left",
                 }}
               >
-                No blogs available yet. Check back soon!
-              </p>
-            )}
+                <b>📚 Latest Blog Posts</b>{" "}
+                {/* ✅ DO NOT CHANGE THIS LINK */}
+                <a
+                  href="/#/blogs/#latest-blogs"
+                  className="anchor-icon"
+                  data-target="blogs/#latest-blogs"
+                >
+                  🔗
+                </a>
+              </h3>
+
+              <div
+                className="blogs-grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "32px",
+                }}
+              >
+                {blogs.map((blog) => {
+                  const blogId = blog._id || blog.id;
+                  return <BlogCard key={blogId} blog={blog} />;
+                })}
+              </div>
+
+              {/* ✅ Show "No blogs" ONLY when not loading */}
+              {!isLoading && blogs.length === 0 && (
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontSize: "18px",
+                    color: "#999",
+                    marginTop: "60px",
+                  }}
+                >
+                  No blogs available yet. Check back soon!
+                </p>
+              )}
+            </section>
           </section>
-        </section>
-      </main>
-    </section>
+        </main>
+      </section>
+    </>
   );
 }

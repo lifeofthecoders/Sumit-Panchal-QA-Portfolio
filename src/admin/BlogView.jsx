@@ -2,11 +2,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getBlogById } from "../services/blogService";
 import { useEffect, useState } from "react";
 import AdminBlogHeader from "./AdminBlogHeader";
+import Loader from "../components/Loader";
 
 export default function BlogView() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   /* ✅ Hover state added */
   const [isHovering, setIsHovering] = useState(false);
@@ -16,7 +18,7 @@ export default function BlogView() {
     const foundBlog = await getBlogById(id);
     if (foundBlog) {
       setBlog(foundBlog);
-    } else {
+            } else {
       navigate("/admin/blogs");
     }
       };
@@ -34,6 +36,8 @@ export default function BlogView() {
   return (
     <>
       <AdminBlogHeader />
+
+      {isLoading && <Loader text="Loading blog..." />}
 
       <div
         style={{
