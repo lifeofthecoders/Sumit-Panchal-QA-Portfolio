@@ -96,8 +96,16 @@ export default function Blogs() {
                   }}
                 >
                   <b>📚 Latest Blog Posts</b>{" "}
-                  <a href="/#blogs/#latest-blogs" className="anchor-icon" data-target="blogs/#latest-blogs">🔗</a>
-
+                  <a
+                    href="#"
+                    className="anchor-icon"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate("/blogs/#latest-blogs");
+                    }}
+                  >
+                    🔗
+                  </a>
                 </h3>
 
                 <div
