@@ -1,6 +1,6 @@
 import { getBlogs } from "../services/blogService";
 import BlogCard from "../components/BlogCard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import "../assets/css/blogs.css";
 import { Link } from "react-router-dom";
@@ -19,6 +19,9 @@ export default function Blogs() {
 
   // blogs state
   const [blogs, setBlogs] = useState([]);
+
+  // ✅ Prevent multiple scroll triggers
+  const hasScrolledRef = useRef(false);
 
   // Load blogs once
   useEffect(() => {
@@ -40,21 +43,30 @@ export default function Blogs() {
     window.scrollTo(0, 0);
   }, []);
 
-  // ✅ Handle scroll to hash section (FIXED for /#/blogs/#latest-blogs format)
+  // ✅ Handle scroll to hash section (after page fully loaded + blogs loaded)
   useEffect(() => {
     if (!hash) return;
 
-    // ✅ FIX: Works even if hash is "#/blogs/#latest-blogs"
+    // ✅ Wait until blogs render first
+    if (blogs.length === 0) return;
+
+    // ✅ Prevent multiple scroll calls
+    if (hasScrolledRef.current) return;
+
     const id = hash.split("#").pop();
     if (!id) return;
 
-    setTimeout(() => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 300);
-  }, [hash]);
+    // ✅ Wait for browser to finish rendering layout
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          hasScrolledRef.current = true;
+        }
+      });
+    });
+  }, [hash, blogs.length]);
 
   // Anchor icon click handler
   useEffect(() => {
@@ -65,8 +77,7 @@ export default function Blogs() {
       const id = e.currentTarget.getAttribute("data-target");
       if (!id) return;
 
-      // ✅ FIXED: Output EXACTLY like you want
-      // Example: https://domain.com/#/blogs/#latest-blogs
+      // ✅ KEEP SAME redirect link format
       const fullURL = `${window.location.origin}${window.location.pathname}#/${id}`;
 
       navigator.clipboard.writeText(fullURL);
@@ -114,7 +125,7 @@ export default function Blogs() {
               }}
             >
               <b>📚 Latest Blog Posts</b>{" "}
-              {/* ✅ SAME TO SAME AS YOU WANT */}
+              {/* ✅ DO NOT CHANGE THIS LINK */}
               <a
                 href="/#/blogs/#latest-blogs"
                 className="anchor-icon"
