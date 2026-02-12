@@ -1,6 +1,7 @@
 import { getBlogs } from "../services/blogService";
 import BlogCard from "../components/BlogCard";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "../assets/css/blogs.css";
 import { Link } from "react-router-dom";
 
@@ -13,6 +14,8 @@ import usePageAnimations from "../hooks/usePageAnimations";
 export default function Blogs() {
   // Same animation hook
   usePageAnimations();
+
+  const { hash } = useLocation();
 
   // blogs state
   const [blogs, setBlogs] = useState([]);
@@ -35,7 +38,25 @@ export default function Blogs() {
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
 
+  // Handle scroll to hash section
+  useEffect(() => {
+    if (!hash) return;
+
+    const id = hash.split("#").pop();
+    if (!id) return;
+
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 300);
+  }, [hash]);
+
+  // Anchor icon click handler
+  useEffect(() => {
     const anchorIcons = document.querySelectorAll(".anchor-icon");
 
     const handleAnchorClick = (e) => {
