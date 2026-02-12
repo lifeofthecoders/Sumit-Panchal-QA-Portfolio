@@ -101,13 +101,18 @@ export default function Blogs() {
                     className="anchor-icon"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.location.hash = "/blogs/#latest-blogs";
+
+                      const link = `${window.location.origin}/Sumit-Panchal-QA-Portfolio/#/blogs/#latest-blogs`;
+
+                      navigator.clipboard.writeText(link).then(() => {
+                        alert("Link copied!");
+                      });
                     }}
                   >
                     🔗
                   </a>
-
                 </h3>
+
 
                 <div
                   className="blogs-grid"
