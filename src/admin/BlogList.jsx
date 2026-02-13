@@ -32,7 +32,9 @@ export default function BlogList() {
     const loadBlogs = async () => {
       try {
         setIsLoading(true);
+
         const result = await getBlogsPaginated(page, limit);
+
         setBlogs(Array.isArray(result?.data) ? result.data : []);
         setTotalPages(result?.pagination?.totalPages || 1);
       } catch (err) {
@@ -52,7 +54,7 @@ export default function BlogList() {
   const handleDeleteClick = (id) => {
     setSelectedBlogId(id);
 
-    /* ✅ FIX — RESET HOVER STATES */
+    /* ✅ RESET HOVER STATES */
     setCancelHover(false);
     setModalDeleteHover(false);
 
@@ -61,6 +63,7 @@ export default function BlogList() {
 
   const confirmDelete = () => {
     deleteBlog(selectedBlogId);
+
     setIsLoading(true);
 
     getBlogsPaginated(page, limit)
@@ -77,7 +80,7 @@ export default function BlogList() {
         setIsLoading(false);
       });
 
-    /* ✅ FIX — RESET HOVER STATES */
+    /* ✅ RESET HOVER STATES */
     setCancelHover(false);
     setModalDeleteHover(false);
 
@@ -86,7 +89,7 @@ export default function BlogList() {
   };
 
   const cancelDelete = () => {
-    /* ✅ FIX — RESET HOVER STATES */
+    /* ✅ RESET HOVER STATES */
     setCancelHover(false);
     setModalDeleteHover(false);
 
@@ -247,7 +250,9 @@ export default function BlogList() {
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                viewHoverId === blog.id ? "#1565C0" : "#2196F3",
+                                viewHoverId === blog.id
+                                  ? "#1565C0"
+                                  : "#2196F3",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -266,7 +271,9 @@ export default function BlogList() {
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                editHoverId === blog.id ? "#E65100" : "#FF9800",
+                                editHoverId === blog.id
+                                  ? "#E65100"
+                                  : "#FF9800",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -283,7 +290,9 @@ export default function BlogList() {
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                deleteHoverId === blog.id ? "#B71C1C" : "#f44336",
+                                deleteHoverId === blog.id
+                                  ? "#B71C1C"
+                                  : "#f44336",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
