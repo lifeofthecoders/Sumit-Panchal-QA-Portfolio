@@ -54,42 +54,49 @@ export default function BlogList() {
   const handleDeleteClick = (id) => {
     setSelectedBlogId(id);
 
-    /* ✅ RESET HOVER STATES */
+    // Reset modal hover states
     setCancelHover(false);
     setModalDeleteHover(false);
 
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
-    deleteBlog(selectedBlogId);
+  const confirmDelete = async () => {
+    try {
+      setIsLoading(true);
 
-    setIsLoading(true);
+      await deleteBlog(selectedBlogId);
 
-    getBlogsPaginated(page, limit)
-      .then((result) => {
-        setBlogs(Array.isArray(result?.data) ? result.data : []);
-        setTotalPages(result?.pagination?.totalPages || 1);
-      })
-      .catch((err) => {
-        console.error("Failed to load blogs:", err);
-        setBlogs([]);
-        setTotalPages(1);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      // After delete, reload data
+      const result = await getBlogsPaginated(page, limit);
 
-    /* ✅ RESET HOVER STATES */
-    setCancelHover(false);
-    setModalDeleteHover(false);
+      const newBlogs = Array.isArray(result?.data) ? result.data : [];
+      const newTotalPages = result?.pagination?.totalPages || 1;
 
-    setShowDeleteModal(false);
-    setSelectedBlogId(null);
+      // If current page becomes empty after delete, go back 1 page
+      if (newBlogs.length === 0 && page > 1) {
+        setPage((p) => Math.max(p - 1, 1));
+        return;
+      }
+
+      setBlogs(newBlogs);
+      setTotalPages(newTotalPages);
+    } catch (err) {
+      console.error("Delete failed:", err);
+    } finally {
+      setIsLoading(false);
+
+      // Reset modal hover states
+      setCancelHover(false);
+      setModalDeleteHover(false);
+
+      setShowDeleteModal(false);
+      setSelectedBlogId(null);
+    }
   };
 
   const cancelDelete = () => {
-    /* ✅ RESET HOVER STATES */
+    // Reset modal hover states
     setCancelHover(false);
     setModalDeleteHover(false);
 
@@ -190,10 +197,11 @@ export default function BlogList() {
 
               <tbody>
                 {blogs.map((blog, index) => {
-                  const srNo = blogs.length - index;
+                  const blogId = blog._id || blog.id;
+                  const srNo = (page - 1) * limit + (index + 1);
 
                   return (
-                    <tr key={blog.id} style={{ borderBottom: "1px solid #eee" }}>
+                    <tr key={blogId} style={{ borderBottom: "1px solid #eee" }}>
                       <td
                         style={{
                           padding: "15px",
@@ -243,16 +251,14 @@ export default function BlogList() {
                         >
                           <button
                             onClick={() =>
-                              navigate(`/admin/blogs/view/${blog.id}`)
+                              navigate(`/admin/blogs/view/${blogId}`)
                             }
-                            onMouseEnter={() => setViewHoverId(blog.id)}
+                            onMouseEnter={() => setViewHoverId(blogId)}
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                viewHoverId === blog.id
-                                  ? "#1565C0"
-                                  : "#2196F3",
+                                viewHoverId === blogId ? "#1565C0" : "#2196F3",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -264,16 +270,14 @@ export default function BlogList() {
 
                           <button
                             onClick={() =>
-                              navigate(`/admin/blogs/edit/${blog.id}`)
+                              navigate(`/admin/blogs/edit/${blogId}`)
                             }
-                            onMouseEnter={() => setEditHoverId(blog.id)}
+                            onMouseEnter={() => setEditHoverId(blogId)}
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                editHoverId === blog.id
-                                  ? "#E65100"
-                                  : "#FF9800",
+                                editHoverId === blogId ? "#E65100" : "#FF9800",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -284,15 +288,13 @@ export default function BlogList() {
                           </button>
 
                           <button
-                            onClick={() => handleDeleteClick(blog.id)}
-                            onMouseEnter={() => setDeleteHoverId(blog.id)}
+                            onClick={() => handleDeleteClick(blogId)}
+                            onMouseEnter={() => setDeleteHoverId(blogId)}
                             onMouseLeave={() => setDeleteHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                deleteHoverId === blog.id
-                                  ? "#B71C1C"
-                                  : "#f44336",
+                                deleteHoverId === blogId ? "#B71C1C" : "#f44336",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",

@@ -46,10 +46,15 @@ export default function Blogs() {
     loadBlogs();
   }, [page]);
 
-  // Scroll to top on page load
+  // ✅ Scroll to top on every page change (important)
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [page]);
+
+  // ✅ Reset scroll trigger when hash changes
+  useEffect(() => {
+    hasScrolledRef.current = false;
+  }, [hash]);
 
   // ✅ Handle scroll to hash section (after page fully loaded + blogs loaded)
   useEffect(() => {
