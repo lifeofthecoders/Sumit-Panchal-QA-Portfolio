@@ -14,6 +14,9 @@ export default function BlogList() {
   const limit = 10;
   const [totalPages, setTotalPages] = useState(1);
 
+  // ✅ Total blogs count (needed for descending srNo)
+  const [totalBlogs, setTotalBlogs] = useState(0);
+
   /* Existing hover states */
   const [isHovering, setIsHovering] = useState(false);
   const [viewHoverId, setViewHoverId] = useState(null);
@@ -37,10 +40,14 @@ export default function BlogList() {
 
         setBlogs(Array.isArray(result?.data) ? result.data : []);
         setTotalPages(result?.pagination?.totalPages || 1);
+
+        // ✅ Store total count for descending serial number
+        setTotalBlogs(result?.pagination?.totalBlogs || 0);
       } catch (err) {
         console.error("Failed to load blogs:", err);
         setBlogs([]);
         setTotalPages(1);
+        setTotalBlogs(0);
       } finally {
         setIsLoading(false);
       }
@@ -73,6 +80,9 @@ export default function BlogList() {
       const newBlogs = Array.isArray(result?.data) ? result.data : [];
       const newTotalPages = result?.pagination?.totalPages || 1;
 
+      // ✅ Update total count again after delete
+      const newTotalBlogs = result?.pagination?.totalBlogs || 0;
+
       // If current page becomes empty after delete, go back 1 page
       if (newBlogs.length === 0 && page > 1) {
         setPage((p) => Math.max(p - 1, 1));
@@ -81,6 +91,7 @@ export default function BlogList() {
 
       setBlogs(newBlogs);
       setTotalPages(newTotalPages);
+      setTotalBlogs(newTotalBlogs);
     } catch (err) {
       console.error("Delete failed:", err);
     } finally {
@@ -196,9 +207,13 @@ export default function BlogList() {
               </thead>
 
               <tbody>
-                {blogs.map((blog, index) => {
+                {/* ✅ Reverse order so newest is on top */}
+                {[...blogs].reverse().map((blog, index) => {
                   const blogId = blog._id || blog.id;
-                  const srNo = (page - 1) * limit + (index + 1);
+
+                  // ✅ Descending srNo (global)
+                  const globalIndex = (page - 1) * limit + index;
+                  const srNo = totalBlogs - globalIndex;
 
                   return (
                     <tr key={blogId} style={{ borderBottom: "1px solid #eee" }}>
