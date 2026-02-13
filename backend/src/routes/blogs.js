@@ -13,9 +13,10 @@ router.get("/", async (req, res) => {
     const limit = Math.max(parseInt(req.query.limit || "10", 10), 1);
     const skip = (page - 1) * limit;
 
-    const total = await Blog.countDocuments();
+    // ✅ Total blog count
+    const totalBlogs = await Blog.countDocuments();
 
-    // Latest first
+    // ✅ Latest first
     const blogs = await Blog.find()
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -24,10 +25,10 @@ router.get("/", async (req, res) => {
     res.json({
       data: blogs,
       pagination: {
-        total,
+        totalBlogs: totalBlogs, // ✅ IMPORTANT (frontend needs this)
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(totalBlogs / limit),
       },
     });
   } catch (err) {
@@ -35,7 +36,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch blogs" });
   }
 });
-
 
 /**
  * GET /api/blogs/:id
@@ -60,7 +60,9 @@ router.post("/", async (req, res) => {
     const blog = await Blog.create(payload);
     res.status(201).json(blog);
   } catch (err) {
-    res.status(400).json({ message: "Failed to create blog", error: err.message });
+    res
+      .status(400)
+      .json({ message: "Failed to create blog", error: err.message });
   }
 });
 
@@ -80,7 +82,9 @@ router.put("/:id", async (req, res) => {
 
     res.json(updated);
   } catch (err) {
-    res.status(400).json({ message: "Failed to update blog", error: err.message });
+    res
+      .status(400)
+      .json({ message: "Failed to update blog", error: err.message });
   }
 });
 
