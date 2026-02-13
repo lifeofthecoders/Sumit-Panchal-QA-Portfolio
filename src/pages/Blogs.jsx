@@ -177,7 +177,7 @@ export default function Blogs() {
               )}
 
               {/* Pagination */}
-              {!isLoading && totalPages > 1 && (
+              {!isLoading && totalPages >= 1 && (
                 <div
                   style={{
                     display: "flex",

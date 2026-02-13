@@ -314,7 +314,7 @@ export default function BlogList() {
         )}
 
         {/* PAGINATION */}
-        {!isLoading && totalPages > 1 && (
+        {!isLoading && (
           <div
             style={{
               display: "flex",
