@@ -1,47 +1,50 @@
-import { getBlogs } from "../services/blogService";
+import { getBlogsPaginated } from "../services/blogService";
 import BlogCard from "../components/BlogCard";
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import "../assets/css/blogs.css";
-import { Link } from "react-router-dom";
-
-// ✅ IMPORT IMAGE PROPERLY
-import home4 from "/image/home4.jpg";
 
 // ✅ IMPORT animation hook (required)
 import usePageAnimations from "../hooks/usePageAnimations";
 import Loader from "../components/Loader";
 
 export default function Blogs() {
-  // Same animation hook
   usePageAnimations();
 
   const { hash } = useLocation();
 
-  // blogs state
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ Prevent multiple scroll triggers
+  // Pagination
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Prevent multiple scroll triggers
   const hasScrolledRef = useRef(false);
 
-  // Load blogs once
+  // Load blogs
   useEffect(() => {
     const loadBlogs = async () => {
       try {
         setIsLoading(true);
-        const data = await getBlogs();
-        setBlogs(Array.isArray(data) ? data : []);
+
+        const result = await getBlogsPaginated(page, limit);
+
+        setBlogs(Array.isArray(result?.data) ? result.data : []);
+        setTotalPages(result?.pagination?.totalPages || 1);
       } catch (error) {
         console.error("Failed to load blogs:", error);
         setBlogs([]);
+        setTotalPages(1);
       } finally {
         setIsLoading(false);
       }
     };
 
     loadBlogs();
-  }, []);
+  }, [page]);
 
   // Scroll to top on page load
   useEffect(() => {
@@ -51,17 +54,13 @@ export default function Blogs() {
   // ✅ Handle scroll to hash section (after page fully loaded + blogs loaded)
   useEffect(() => {
     if (!hash) return;
+    if (isLoading) return;
 
-    // ✅ Wait until blogs render first
-    if (blogs.length === 0) return;
-
-    // ✅ Prevent multiple scroll calls
     if (hasScrolledRef.current) return;
 
     const id = hash.split("#").pop();
     if (!id) return;
 
-    // ✅ Wait for browser to finish rendering layout
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const el = document.getElementById(id);
@@ -71,7 +70,7 @@ export default function Blogs() {
         }
       });
     });
-  }, [hash, blogs.length]);
+  }, [hash, isLoading]);
 
   // Anchor icon click handler
   useEffect(() => {
@@ -97,7 +96,6 @@ export default function Blogs() {
       icon.addEventListener("click", handleAnchorClick)
     );
 
-    // ✅ Cleanup must return only a function (NOT JSX)
     return () => {
       anchorIcons.forEach((icon) =>
         icon.removeEventListener("click", handleAnchorClick)
@@ -121,6 +119,7 @@ export default function Blogs() {
                 margin: "0 auto",
                 boxSizing: "border-box",
                 width: "100%",
+                minHeight: "70vh",
               }}
             >
               <h3
@@ -152,13 +151,13 @@ export default function Blogs() {
                   gap: "32px",
                 }}
               >
-                {blogs.map((blog) => {
-                  const blogId = blog._id || blog.id;
-                  return <BlogCard key={blogId} blog={blog} />;
-                })}
+                {!isLoading &&
+                  blogs.map((blog) => {
+                    const blogId = blog._id || blog.id;
+                    return <BlogCard key={blogId} blog={blog} />;
+                  })}
               </div>
 
-              {/* ✅ Show "No blogs" ONLY when not loading */}
               {!isLoading && blogs.length === 0 && (
                 <p
                   style={{
@@ -170,6 +169,80 @@ export default function Blogs() {
                 >
                   No blogs available yet. Check back soon!
                 </p>
+              )}
+
+              {/* Pagination */}
+              {!isLoading && totalPages > 1 && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "10px",
+                    marginTop: "35px",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                  }}
+                >
+                  <button
+                    onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                    disabled={page === 1}
+                    style={{
+                      padding: "10px 16px",
+                      borderRadius: "6px",
+                      border: "none",
+                      cursor: page === 1 ? "not-allowed" : "pointer",
+                      background: page === 1 ? "#ccc" : "#4CAF50",
+                      color: "#fff",
+                      fontWeight: "700",
+                      transition: "all 0.25s ease",
+                    }}
+                  >
+                    ◀ Prev
+                  </button>
+
+                  {/* Page Numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .slice(
+                      Math.max(page - 3, 0),
+                      Math.min(page + 2, totalPages)
+                    )
+                    .map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        style={{
+                          padding: "10px 14px",
+                          borderRadius: "6px",
+                          border: "none",
+                          cursor: "pointer",
+                          background: p === page ? "#21C87A" : "#E8F5E9",
+                          color: p === page ? "#fff" : "#2E7D32",
+                          fontWeight: "800",
+                          minWidth: "44px",
+                          transition: "all 0.25s ease",
+                        }}
+                      >
+                        {p}
+                      </button>
+                    ))}
+
+                  <button
+                    onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                    disabled={page === totalPages}
+                    style={{
+                      padding: "10px 16px",
+                      borderRadius: "6px",
+                      border: "none",
+                      cursor: page === totalPages ? "not-allowed" : "pointer",
+                      background: page === totalPages ? "#ccc" : "#4CAF50",
+                      color: "#fff",
+                      fontWeight: "700",
+                      transition: "all 0.25s ease",
+                    }}
+                  >
+                    Next ▶
+                  </button>
+                </div>
               )}
             </section>
           </section>

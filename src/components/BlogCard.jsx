@@ -4,14 +4,12 @@ export default function BlogCard({ blog }) {
   const navigate = useNavigate();
 
   const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    return new Date(dateString).toLocaleDateString("en-US", options);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
-  // ✅ FIX: Support MongoDB _id and old id both
-  const blogId = blog?._id || blog?.id;
-
   return (
+    
     <div
       style={{
         borderRadius: "16px",
@@ -22,7 +20,7 @@ export default function BlogCard({ blog }) {
         backgroundColor: "#fff",
         height: "100%",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "column"
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-8px)";
@@ -32,11 +30,7 @@ export default function BlogCard({ blog }) {
         e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
       }}
-      onClick={() => {
-        // ✅ FIX: Prevent navigation if id missing
-        if (!blogId) return;
-        navigate(`/blogs/${blogId}`);
-      }}
+      onClick={() => navigate(`/blogs/${blog.id}`)}
     >
       {/* Blog Image + Author Info Overlay */}
       <div style={{ position: "relative", height: "280px" }}>
@@ -46,7 +40,7 @@ export default function BlogCard({ blog }) {
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover",
+            objectFit: "cover"
           }}
         />
 
@@ -56,21 +50,14 @@ export default function BlogCard({ blog }) {
             position: "absolute",
             bottom: "0",
             right: "0",
-            background:
-              "linear-gradient(135deg, rgba(100,100,255,0.9), rgba(150,100,255,0.9))",
+            background: "linear-gradient(135deg, rgba(100,100,255,0.9), rgba(150,100,255,0.9))",
             color: "white",
             padding: "12px 20px",
             borderTopLeftRadius: "12px",
-            maxWidth: "60%",
+            maxWidth: "60%"
           }}
         >
-          <div
-            style={{
-              fontSize: "14px",
-              fontWeight: "600",
-              marginBottom: "2px",
-            }}
-          >
+          <div style={{ fontSize: "14px", fontWeight: "600", marginBottom: "2px" }}>
             {blog.author}
           </div>
           <div style={{ fontSize: "11px", opacity: 0.9 }}>
@@ -80,27 +67,12 @@ export default function BlogCard({ blog }) {
       </div>
 
       {/* Blog Content */}
-      <div
-        style={{
-          padding: "24px",
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <div style={{ padding: "24px", flexGrow: 1, display: "flex", flexDirection: "column" }}>
         {/* Date + Type Badge */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "12px",
-          }}
-        >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
           <span style={{ fontSize: "13px", color: "#666" }}>
             {formatDate(blog.date)}
           </span>
-
           <span
             style={{
               padding: "6px 14px",
@@ -108,7 +80,7 @@ export default function BlogCard({ blog }) {
               borderRadius: "20px",
               fontSize: "12px",
               fontWeight: "600",
-              color: "#333",
+              color: "#333"
             }}
           >
             {blog.type}
@@ -122,7 +94,7 @@ export default function BlogCard({ blog }) {
             fontWeight: "700",
             marginBottom: "12px",
             lineHeight: "1.4",
-            color: "#1a1a1a",
+            color: "#1a1a1a"
           }}
         >
           {blog.title}
@@ -140,7 +112,7 @@ export default function BlogCard({ blog }) {
             WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
-            flexGrow: 1,
+            flexGrow: 1
           }}
         >
           {blog.description
@@ -148,6 +120,7 @@ export default function BlogCard({ blog }) {
             .replace(/&nbsp;/g, " ")
             .trim()}
         </p>
+
 
         {/* Read More Link */}
         <div
@@ -157,7 +130,7 @@ export default function BlogCard({ blog }) {
             color: "#6366f1",
             fontSize: "14px",
             fontWeight: "600",
-            cursor: "pointer",
+            cursor: "pointer"
           }}
         >
           Read more

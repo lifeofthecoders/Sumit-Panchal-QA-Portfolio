@@ -1,19 +1,18 @@
 {
-  "name": "qa-portfolio-frontend",
+  "homepage": "https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d dist",
+  "name": "qa-",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-
-  "homepage": "https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio",
-
   "scripts": {
-    "dev": "npx vite",
-    "build": "npx vite build",
-    "preview": "npx vite preview",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
-
   "dependencies": {
     "@types/uuid": "^10.0.0",
     "react": "^18.2.0",
@@ -23,7 +22,6 @@
     "react-router-dom": "^7.13.0",
     "uuid": "^13.0.0"
   },
-
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/react": "^19.2.5",

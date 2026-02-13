@@ -18,7 +18,7 @@ export default function BlogView() {
     const foundBlog = await getBlogById(id);
     if (foundBlog) {
       setBlog(foundBlog);
-            } else {
+    } else {
       navigate("/admin/blogs");
     }
       };

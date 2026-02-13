@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getBlogs, deleteBlog } from "../services/blogService";
+import { getBlogsPaginated, deleteBlog } from "../services/blogService";
 import AdminBlogHeader from "./AdminBlogHeader";
 import Loader from "../components/Loader";
 
@@ -8,6 +8,11 @@ export default function BlogList() {
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const [totalPages, setTotalPages] = useState(1);
 
   /* Existing hover states */
   const [isHovering, setIsHovering] = useState(false);
@@ -23,20 +28,24 @@ export default function BlogList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBlogId, setSelectedBlogId] = useState(null);
 
-  // ✅ FIX: load blogs properly (async)
-  const loadBlogs = async () => {
-    try {
-      const data = await getBlogs();
-      setBlogs(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Failed to load blogs:", error);
-      setBlogs([]);
-    }
-  };
-
   useEffect(() => {
+    const loadBlogs = async () => {
+      try {
+        setIsLoading(true);
+        const result = await getBlogsPaginated(page, limit);
+        setBlogs(Array.isArray(result?.data) ? result.data : []);
+        setTotalPages(result?.pagination?.totalPages || 1);
+      } catch (err) {
+        console.error("Failed to load blogs:", err);
+        setBlogs([]);
+        setTotalPages(1);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadBlogs();
-  }, []);
+  }, [page]);
 
   /* ================= DELETE HANDLERS ================= */
 
@@ -50,14 +59,22 @@ export default function BlogList() {
     setShowDeleteModal(true);
   };
 
-  // ✅ FIX: confirmDelete must await deleteBlog + reload
-  const confirmDelete = async () => {
-    try {
-      await deleteBlog(selectedBlogId);
-      await loadBlogs();
-    } catch (error) {
-      console.error("Failed to delete blog:", error);
-    }
+  const confirmDelete = () => {
+    deleteBlog(selectedBlogId);
+    setIsLoading(true);
+    getBlogsPaginated(page, limit)
+      .then((result) => {
+        setBlogs(Array.isArray(result?.data) ? result.data : []);
+        setTotalPages(result?.pagination?.totalPages || 1);
+      })
+      .catch((err) => {
+        console.error("Failed to load blogs:", err);
+        setBlogs([]);
+        setTotalPages(1);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
 
     /* ✅ FIX — RESET HOVER STATES */
     setCancelHover(false);
@@ -124,7 +141,7 @@ export default function BlogList() {
         </div>
 
         {/* EMPTY STATE */}
-        {blogs.length === 0 ? (
+        {!isLoading && blogs.length === 0 ? (
           <p
             style={{
               textAlign: "center",
@@ -156,14 +173,10 @@ export default function BlogList() {
                   <th style={{ padding: "15px", textAlign: "center" }}>Image</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Type</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Author</th>
-                  <th style={{ padding: "15px", textAlign: "center" }}>
-                    Profession
-                  </th>
+                  <th style={{ padding: "15px", textAlign: "center" }}>Profession</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Date</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Title</th>
-                  <th style={{ padding: "15px", textAlign: "center" }}>
-                    Actions
-                  </th>
+                  <th style={{ padding: "15px", textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
 
@@ -171,21 +184,9 @@ export default function BlogList() {
                 {blogs.map((blog, index) => {
                   const srNo = blogs.length - index;
 
-                  // ✅ FIX: Support both MongoDB (_id) and old (id)
-                  const blogId = blog._id || blog.id;
-
                   return (
-                    <tr
-                      key={blogId}
-                      style={{ borderBottom: "1px solid #eee" }}
-                    >
-                      <td
-                        style={{
-                          padding: "15px",
-                          fontWeight: "600",
-                          textAlign: "center",
-                        }}
-                      >
+                    <tr key={blog.id} style={{ borderBottom: "1px solid #eee" }}>
+                      <td style={{ padding: "15px", fontWeight: "600", textAlign: "center" }}>
                         {srNo}
                       </td>
 
@@ -202,40 +203,22 @@ export default function BlogList() {
                         />
                       </td>
 
-                      <td style={{ padding: "15px", textAlign: "center" }}>
-                        {blog.type}
-                      </td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>
-                        {blog.author}
-                      </td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>
-                        {blog.profession}
-                      </td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>
-                        {blog.date}
-                      </td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>
-                        {blog.title}
-                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.type}</td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.author}</td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.profession}</td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.date}</td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.title}</td>
 
                       <td style={{ padding: "15px", textAlign: "center" }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: "8px",
-                            justifyContent: "center",
-                          }}
-                        >
+                        <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
                           <button
-                            onClick={() =>
-                              navigate(`/admin/blogs/view/${blogId}`)
-                            }
-                            onMouseEnter={() => setViewHoverId(blogId)}
+                            onClick={() => navigate(`/admin/blogs/view/${blog.id}`)}
+                            onMouseEnter={() => setViewHoverId(blog.id)}
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                viewHoverId === blogId ? "#1565C0" : "#2196F3",
+                                viewHoverId === blog.id ? "#1565C0" : "#2196F3",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -246,15 +229,13 @@ export default function BlogList() {
                           </button>
 
                           <button
-                            onClick={() =>
-                              navigate(`/admin/blogs/edit/${blogId}`)
-                            }
-                            onMouseEnter={() => setEditHoverId(blogId)}
+                            onClick={() => navigate(`/admin/blogs/edit/${blog.id}`)}
+                            onMouseEnter={() => setEditHoverId(blog.id)}
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                editHoverId === blogId ? "#E65100" : "#FF9800",
+                                editHoverId === blog.id ? "#E65100" : "#FF9800",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -265,15 +246,13 @@ export default function BlogList() {
                           </button>
 
                           <button
-                            onClick={() => handleDeleteClick(blogId)}
-                            onMouseEnter={() => setDeleteHoverId(blogId)}
+                            onClick={() => handleDeleteClick(blog.id)}
+                            onMouseEnter={() => setDeleteHoverId(blog.id)}
                             onMouseLeave={() => setDeleteHoverId(null)}
                             style={{
                               padding: "6px 12px",
                               backgroundColor:
-                                deleteHoverId === blogId
-                                  ? "#B71C1C"
-                                  : "#f44336",
+                                deleteHoverId === blog.id ? "#B71C1C" : "#f44336",
                               color: "white",
                               border: "none",
                               borderRadius: "4px",
@@ -291,6 +270,122 @@ export default function BlogList() {
             </table>
           </div>
         )}
+      
+          {/* PAGINATION */}
+          {!isLoading && totalPages > 1 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px",
+                marginTop: "30px",
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              <button
+                onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                disabled={page === 1}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: "6px",
+                  border: "none",
+                  cursor: page === 1 ? "not-allowed" : "pointer",
+                  background: page === 1 ? "#ccc" : "#4CAF50",
+                  color: "#fff",
+                  fontWeight: "700",
+                  transition: "all 0.25s ease",
+                }}
+              >
+                ◀ Prev
+              </button>
+
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .slice(
+                  Math.max(page - 3, 0),
+                  Math.min(page + 2, totalPages)
+                )
+                .map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    style={{
+                      padding: "10px 14px",
+                      borderRadius: "6px",
+                      border: "none",
+                      cursor: "pointer",
+                      background: p === page ? "#21C87A" : "#E8F5E9",
+                      color: p === page ? "#fff" : "#2E7D32",
+                      fontWeight: "800",
+                      minWidth: "44px",
+                      transition: "all 0.25s ease",
+                    }}
+                  >
+                    {p}
+                  </button>
+                ))}
+
+              <button
+                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                disabled={page === totalPages}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: "6px",
+                  border: "none",
+                  cursor: page === totalPages ? "not-allowed" : "pointer",
+                  background: page === totalPages ? "#ccc" : "#4CAF50",
+                  color: "#fff",
+                  fontWeight: "700",
+                  transition: "all 0.25s ease",
+                }}
+              >
+                Next ▶
+              </button>
+            </div>
+          )}
+disabled={page === 1}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: "6px",
+                  border: "none",
+                  cursor: page === 1 ? "not-allowed" : "pointer",
+                  background: page === 1 ? "#ccc" : "#4CAF50",
+                  color: "#fff",
+                  fontWeight: "600",
+                }}
+              >
+                ◀ Prev
+              </button>
+
+              <span
+                style={{
+                  padding: "10px 14px",
+                  fontWeight: "700",
+                  color: "#333",
+                }}
+              >
+                Page {page} of {totalPages}
+              </span>
+
+              <button
+                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                disabled={page === totalPages}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: "6px",
+                  border: "none",
+                  cursor: page === totalPages ? "not-allowed" : "pointer",
+                  background: page === totalPages ? "#ccc" : "#4CAF50",
+                  color: "#fff",
+                  fontWeight: "600",
+                }}
+              >
+                Next ▶
+              </button>
+            </div>
+          )}
+
       </div>
 
       {/* DELETE MODAL */}
@@ -342,7 +437,9 @@ export default function BlogList() {
                 onMouseLeave={() => setModalDeleteHover(false)}
                 style={{
                   ...deleteBtn,
-                  backgroundColor: modalDeleteHover ? "#B71C1C" : "#f44336",
+                  backgroundColor: modalDeleteHover
+                    ? "#B71C1C"
+                    : "#f44336",
                 }}
               >
                 Delete

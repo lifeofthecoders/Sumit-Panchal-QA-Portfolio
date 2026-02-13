@@ -9,12 +9,33 @@ const router = express.Router();
  */
 router.get("/", async (req, res) => {
   try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.json(blogs);
+    const page = Math.max(parseInt(req.query.page || "1", 10), 1);
+    const limit = Math.max(parseInt(req.query.limit || "10", 10), 1);
+    const skip = (page - 1) * limit;
+
+    const total = await Blog.countDocuments();
+
+    // Latest first
+    const blogs = await Blog.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      data: blogs,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
+    console.error("GET /api/blogs error:", err);
     res.status(500).json({ message: "Failed to fetch blogs" });
   }
 });
+
 
 /**
  * GET /api/blogs/:id
