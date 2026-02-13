@@ -62,6 +62,7 @@ export default function BlogList() {
   const confirmDelete = () => {
     deleteBlog(selectedBlogId);
     setIsLoading(true);
+
     getBlogsPaginated(page, limit)
       .then((result) => {
         setBlogs(Array.isArray(result?.data) ? result.data : []);
@@ -173,10 +174,14 @@ export default function BlogList() {
                   <th style={{ padding: "15px", textAlign: "center" }}>Image</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Type</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Author</th>
-                  <th style={{ padding: "15px", textAlign: "center" }}>Profession</th>
+                  <th style={{ padding: "15px", textAlign: "center" }}>
+                    Profession
+                  </th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Date</th>
                   <th style={{ padding: "15px", textAlign: "center" }}>Title</th>
-                  <th style={{ padding: "15px", textAlign: "center" }}>Actions</th>
+                  <th style={{ padding: "15px", textAlign: "center" }}>
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
@@ -186,7 +191,13 @@ export default function BlogList() {
 
                   return (
                     <tr key={blog.id} style={{ borderBottom: "1px solid #eee" }}>
-                      <td style={{ padding: "15px", fontWeight: "600", textAlign: "center" }}>
+                      <td
+                        style={{
+                          padding: "15px",
+                          fontWeight: "600",
+                          textAlign: "center",
+                        }}
+                      >
                         {srNo}
                       </td>
 
@@ -203,16 +214,34 @@ export default function BlogList() {
                         />
                       </td>
 
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.type}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.author}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.profession}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.date}</td>
-                      <td style={{ padding: "15px", textAlign: "center" }}>{blog.title}</td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.type}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.author}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.profession}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.date}
+                      </td>
+                      <td style={{ padding: "15px", textAlign: "center" }}>
+                        {blog.title}
+                      </td>
 
                       <td style={{ padding: "15px", textAlign: "center" }}>
-                        <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "8px",
+                            justifyContent: "center",
+                          }}
+                        >
                           <button
-                            onClick={() => navigate(`/admin/blogs/view/${blog.id}`)}
+                            onClick={() =>
+                              navigate(`/admin/blogs/view/${blog.id}`)
+                            }
                             onMouseEnter={() => setViewHoverId(blog.id)}
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
@@ -229,7 +258,9 @@ export default function BlogList() {
                           </button>
 
                           <button
-                            onClick={() => navigate(`/admin/blogs/edit/${blog.id}`)}
+                            onClick={() =>
+                              navigate(`/admin/blogs/edit/${blog.id}`)
+                            }
                             onMouseEnter={() => setEditHoverId(blog.id)}
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
@@ -270,122 +301,77 @@ export default function BlogList() {
             </table>
           </div>
         )}
-      
-          {/* PAGINATION */}
-          {!isLoading && totalPages > 1 && (
-            <div
+
+        {/* PAGINATION */}
+        {!isLoading && totalPages > 1 && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "10px",
+              marginTop: "30px",
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
+            <button
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
+              disabled={page === 1}
               style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "10px",
-                marginTop: "30px",
-                flexWrap: "wrap",
-                alignItems: "center",
+                padding: "10px 16px",
+                borderRadius: "6px",
+                border: "none",
+                cursor: page === 1 ? "not-allowed" : "pointer",
+                background: page === 1 ? "#ccc" : "#4CAF50",
+                color: "#fff",
+                fontWeight: "700",
+                transition: "all 0.25s ease",
               }}
             >
-              <button
-                onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                disabled={page === 1}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  cursor: page === 1 ? "not-allowed" : "pointer",
-                  background: page === 1 ? "#ccc" : "#4CAF50",
-                  color: "#fff",
-                  fontWeight: "700",
-                  transition: "all 0.25s ease",
-                }}
-              >
-                ◀ Prev
-              </button>
+              ◀ Prev
+            </button>
 
-              {/* Page Numbers */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .slice(
-                  Math.max(page - 3, 0),
-                  Math.min(page + 2, totalPages)
-                )
-                .map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    style={{
-                      padding: "10px 14px",
-                      borderRadius: "6px",
-                      border: "none",
-                      cursor: "pointer",
-                      background: p === page ? "#21C87A" : "#E8F5E9",
-                      color: p === page ? "#fff" : "#2E7D32",
-                      fontWeight: "800",
-                      minWidth: "44px",
-                      transition: "all 0.25s ease",
-                    }}
-                  >
-                    {p}
-                  </button>
-                ))}
+            {/* Page Numbers */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .slice(Math.max(page - 3, 0), Math.min(page + 2, totalPages))
+              .map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: "6px",
+                    border: "none",
+                    cursor: "pointer",
+                    background: p === page ? "#21C87A" : "#E8F5E9",
+                    color: p === page ? "#fff" : "#2E7D32",
+                    fontWeight: "800",
+                    minWidth: "44px",
+                    transition: "all 0.25s ease",
+                  }}
+                >
+                  {p}
+                </button>
+              ))}
 
-              <button
-                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                disabled={page === totalPages}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  cursor: page === totalPages ? "not-allowed" : "pointer",
-                  background: page === totalPages ? "#ccc" : "#4CAF50",
-                  color: "#fff",
-                  fontWeight: "700",
-                  transition: "all 0.25s ease",
-                }}
-              >
-                Next ▶
-              </button>
-            </div>
-          )}
-disabled={page === 1}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  cursor: page === 1 ? "not-allowed" : "pointer",
-                  background: page === 1 ? "#ccc" : "#4CAF50",
-                  color: "#fff",
-                  fontWeight: "600",
-                }}
-              >
-                ◀ Prev
-              </button>
-
-              <span
-                style={{
-                  padding: "10px 14px",
-                  fontWeight: "700",
-                  color: "#333",
-                }}
-              >
-                Page {page} of {totalPages}
-              </span>
-
-              <button
-                onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                disabled={page === totalPages}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  cursor: page === totalPages ? "not-allowed" : "pointer",
-                  background: page === totalPages ? "#ccc" : "#4CAF50",
-                  color: "#fff",
-                  fontWeight: "600",
-                }}
-              >
-                Next ▶
-              </button>
-            </div>
-          )}
-
+            <button
+              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+              disabled={page === totalPages}
+              style={{
+                padding: "10px 16px",
+                borderRadius: "6px",
+                border: "none",
+                cursor: page === totalPages ? "not-allowed" : "pointer",
+                background: page === totalPages ? "#ccc" : "#4CAF50",
+                color: "#fff",
+                fontWeight: "700",
+                transition: "all 0.25s ease",
+              }}
+            >
+              Next ▶
+            </button>
+          </div>
+        )}
       </div>
 
       {/* DELETE MODAL */}
@@ -437,9 +423,7 @@ disabled={page === 1}
                 onMouseLeave={() => setModalDeleteHover(false)}
                 style={{
                   ...deleteBtn,
-                  backgroundColor: modalDeleteHover
-                    ? "#B71C1C"
-                    : "#f44336",
+                  backgroundColor: modalDeleteHover ? "#B71C1C" : "#f44336",
                 }}
               >
                 Delete
