@@ -1,4 +1,5 @@
 import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -23,6 +24,13 @@ import BlogView from "./admin/BlogView";
 function Layout() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+
+  // ✅ Warm up API (Render Free sleep fix)
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/blogs?page=1&limit=1`)
+      .then(() => {})
+      .catch(() => {});
+  }, []);
 
   return (
     <>
