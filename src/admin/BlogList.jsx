@@ -207,8 +207,8 @@ export default function BlogList() {
               </thead>
 
               <tbody>
-                {/* ✅ Reverse order so newest is on top */}
-                {[...blogs].reverse().map((blog, index) => {
+                {/* ✅ KEEP API order (already latest first) */}
+                {blogs.map((blog, index) => {
                   const blogId = blog._id || blog.id;
 
                   // ✅ Descending srNo (global)
@@ -265,9 +265,7 @@ export default function BlogList() {
                           }}
                         >
                           <button
-                            onClick={() =>
-                              navigate(`/admin/blogs/view/${blogId}`)
-                            }
+                            onClick={() => navigate(`/admin/blogs/view/${blogId}`)}
                             onMouseEnter={() => setViewHoverId(blogId)}
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
@@ -284,9 +282,7 @@ export default function BlogList() {
                           </button>
 
                           <button
-                            onClick={() =>
-                              navigate(`/admin/blogs/edit/${blogId}`)
-                            }
+                            onClick={() => navigate(`/admin/blogs/edit/${blogId}`)}
                             onMouseEnter={() => setEditHoverId(blogId)}
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
@@ -357,7 +353,6 @@ export default function BlogList() {
               ◀ Prev
             </button>
 
-            {/* Page Numbers */}
             {Array.from({ length: totalPages }, (_, i) => i + 1)
               .slice(Math.max(page - 3, 0), Math.min(page + 2, totalPages))
               .map((p) => (

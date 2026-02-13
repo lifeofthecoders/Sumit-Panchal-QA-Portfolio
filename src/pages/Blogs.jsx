@@ -16,6 +16,9 @@ export default function Blogs() {
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ✅ API Error Message
+  const [errorMsg, setErrorMsg] = useState("");
+
   // Pagination
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -29,6 +32,7 @@ export default function Blogs() {
     const loadBlogs = async () => {
       try {
         setIsLoading(true);
+        setErrorMsg("");
 
         const result = await getBlogsPaginated(page, limit);
 
@@ -36,8 +40,14 @@ export default function Blogs() {
         setTotalPages(result?.pagination?.totalPages || 1);
       } catch (error) {
         console.error("Failed to load blogs:", error);
+
         setBlogs([]);
         setTotalPages(1);
+
+        // ✅ Proper user-friendly error
+        setErrorMsg(
+          "⚠️ Blogs failed to load. Please refresh the page or try again after a few seconds."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -148,6 +158,24 @@ export default function Blogs() {
                 </a>
               </h3>
 
+              {/* ✅ Error Message UI */}
+              {!isLoading && errorMsg && (
+                <div
+                  style={{
+                    background: "#fff3cd",
+                    color: "#856404",
+                    padding: "14px 16px",
+                    borderRadius: "10px",
+                    marginBottom: "25px",
+                    fontWeight: "600",
+                    textAlign: "center",
+                    border: "1px solid #ffeeba",
+                  }}
+                >
+                  {errorMsg}
+                </div>
+              )}
+
               <div
                 className="blogs-grid"
                 style={{
@@ -163,7 +191,7 @@ export default function Blogs() {
                   })}
               </div>
 
-              {!isLoading && blogs.length === 0 && (
+              {!isLoading && !errorMsg && blogs.length === 0 && (
                 <p
                   style={{
                     textAlign: "center",
