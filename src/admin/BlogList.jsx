@@ -388,7 +388,7 @@ export default function BlogList() {
                             title="View"
                           >
                             <img
-                              src="/image/view-icon.png"
+                              src="/image/View Icon.png"
                               alt="View"
                               style={{
                                 width: "20px",
@@ -425,7 +425,7 @@ export default function BlogList() {
                             title="Edit"
                           >
                               <img
-                                src="/image/edit-icon.png"
+                                src="/image/Edit Icon.png"
                                 alt="Edit"
                                 style={{
                                   width: "20px",
@@ -460,7 +460,7 @@ export default function BlogList() {
                             title="Delete"
                           >
                             <img
-                              src="/image/trash-icon.png"
+                              src="/image/Delete Icon.png"
                               alt="Delete"
                               style={{
                                 width: "20px",
