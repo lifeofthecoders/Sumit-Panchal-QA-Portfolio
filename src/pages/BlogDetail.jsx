@@ -8,7 +8,7 @@ import Loader from "../components/Loader";
 export default function BlogDetail() {
   usePageAnimations();
 
-  // ✅ ANIMATION HOOK - SAME AS ABOUT PAGE
+  // ✅ ANIMATION HOOK - OPTIMIZED FOR SMOOTH SCROLL
   useEffect(() => {
     /* ============================
        ANCHOR ICON COPY LINK
@@ -53,10 +53,12 @@ export default function BlogDetail() {
     animatedElements.forEach((el) => observer.observe(el));
 
     /* ============================
-       LOGO RE-ANIMATION
+       LOGO RE-ANIMATION (SMOOTH)
        ============================ */
     const logo = document.querySelector(".logo-slide");
     let lastScrollY = window.scrollY;
+    let animationFrameId = null;
+    let pendingScroll = false;
 
     const restartLogoAnimation = () => {
       if (!logo) return;
@@ -67,15 +69,21 @@ export default function BlogDetail() {
 
     restartLogoAnimation();
 
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      if (Math.abs(currentScroll - lastScrollY) > 12) {
-        restartLogoAnimation();
-        lastScrollY = currentScroll;
-      }
+    const handleScrollOptimized = () => {
+      pendingScroll = true;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
+      animationFrameId = requestAnimationFrame(() => {
+        const currentScroll = window.scrollY;
+        if (Math.abs(currentScroll - lastScrollY) > 15) {
+          restartLogoAnimation();
+          lastScrollY = currentScroll;
+        }
+        pendingScroll = false;
+      });
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScrollOptimized, { passive: true });
 
     /* ============================
        CLEANUP (CRITICAL)
@@ -86,7 +94,8 @@ export default function BlogDetail() {
       );
       animatedElements.forEach((el) => observer.unobserve(el));
       observer.disconnect();
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScrollOptimized);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
