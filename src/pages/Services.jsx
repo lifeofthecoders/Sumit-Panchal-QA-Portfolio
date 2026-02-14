@@ -6,31 +6,31 @@ import usePageAnimations from "../hooks/usePageAnimations";
 export default function Services() {
     usePageAnimations(); // ✅ ADD THIS
 
-    // ✅ ADD THIS EXACTLY HERE
+    // ✅ ANIMATION HOOK - SAME AS ABOUT PAGE
     useEffect(() => {
+        /* ============================
+           ANCHOR ICON COPY LINK
+           ============================ */
         const icons = document.querySelectorAll(".anchor-icon");
 
         icons.forEach((icon) => {
             icon.onclick = (e) => {
                 e.preventDefault();
-                e.stopPropagation(); // ✅ prevents browser focus scroll
+                e.stopPropagation();
 
                 const id = icon.getAttribute("data-target");
                 if (!id) return;
 
-                // ✅ Copy URL only (NO SCROLL)
                 const url =
                     window.location.origin +
                     window.location.pathname +
                     "#" +
                     id;
 
-                // ✅ Update hash WITHOUT triggering scroll
                 window.history.replaceState(null, "", `#${id}`);
 
                 navigator.clipboard.writeText(url);
 
-                // ✅ Prevent layout shift when icon changes
                 icon.style.width = `${icon.offsetWidth}px`;
                 icon.innerText = "✅";
 
@@ -41,31 +41,57 @@ export default function Services() {
             };
         });
 
-        // cleanup (safe)
+        /* ============================
+           INTERSECTION OBSERVER
+           ============================ */
+        const observerOptions = { threshold: 0.1 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                entry.target.classList.toggle("in-view", entry.isIntersecting);
+            });
+        }, observerOptions);
+
+        const animatedElements = document.querySelectorAll(
+            ".slide-up, .hero-animate h1, .hero-animate h2, .profile-slide, .animate-content"
+        );
+
+        animatedElements.forEach((el) => observer.observe(el));
+
+        /* ============================
+           LOGO RE-ANIMATION
+           ============================ */
+        const logo = document.querySelector(".logo-slide");
+        let lastScrollY = window.scrollY;
+
+        const restartLogoAnimation = () => {
+            if (!logo) return;
+            logo.classList.remove("animate");
+            void logo.offsetWidth;
+            logo.classList.add("animate");
+        };
+
+        restartLogoAnimation();
+
+        const handleScroll = () => {
+            const currentScroll = window.scrollY;
+            if (Math.abs(currentScroll - lastScrollY) > 12) {
+                restartLogoAnimation();
+                lastScrollY = currentScroll;
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        /* ============================
+           CLEANUP (CRITICAL)
+           ============================ */
         return () => {
             icons.forEach((icon) => (icon.onclick = null));
+            animatedElements.forEach((el) => observer.unobserve(el));
+            observer.disconnect();
+            window.removeEventListener("scroll", handleScroll);
         };
-    }, []);
-
-
-    useEffect(() => {
-        // 🔹 FIX: reveal animated content on Services page
-        const content = document.querySelector(".animate-content");
-        if (content) {
-            content.classList.remove("in-view");
-            void content.offsetWidth; // force reflow
-            content.classList.add("in-view");
-        }
-    }, []);
-
-    useEffect(() => {
-        const slideItems = document.querySelectorAll(".slide-up");
-
-        slideItems.forEach((el) => {
-            el.classList.remove("in-view");
-            void el.offsetWidth; // force reflow
-            el.classList.add("in-view");
-        });
     }, []);
 
     return (
