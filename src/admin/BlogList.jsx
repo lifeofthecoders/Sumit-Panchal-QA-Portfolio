@@ -72,7 +72,7 @@ export default function BlogList() {
     const handleScrollOptimized = () => {
       pendingScroll = true;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
+
       animationFrameId = requestAnimationFrame(() => {
         const currentScroll = window.scrollY;
         if (Math.abs(currentScroll - lastScrollY) > 15) {
@@ -362,15 +362,12 @@ export default function BlogList() {
                           }}
                         >
                           <button
-                            onClick={() =>
-                              navigate(`/admin/blogs/view/${blogId}`)
-                            }
+                            onClick={() => navigate(`/admin/blogs/view/${blogId}`)}
                             onMouseEnter={() => setViewHoverId(blogId)}
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
                               padding: "8px 10px",
-                              backgroundColor:
-                                viewHoverId === blogId ? "#1565C0" : "#2196F3",
+                              backgroundColor: viewHoverId === blogId ? "#1565C0" : "#2196F3",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",
@@ -388,7 +385,7 @@ export default function BlogList() {
                             title="View"
                           >
                             <img
-                              src="/image/View Icon.png"
+                              src="/image/View-Icon.png"
                               alt="View"
                               style={{
                                 width: "20px",
@@ -397,6 +394,7 @@ export default function BlogList() {
                               }}
                             />
                           </button>
+
 
                           <button
                             onClick={() =>
@@ -424,15 +422,15 @@ export default function BlogList() {
                             }}
                             title="Edit"
                           >
-                              <img
-                                src="/image/Edit Icon.png"
-                                alt="Edit"
-                                style={{
-                                  width: "20px",
-                                  height: "20px",
-                                  display: "block",
-                                }}
-                              />
+                            <img
+                              src="/image/Edit-Icon.png"
+                              alt="Edit"
+                              style={{
+                                width: "20px",
+                                height: "20px",
+                                display: "block",
+                              }}
+                            />
                           </button>
 
                           <button
@@ -460,7 +458,7 @@ export default function BlogList() {
                             title="Delete"
                           >
                             <img
-                              src="/image/Delete Icon.png"
+                              src="/image/Delete-Icon.png"
                               alt="Delete"
                               style={{
                                 width: "20px",
