@@ -357,7 +357,7 @@ export default function BlogList() {
                         <div
                           style={{
                             display: "flex",
-                            gap: "8px",
+                            gap: "10px",
                             justifyContent: "center",
                           }}
                         >
@@ -368,16 +368,26 @@ export default function BlogList() {
                             onMouseEnter={() => setViewHoverId(blogId)}
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
-                              padding: "6px 12px",
+                              padding: "8px 10px",
                               backgroundColor:
                                 viewHoverId === blogId ? "#1565C0" : "#2196F3",
                               color: "white",
                               border: "none",
-                              borderRadius: "4px",
+                              borderRadius: "6px",
                               cursor: "pointer",
+                              fontSize: "16px",
+                              transition: "all 0.3s ease",
+                              lineHeight: "1",
+                              minWidth: "40px",
+                              minHeight: "40px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              transform: viewHoverId === blogId ? "scale(1.1)" : "scale(1)",
                             }}
+                            title="View"
                           >
-                            View
+                            👁️
                           </button>
 
                           <button
@@ -387,16 +397,26 @@ export default function BlogList() {
                             onMouseEnter={() => setEditHoverId(blogId)}
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
-                              padding: "6px 12px",
+                              padding: "8px 10px",
                               backgroundColor:
                                 editHoverId === blogId ? "#E65100" : "#FF9800",
                               color: "white",
                               border: "none",
-                              borderRadius: "4px",
+                              borderRadius: "6px",
                               cursor: "pointer",
+                              fontSize: "16px",
+                              transition: "all 0.3s ease",
+                              lineHeight: "1",
+                              minWidth: "40px",
+                              minHeight: "40px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              transform: editHoverId === blogId ? "scale(1.1)" : "scale(1)",
                             }}
+                            title="Edit"
                           >
-                            Edit
+                            ✏️
                           </button>
 
                           <button
@@ -404,16 +424,26 @@ export default function BlogList() {
                             onMouseEnter={() => setDeleteHoverId(blogId)}
                             onMouseLeave={() => setDeleteHoverId(null)}
                             style={{
-                              padding: "6px 12px",
+                              padding: "8px 10px",
                               backgroundColor:
                                 deleteHoverId === blogId ? "#B71C1C" : "#f44336",
                               color: "white",
                               border: "none",
-                              borderRadius: "4px",
+                              borderRadius: "6px",
                               cursor: "pointer",
+                              fontSize: "16px",
+                              transition: "all 0.3s ease",
+                              lineHeight: "1",
+                              minWidth: "40px",
+                              minHeight: "40px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              transform: deleteHoverId === blogId ? "scale(1.1)" : "scale(1)",
                             }}
+                            title="Delete"
                           >
-                            Delete
+                            🗑️
                           </button>
                         </div>
                       </td>
@@ -440,6 +470,18 @@ export default function BlogList() {
             <button
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
               disabled={page === 1}
+              onMouseEnter={(e) => {
+                if (page !== 1) {
+                  e.currentTarget.style.backgroundColor = "#21C87A";
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (page !== 1) {
+                  e.currentTarget.style.backgroundColor = "#4CAF50";
+                  e.currentTarget.style.transform = "scale(1)";
+                }
+              }}
               style={{
                 padding: "10px 16px",
                 borderRadius: "6px",
@@ -448,7 +490,7 @@ export default function BlogList() {
                 background: page === 1 ? "#ccc" : "#4CAF50",
                 color: "#fff",
                 fontWeight: "700",
-                transition: "all 0.25s ease",
+                transition: "all 0.3s ease",
               }}
             >
               ◀ Prev
@@ -461,6 +503,20 @@ export default function BlogList() {
                 <button
                   key={p}
                   onClick={() => setPage(p)}
+                  onMouseEnter={(e) => {
+                    if (p !== page) {
+                      e.currentTarget.style.backgroundColor = "#7DC884";
+                      e.currentTarget.style.color = "#fff";
+                      e.currentTarget.style.transform = "scale(1.08)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (p !== page) {
+                      e.currentTarget.style.backgroundColor = "#E8F5E9";
+                      e.currentTarget.style.color = "#2E7D32";
+                      e.currentTarget.style.transform = "scale(1)";
+                    }
+                  }}
                   style={{
                     padding: "10px 14px",
                     borderRadius: "6px",
@@ -470,7 +526,7 @@ export default function BlogList() {
                     color: p === page ? "#fff" : "#2E7D32",
                     fontWeight: "800",
                     minWidth: "44px",
-                    transition: "all 0.25s ease",
+                    transition: "all 0.3s ease",
                   }}
                 >
                   {p}
@@ -480,6 +536,18 @@ export default function BlogList() {
             <button
               onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
               disabled={page === totalPages}
+              onMouseEnter={(e) => {
+                if (page !== totalPages) {
+                  e.currentTarget.style.backgroundColor = "#21C87A";
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (page !== totalPages) {
+                  e.currentTarget.style.backgroundColor = "#4CAF50";
+                  e.currentTarget.style.transform = "scale(1)";
+                }
+              }}
               style={{
                 padding: "10px 16px",
                 borderRadius: "6px",
@@ -488,7 +556,7 @@ export default function BlogList() {
                 background: page === totalPages ? "#ccc" : "#4CAF50",
                 color: "#fff",
                 fontWeight: "700",
-                transition: "all 0.25s ease",
+                transition: "all 0.3s ease",
               }}
             >
               Next ▶

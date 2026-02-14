@@ -273,6 +273,18 @@ export default function Blogs() {
                   <button
                     onClick={() => setPage((p) => Math.max(p - 1, 1))}
                     disabled={page === 1}
+                    onMouseEnter={(e) => {
+                      if (page !== 1) {
+                        e.currentTarget.style.backgroundColor = "#21C87A";
+                        e.currentTarget.style.transform = "scale(1.05)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (page !== 1) {
+                        e.currentTarget.style.backgroundColor = "#4CAF50";
+                        e.currentTarget.style.transform = "scale(1)";
+                      }
+                    }}
                     style={{
                       padding: "10px 16px",
                       borderRadius: "6px",
@@ -281,7 +293,7 @@ export default function Blogs() {
                       background: page === 1 ? "#ccc" : "#4CAF50",
                       color: "#fff",
                       fontWeight: "700",
-                      transition: "all 0.25s ease",
+                      transition: "all 0.3s ease",
                     }}
                   >
                     ◀ Prev
@@ -297,6 +309,20 @@ export default function Blogs() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
+                        onMouseEnter={(e) => {
+                          if (p !== page) {
+                            e.currentTarget.style.backgroundColor = "#7DC884";
+                            e.currentTarget.style.color = "#fff";
+                            e.currentTarget.style.transform = "scale(1.08)";
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (p !== page) {
+                            e.currentTarget.style.backgroundColor = "#E8F5E9";
+                            e.currentTarget.style.color = "#2E7D32";
+                            e.currentTarget.style.transform = "scale(1)";
+                          }
+                        }}
                         style={{
                           padding: "10px 14px",
                           borderRadius: "6px",
@@ -306,7 +332,7 @@ export default function Blogs() {
                           color: p === page ? "#fff" : "#2E7D32",
                           fontWeight: "800",
                           minWidth: "44px",
-                          transition: "all 0.25s ease",
+                          transition: "all 0.3s ease",
                         }}
                       >
                         {p}
@@ -316,6 +342,18 @@ export default function Blogs() {
                   <button
                     onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
                     disabled={page === totalPages}
+                    onMouseEnter={(e) => {
+                      if (page !== totalPages) {
+                        e.currentTarget.style.backgroundColor = "#21C87A";
+                        e.currentTarget.style.transform = "scale(1.05)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (page !== totalPages) {
+                        e.currentTarget.style.backgroundColor = "#4CAF50";
+                        e.currentTarget.style.transform = "scale(1)";
+                      }
+                    }}
                     style={{
                       padding: "10px 16px",
                       borderRadius: "6px",
@@ -324,7 +362,7 @@ export default function Blogs() {
                       background: page === totalPages ? "#ccc" : "#4CAF50",
                       color: "#fff",
                       fontWeight: "700",
-                      transition: "all 0.25s ease",
+                      transition: "all 0.3s ease",
                     }}
                   >
                     Next ▶
