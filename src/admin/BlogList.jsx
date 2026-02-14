@@ -387,7 +387,15 @@ export default function BlogList() {
                             }}
                             title="View"
                           >
-                            👁️
+                            <img
+                              src="/image/view-icon.png"
+                              alt="View"
+                              style={{
+                                width: "20px",
+                                height: "20px",
+                                display: "block",
+                              }}
+                            />
                           </button>
 
                           <button
@@ -416,7 +424,15 @@ export default function BlogList() {
                             }}
                             title="Edit"
                           >
-                            ✏️
+                              <img
+                                src="/image/edit-icon.png"
+                                alt="Edit"
+                                style={{
+                                  width: "20px",
+                                  height: "20px",
+                                  display: "block",
+                                }}
+                              />
                           </button>
 
                           <button
@@ -443,7 +459,15 @@ export default function BlogList() {
                             }}
                             title="Delete"
                           >
-                            🗑️
+                            <img
+                              src="/image/trash-icon.png"
+                              alt="Delete"
+                              style={{
+                                width: "20px",
+                                height: "20px",
+                                display: "block",
+                              }}
+                            />
                           </button>
                         </div>
                       </td>
