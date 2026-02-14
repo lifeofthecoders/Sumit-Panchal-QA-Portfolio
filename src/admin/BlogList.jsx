@@ -3,8 +3,93 @@ import { useState, useEffect } from "react";
 import { getBlogsPaginated, deleteBlog } from "../services/blogService";
 import AdminBlogHeader from "./AdminBlogHeader";
 import Loader from "../components/Loader";
+import usePageAnimations from "../hooks/usePageAnimations";
 
 export default function BlogList() {
+  usePageAnimations();
+
+  // ✅ ANIMATION HOOK - SAME AS ABOUT PAGE
+  useEffect(() => {
+    /* ============================
+       ANCHOR ICON COPY LINK
+       ============================ */
+    const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+    const handleAnchorClick = (e) => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute("data-target");
+      if (!id) return;
+
+      const fullURL =
+        window.location.origin + window.location.pathname + "#" + id;
+
+      navigator.clipboard.writeText(fullURL);
+
+      e.currentTarget.innerText = "✅";
+      setTimeout(() => {
+        e.currentTarget.innerText = "🔗";
+      }, 1200);
+    };
+
+    anchorIcons.forEach((icon) =>
+      icon.addEventListener("click", handleAnchorClick)
+    );
+
+    /* ============================
+       INTERSECTION OBSERVER
+       ============================ */
+    const observerOptions = { threshold: 0.1 };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle("in-view", entry.isIntersecting);
+      });
+    }, observerOptions);
+
+    const animatedElements = document.querySelectorAll(
+      ".slide-up, .hero-animate h1, .hero-animate h2, .profile-slide, .animate-content"
+    );
+
+    animatedElements.forEach((el) => observer.observe(el));
+
+    /* ============================
+       LOGO RE-ANIMATION
+       ============================ */
+    const logo = document.querySelector(".logo-slide");
+    let lastScrollY = window.scrollY;
+
+    const restartLogoAnimation = () => {
+      if (!logo) return;
+      logo.classList.remove("animate");
+      void logo.offsetWidth;
+      logo.classList.add("animate");
+    };
+
+    restartLogoAnimation();
+
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+      if (Math.abs(currentScroll - lastScrollY) > 12) {
+        restartLogoAnimation();
+        lastScrollY = currentScroll;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    /* ============================
+       CLEANUP (CRITICAL)
+       ============================ */
+    return () => {
+      anchorIcons.forEach((icon) =>
+        icon.removeEventListener("click", handleAnchorClick)
+      );
+      animatedElements.forEach((el) => observer.unobserve(el));
+      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
