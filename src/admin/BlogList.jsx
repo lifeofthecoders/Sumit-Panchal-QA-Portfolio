@@ -385,7 +385,7 @@ export default function BlogList() {
                             title="View"
                           >
                             <img
-                              src={`${import.meta.env.BASE_URL}image/View-Icon.png`}
+                              src={`${import.meta.env.BASE_URL}image/View-Icon.png`} 
                               alt="View"
                               style={{
                                 width: "20px",
