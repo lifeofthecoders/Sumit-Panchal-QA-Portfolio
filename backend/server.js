@@ -72,3 +72,12 @@ const start = async () => {
 };
 
 start();
+
+// Global error handlers to log crashes (helpful on platforms like Render)
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION:", err && err.stack ? err.stack : err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("UNHANDLED REJECTION at:", promise, "reason:", reason);
+});
