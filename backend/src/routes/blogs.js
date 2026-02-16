@@ -1,6 +1,6 @@
 import express from "express";
 import Blog from "../models/Blog.js";
-import upload from "../middlewares/uploadBlogImage.js";
+import upload, { isCloudinaryAvailable } from "../middlewares/uploadBlogImage.js";
 
 const router = express.Router();
 
@@ -41,21 +41,30 @@ router.get("/", async (req, res) => {
  * Upload image to Cloudinary
  * IMPORTANT: This MUST be above "/:id" route
  */
-router.post("/upload", upload.single("image"), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No image uploaded" });
+router.post("/upload", (req, res) => {
+  if (!isCloudinaryAvailable) {
+    // Cloudinary not configured on the server — return descriptive error
+    return res.status(503).json({ message: "Image uploads are disabled on the server (Cloudinary not configured)." });
+  }
+
+  // run multer middleware manually so we can catch middleware errors
+  upload.single("image")(req, res, async (err) => {
+    if (err) {
+      console.error("Upload middleware error:", err && err.stack ? err.stack : err);
+      return res.status(500).json({ message: "Upload middleware error", error: err.message || String(err) });
     }
 
-    return res.status(200).json({
-      imageUrl: req.file.path,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      message: "Upload failed",
-      error: err.message,
-    });
-  }
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image uploaded" });
+      }
+
+      return res.status(200).json({ imageUrl: req.file.path });
+    } catch (err2) {
+      console.error("Upload handler error:", err2 && err2.stack ? err2.stack : err2);
+      return res.status(500).json({ message: "Upload failed", error: err2.message });
+    }
+  });
 });
 
 /**
