@@ -1,12 +1,19 @@
 import { v2 as cloudinary } from "cloudinary";
 
+// Configure Cloudinary from environment variables. For security, do NOT commit
+// your real credentials to source control — set them in the deployment environment
+// (Render dashboard / environment variables) as CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET.
 cloudinary.config({
-  // Use environment variables when available; fall back to provided credentials
-  // WARNING: Hard-coded credentials below are for immediate debugging only.
-  // For production, set CLOUDINARY_* env vars on the host and remove hard-coded values.
-  cloud_name: "coderslife",
-  api_key: "636567596127319",
-  api_secret: "-ZzY46Ms9C5ZNT23X5_KErfYqFM",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "",
+  api_key: process.env.CLOUDINARY_API_KEY || "",
+  api_secret: process.env.CLOUDINARY_API_SECRET || "",
 });
+
+// Warn in logs when credentials are missing (helps during deployment debugging)
+if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  console.warn(
+    "⚠️ Cloudinary credentials are not fully configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in your environment."
+  );
+}
 
 export default cloudinary;
