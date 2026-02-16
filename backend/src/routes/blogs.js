@@ -4,6 +4,11 @@ import upload from "../middlewares/uploadBlogImage.js";
 
 const router = express.Router();
 
+// Simple test endpoint to verify POST works on deployed server
+router.post('/upload-test', (req, res) => {
+  return res.status(200).json({ ok: true, message: 'upload-test endpoint reached' });
+});
+
 /**
  * GET /api/blogs
  * Returns all blogs, latest first
