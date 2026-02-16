@@ -58,7 +58,6 @@ export default function BlogDetail() {
     const logo = document.querySelector(".logo-slide");
     let lastScrollY = window.scrollY;
     let animationFrameId = null;
-    let pendingScroll = false;
 
     const restartLogoAnimation = () => {
       if (!logo) return;
@@ -70,16 +69,14 @@ export default function BlogDetail() {
     restartLogoAnimation();
 
     const handleScrollOptimized = () => {
-      pendingScroll = true;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
+
       animationFrameId = requestAnimationFrame(() => {
         const currentScroll = window.scrollY;
         if (Math.abs(currentScroll - lastScrollY) > 15) {
           restartLogoAnimation();
           lastScrollY = currentScroll;
         }
-        pendingScroll = false;
       });
     };
 
@@ -147,6 +144,48 @@ export default function BlogDetail() {
     loadBlog();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  /* ======================================================
+     ✅ NEW FEATURE: AUTO-GENERATE IDs FOR HEADINGS
+     This enables Table of Content (#hash) same-page scrolling
+     ====================================================== */
+  useEffect(() => {
+    if (!blog) return;
+
+    const timer = setTimeout(() => {
+      const content = document.querySelector(".blog-content");
+      if (!content) return;
+
+      // Find headings inside blog content
+      const headings = content.querySelectorAll("h1, h2, h3");
+
+      headings.forEach((heading) => {
+        // If already has id, skip
+        if (heading.id) return;
+
+        // Generate slug from heading text
+        const slug = heading.innerText
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, "") // remove special chars
+          .replace(/\s+/g, "-"); // spaces -> hyphen
+
+        heading.id = slug;
+      });
+
+      // If URL contains hash, scroll to section
+      if (window.location.hash) {
+        const targetId = window.location.hash.replace("#", "");
+        const targetEl = document.getElementById(targetId);
+
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [blog]);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -343,7 +382,11 @@ export default function BlogDetail() {
                     </span>
 
                     <span style={{ fontSize: "14px", color: "#000" }}>
-                      By <strong style={{ color: "#4caf50" }}>{blog.author}</strong> • {blog.profession}
+                      By{" "}
+                      <strong style={{ color: "#4caf50" }}>
+                        {blog.author}
+                      </strong>{" "}
+                      • {blog.profession}
                     </span>
                   </div>
 
@@ -382,6 +425,7 @@ export default function BlogDetail() {
                       margin-top: 30px;
                       margin-bottom: 15px;
                       font-weight: 700;
+                      scroll-margin-top: 90px;
                     }
                     .blog-content h1 { font-size: 36px; }
                     .blog-content h2 { font-size: 30px; }
