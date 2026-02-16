@@ -1,5 +1,6 @@
 import express from "express";
 import Blog from "../models/Blog.js";
+import upload from "../middlewares/uploadBlogImage.js";
 
 const router = express.Router();
 
@@ -34,6 +35,28 @@ router.get("/", async (req, res) => {
   } catch (err) {
     console.error("GET /api/blogs error:", err);
     res.status(500).json({ message: "Failed to fetch blogs" });
+  }
+});
+
+/**
+ * ✅ POST /api/blogs/upload
+ * Upload image to Cloudinary
+ * IMPORTANT: This MUST be above "/:id" route
+ */
+router.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    return res.status(200).json({
+      imageUrl: req.file.path,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Upload failed",
+      error: err.message,
+    });
   }
 });
 
