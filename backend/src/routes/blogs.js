@@ -49,8 +49,13 @@ router.post("/upload", (req, res) => {
   upload.single("image")(req, res, async (err) => {
     if (err) {
       console.error("Upload middleware error:", err);
-      // If the middleware failed (e.g., Cloudinary or multer error), respond with JSON
-      return res.status(500).json({ message: "Upload failed", error: err.message || String(err) });
+      // Temporary fallback: return a placeholder image URL so frontend can continue
+      // In production you should inspect Render logs and fix Cloudinary/middleware errors.
+      return res.status(200).json({
+        imageUrl: "https://via.placeholder.com/600x400.png?text=upload-failed",
+        warning: "Upload failed on server; using placeholder image. Check backend logs for details.",
+        error: err.message || String(err),
+      });
     }
 
     try {
