@@ -147,7 +147,7 @@ export default function BlogDetail() {
 
   /* ======================================================
      ✅ NEW FEATURE: AUTO-GENERATE IDs FOR HEADINGS
-     This enables Table of Content (#hash) same-page scrolling
+     + FIXED TOC SCROLLING FOR HASH ROUTER
      ====================================================== */
   useEffect(() => {
     if (!blog) return;
@@ -173,15 +173,55 @@ export default function BlogDetail() {
         heading.id = slug;
       });
 
-      // If URL contains hash, scroll to section
-      if (window.location.hash) {
-        const targetId = window.location.hash.replace("#", "");
-        const targetEl = document.getElementById(targetId);
+      /* ======================================================
+         ✅ FIX: Scroll using ?section= (NOT #hash)
+         Because your project uses HashRouter (#) already
+         ====================================================== */
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get("section");
+
+      if (section) {
+        const targetEl = document.getElementById(section);
 
         if (targetEl) {
           targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
+
+      /* ======================================================
+         ✅ FIX: Prevent page reload / new tab when clicking TOC
+         Intercept links like ?section=what-is-ai-testing
+         ====================================================== */
+      const handleTOCClick = (e) => {
+        const link = e.target.closest("a");
+        if (!link) return;
+
+        const href = link.getAttribute("href");
+        if (!href) return;
+
+        // Only handle ?section= links
+        if (href.startsWith("?section=")) {
+          e.preventDefault();
+
+          const sectionId = href.replace("?section=", "").trim();
+
+          // Update URL without reload
+          window.history.replaceState(null, "", `?section=${sectionId}`);
+
+          // Scroll
+          const targetEl = document.getElementById(sectionId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      };
+
+      content.addEventListener("click", handleTOCClick);
+
+      // Cleanup for this event
+      return () => {
+        content.removeEventListener("click", handleTOCClick);
+      };
     }, 250);
 
     return () => clearTimeout(timer);
