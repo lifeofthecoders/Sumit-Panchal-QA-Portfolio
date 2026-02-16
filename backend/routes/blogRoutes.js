@@ -1,4 +1,8 @@
-const upload = require("../middlewares/uploadBlogImage");
+import express from "express";
+import upload from "../middlewares/uploadBlogImage.js";
+
+const router = express.Router();
+
 router.post("/upload", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
@@ -15,3 +19,5 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     });
   }
 });
+
+export default router;
