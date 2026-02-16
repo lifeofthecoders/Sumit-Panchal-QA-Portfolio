@@ -62,7 +62,9 @@ export const deleteBlog = async (id) => {
 };
 
 export const getBlogsPaginated = async (page = 1, limit = 10) => {
-  const res = await fetch(`${API_BASE_URL}/api/blogs?page=${page}&limit=${limit}`);
+  const res = await fetch(
+    `${API_BASE_URL}/api/blogs?page=${page}&limit=${limit}`
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch blogs");
@@ -83,11 +85,24 @@ export const uploadBlogImage = async (file) => {
     body: formData,
   });
 
-  const data = await res.json();
+  // ✅ FIX: If response is HTML instead of JSON, don't crash
+  const contentType = res.headers.get("content-type") || "";
+  let data = null;
+
+  if (contentType.includes("application/json")) {
+    data = await res.json();
+  } else {
+    const text = await res.text();
+    throw new Error(
+      "Upload API returned invalid response (not JSON). " +
+        "This usually means your VITE_API_BASE_URL is wrong or backend is not running."
+    );
+  }
 
   if (!res.ok) {
     throw new Error(data.message || "Image upload failed");
   }
 
-  return data.imageUrl;
+  // ✅ FIX: support both backend response keys
+  return data.imageUrl || data.url;
 };
