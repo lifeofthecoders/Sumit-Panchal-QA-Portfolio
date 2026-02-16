@@ -478,67 +478,66 @@ export default function BlogDetail() {
                       text-align: justify;
                     }
 
-                    /* ✅ FIXED: Tight Spacing List Alignment (Modern Blog Style) */
+                    /* =========================================================
+                    ✅ QUILL LIST ALIGNMENT FIX (100% SAME AS ADMIN EDITOR)
+                    Tight spacing + Proper Indent levels
+                    ========================================================= */
+
+                    /* Base list style */
                     .blog-content ul,
                     .blog-content ol {
-                      margin: 0 0 16px 0;
+                      margin: 10px 0 18px 0;
                       padding-left: 32px;
                       list-style-position: outside;
-                      text-align: justify;
                     }
 
+                    /* Base list item */
+                    .blog-content li {
+                      margin: 6px 0;
+                      line-height: 1.75;
+                    }
+
+                    /* Nested list spacing */
                     .blog-content ul ul,
                     .blog-content ol ol,
                     .blog-content ul ol,
                     .blog-content ol ul {
-                      margin-top: 10px;
-                      margin-bottom: 10px;
-                      padding-left: 28px;
+                      margin-top: 8px;
+                      margin-bottom: 8px;
+                      padding-left: 26px;
                     }
 
-                    .blog-content li {
-                      margin-bottom: 10px;
-                      line-height: 1.8;
+                    /* ✅ QUILL INDENT LEVELS (Very Important) */
+                    .blog-content .ql-indent-1 {
+                      padding-left: 30px !important;
                     }
 
-                    .blog-content li::marker {
-                      font-weight: 600;
+                    .blog-content .ql-indent-2 {
+                      padding-left: 60px !important;
                     }
 
-                    .blog-content img {
-                      max-width: 100%;
-                      height: auto;
-                      border-radius: 8px;
-                      margin: 20px 0;
+                    .blog-content .ql-indent-3 {
+                      padding-left: 90px !important;
                     }
 
-                    .blog-content blockquote {
-                      border-left: 4px solid #6366f1;
-                      padding-left: 20px;
-                      margin: 20px 0;
-                      font-style: italic;
-                      color: #555;
-                      text-align: justify;
+                    .blog-content .ql-indent-4 {
+                      padding-left: 120px !important;
                     }
 
-                    .blog-content code {
-                      background-color: #f5f5f5;
-                      padding: 2px 6px;
-                      border-radius: 4px;
-                      font-family: monospace;
+                    .blog-content .ql-indent-5 {
+                      padding-left: 150px !important;
                     }
 
-                    .blog-content pre {
-                      background-color: #f5f5f5;
-                      padding: 15px;
-                      border-radius: 8px;
-                      overflow-x: auto;
-                      margin: 20px 0;
+                    .blog-content .ql-indent-6 {
+                      padding-left: 180px !important;
                     }
 
-                    .blog-content a {
-                      color: #6366f1;
-                      text-decoration: underline;
+                    .blog-content .ql-indent-7 {
+                      padding-left: 210px !important;
+                    }
+
+                    .blog-content .ql-indent-8 {
+                      padding-left: 240px !important;
                     }
                   `}</style>
                 </div>
