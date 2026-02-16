@@ -1,6 +1,6 @@
 import express from "express";
 import Blog from "../models/Blog.js";
-import upload from "../middlewares/uploadBlogImage.js";
+import upload, { isCloudinaryAvailable } from "../middlewares/uploadBlogImage.js";
 import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
@@ -17,6 +17,11 @@ router.post('/upload-base64', async (req, res) => {
   try {
     const { imageBase64 } = req.body;
     if (!imageBase64) return res.status(400).json({ message: 'No imageBase64 provided' });
+    // Ensure Cloudinary SDK is available and configured
+    if (!cloudinary || !cloudinary.uploader) {
+      console.error('upload-base64 attempted but Cloudinary uploader is not available');
+      return res.status(503).json({ message: 'Cloudinary is not configured on the server' });
+    }
 
     // Upload directly to Cloudinary using the SDK
     const result = await cloudinary.uploader.upload(imageBase64, { folder: 'blogs' });
@@ -72,17 +77,18 @@ router.get("/", async (req, res) => {
  * Implementation: call multer upload programmatically so we can catch middleware errors
  */
 router.post("/upload", (req, res) => {
+  // If Cloudinary uploader is not available, return a clear 503 instead of invoking multer-storage-cloudinary
+  if (!isCloudinaryAvailable) {
+    console.error('Upload attempted but Cloudinary storage is not available');
+    return res.status(503).json({ message: 'Image uploads are currently disabled on the server (Cloudinary not configured or disabled).' });
+  }
+
   // run multer middleware manually to capture any errors it emits
   upload.single("image")(req, res, async (err) => {
     if (err) {
-      console.error("Upload middleware error:", err);
-      // Temporary fallback: return a placeholder image URL so frontend can continue
-      // In production you should inspect Render logs and fix Cloudinary/middleware errors.
-      return res.status(200).json({
-        imageUrl: "https://via.placeholder.com/600x400.png?text=upload-failed",
-        warning: "Upload failed on server; using placeholder image. Check backend logs for details.",
-        error: err.message || String(err),
-      });
+      console.error("Upload middleware error:", err && err.stack ? err.stack : err);
+      // Return a clear error to the client
+      return res.status(500).json({ message: 'Upload middleware error on server', error: err.message || String(err) });
     }
 
     try {
@@ -92,7 +98,7 @@ router.post("/upload", (req, res) => {
 
       return res.status(200).json({ imageUrl: req.file.path });
     } catch (err2) {
-      console.error("Upload handler error:", err2);
+      console.error("Upload handler error:", err2 && err2.stack ? err2.stack : err2);
       return res.status(500).json({ message: "Upload failed", error: err2.message });
     }
   });

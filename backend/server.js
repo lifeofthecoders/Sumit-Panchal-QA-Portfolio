@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import blogsRouter from "./src/routes/blogs.js";
+import cloudinary from "./src/config/cloudinary.js";
 
 dotenv.config();
 
@@ -46,6 +47,26 @@ app.use((req, res, next) => {
 /* Health */
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, message: "Backend is running" });
+});
+
+// Cloudinary health check: verifies env vars and attempts a lightweight API call
+app.get("/api/cloudinary-health", async (req, res) => {
+  // Quick config check
+  const configured = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+
+  if (!configured) {
+    return res.status(503).json({ ok: false, configured: false, message: "Cloudinary env vars are missing" });
+  }
+
+  try {
+    // Attempt a lightweight authenticated API call to validate credentials
+    // Listing a single resource is sufficient to verify auth; it will fail fast if creds are invalid.
+    const result = await cloudinary.api.resources({ max_results: 1 });
+    return res.status(200).json({ ok: true, configured: true, cloudinaryInfo: { total_count: result && result.total_count }, message: "Cloudinary reachable" });
+  } catch (err) {
+    console.error("Cloudinary health check failed:", err && err.message ? err.message : err);
+    return res.status(503).json({ ok: false, configured: true, message: "Cloudinary auth or API error", error: err && err.message ? err.message : String(err) });
+  }
 });
 
 /* Routes */
