@@ -1,12 +1,34 @@
 import express from "express";
 import Blog from "../models/Blog.js";
 import upload from "../middlewares/uploadBlogImage.js";
+import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
 
 // Simple test endpoint to verify POST works on deployed server
 router.post('/upload-test', (req, res) => {
   return res.status(200).json({ ok: true, message: 'upload-test endpoint reached' });
+});
+
+// Temporary alternative upload endpoint that accepts a base64 image payload in JSON.
+// This bypasses multer/multipart handling and can help diagnose whether multipart uploads
+// are causing the crash on the Render instance. Expects { imageBase64: 'data:image/png;base64,...' }
+router.post('/upload-base64', async (req, res) => {
+  try {
+    const { imageBase64 } = req.body;
+    if (!imageBase64) return res.status(400).json({ message: 'No imageBase64 provided' });
+
+    // Upload directly to Cloudinary using the SDK
+    const result = await cloudinary.uploader.upload(imageBase64, { folder: 'blogs' });
+    if (!result || !result.secure_url) {
+      return res.status(500).json({ message: 'Cloudinary did not return a secure_url', raw: result });
+    }
+
+    return res.status(200).json({ imageUrl: result.secure_url });
+  } catch (err) {
+    console.error('upload-base64 error:', err);
+    return res.status(500).json({ message: 'Upload failed', error: err.message || String(err) });
+  }
 });
 
 /**
