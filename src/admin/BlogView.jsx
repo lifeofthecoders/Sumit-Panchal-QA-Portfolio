@@ -265,7 +265,7 @@ export default function BlogView() {
               </span>
 
               <span style={{ fontSize: "14px", color: "#666" }}>
-                By <strong>{blog.author}</strong> • {blog.profession}
+                By <strong style={{ color: "#4caf50" }}>{blog.author}</strong> • {blog.profession}
               </span>
             </div>
 

@@ -343,7 +343,7 @@ export default function BlogDetail() {
                     </span>
 
                     <span style={{ fontSize: "14px", color: "#000" }}>
-                      By <strong>{blog.author}</strong> • {blog.profession}
+                      By <strong style={{ color: "#4caf50" }}>{blog.author}</strong> • {blog.profession}
                     </span>
                   </div>
 
