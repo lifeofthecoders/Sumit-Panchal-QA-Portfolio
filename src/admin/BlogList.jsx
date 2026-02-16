@@ -367,7 +367,7 @@ export default function BlogList() {
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
                               padding: "8px 10px",
-                              backgroundColor: viewHoverId === blogId ? "#1565C0" : "#2196F3",
+                              // backgroundColor: viewHoverId === blogId ? "#1565C0" : "#2196F3",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",
@@ -404,8 +404,7 @@ export default function BlogList() {
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
                               padding: "8px 10px",
-                              backgroundColor:
-                                editHoverId === blogId ? "#E65100" : "#FF9800",
+                              // backgroundColor: editHoverId === blogId ? "#E65100" : "#FF9800",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",
@@ -439,8 +438,7 @@ export default function BlogList() {
                             onMouseLeave={() => setDeleteHoverId(null)}
                             style={{
                               padding: "8px 10px",
-                              backgroundColor:
-                                deleteHoverId === blogId ? "#B71C1C" : "#f44336",
+                              // backgroundColor: deleteHoverId === blogId ? "#B71C1C" : "#f44336",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",

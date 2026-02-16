@@ -58,7 +58,6 @@ export default function BlogDetail() {
     const logo = document.querySelector(".logo-slide");
     let lastScrollY = window.scrollY;
     let animationFrameId = null;
-    let pendingScroll = false;
 
     const restartLogoAnimation = () => {
       if (!logo) return;
@@ -70,16 +69,14 @@ export default function BlogDetail() {
     restartLogoAnimation();
 
     const handleScrollOptimized = () => {
-      pendingScroll = true;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
+
       animationFrameId = requestAnimationFrame(() => {
         const currentScroll = window.scrollY;
         if (Math.abs(currentScroll - lastScrollY) > 15) {
           restartLogoAnimation();
           lastScrollY = currentScroll;
         }
-        pendingScroll = false;
       });
     };
 
@@ -147,6 +144,90 @@ export default function BlogDetail() {
     loadBlog();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  /* ======================================================
+     ✅ NEW FEATURE: AUTO-GENERATE IDs FOR HEADINGS
+     + FIXED TOC SCROLLING FOR HASH ROUTER
+     ====================================================== */
+  useEffect(() => {
+    if (!blog) return;
+
+    let cleanupTOC = null;
+
+    const timer = setTimeout(() => {
+      const content = document.querySelector(".blog-content");
+      if (!content) return;
+
+      // Find headings inside blog content
+      const headings = content.querySelectorAll("h1, h2, h3");
+
+      headings.forEach((heading) => {
+        // If already has id, skip
+        if (heading.id) return;
+
+        // Generate slug from heading text
+        const slug = heading.innerText
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, "") // remove special chars
+          .replace(/\s+/g, "-"); // spaces -> hyphen
+
+        heading.id = slug;
+      });
+
+      /* ======================================================
+         ✅ FIX: Scroll using ?section= (NOT #hash)
+         ====================================================== */
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get("section");
+
+      if (section) {
+        const targetEl = document.getElementById(section);
+
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      /* ======================================================
+         ✅ FIX: Prevent page reload / new tab when clicking TOC
+         ====================================================== */
+      const handleTOCClick = (e) => {
+        const link = e.target.closest("a");
+        if (!link) return;
+
+        const href = link.getAttribute("href");
+        if (!href) return;
+
+        // Only handle ?section= links
+        if (href.startsWith("?section=")) {
+          e.preventDefault();
+
+          const sectionId = href.replace("?section=", "").trim();
+
+          // Update URL without reload
+          window.history.replaceState(null, "", `?section=${sectionId}`);
+
+          // Scroll
+          const targetEl = document.getElementById(sectionId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      };
+
+      content.addEventListener("click", handleTOCClick);
+
+      cleanupTOC = () => {
+        content.removeEventListener("click", handleTOCClick);
+      };
+    }, 250);
+
+    return () => {
+      clearTimeout(timer);
+      if (cleanupTOC) cleanupTOC();
+    };
+  }, [blog]);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -343,7 +424,11 @@ export default function BlogDetail() {
                     </span>
 
                     <span style={{ fontSize: "14px", color: "#000" }}>
-                      By <strong>{blog.author}</strong> • {blog.profession}
+                      By{" "}
+                      <strong style={{ color: "#4caf50" }}>
+                        {blog.author}
+                      </strong>{" "}
+                      • {blog.profession}
                     </span>
                   </div>
 
@@ -382,6 +467,7 @@ export default function BlogDetail() {
                       margin-top: 30px;
                       margin-bottom: 15px;
                       font-weight: 700;
+                      scroll-margin-top: 90px;
                     }
                     .blog-content h1 { font-size: 36px; }
                     .blog-content h2 { font-size: 30px; }
@@ -392,50 +478,66 @@ export default function BlogDetail() {
                       text-align: justify;
                     }
 
-                    .blog-content ul, .blog-content ol {
-                      margin-left: 30px;
-                      margin-bottom: 16px;
-                      text-align: justify;
+                    /* =========================================================
+                    ✅ QUILL LIST ALIGNMENT FIX (100% SAME AS ADMIN EDITOR)
+                    Tight spacing + Proper Indent levels
+                    ========================================================= */
+
+                    /* Base list style */
+                    .blog-content ul,
+                    .blog-content ol {
+                      margin: 10px 0 18px 0;
+                      padding-left: 32px;
+                      list-style-position: outside;
                     }
 
+                    /* Base list item */
                     .blog-content li {
+                      margin: 6px 0;
+                      line-height: 1.75;
+                    }
+
+                    /* Nested list spacing */
+                    .blog-content ul ul,
+                    .blog-content ol ol,
+                    .blog-content ul ol,
+                    .blog-content ol ul {
+                      margin-top: 8px;
                       margin-bottom: 8px;
+                      padding-left: 26px;
                     }
 
-                    .blog-content img {
-                      max-width: 100%;
-                      height: auto;
-                      border-radius: 8px;
-                      margin: 20px 0;
+                    /* ✅ QUILL INDENT LEVELS (Very Important) */
+                    .blog-content .ql-indent-1 {
+                      padding-left: 30px !important;
                     }
 
-                    .blog-content blockquote {
-                      border-left: 4px solid #6366f1;
-                      padding-left: 20px;
-                      margin: 20px 0;
-                      font-style: italic;
-                      color: #555;
-                      text-align: justify;
+                    .blog-content .ql-indent-2 {
+                      padding-left: 60px !important;
                     }
 
-                    .blog-content code {
-                      background-color: #f5f5f5;
-                      padding: 2px 6px;
-                      border-radius: 4px;
-                      font-family: monospace;
+                    .blog-content .ql-indent-3 {
+                      padding-left: 90px !important;
                     }
 
-                    .blog-content pre {
-                      background-color: #f5f5f5;
-                      padding: 15px;
-                      border-radius: 8px;
-                      overflow-x: auto;
-                      margin: 20px 0;
+                    .blog-content .ql-indent-4 {
+                      padding-left: 120px !important;
                     }
 
-                    .blog-content a {
-                      color: #6366f1;
-                      text-decoration: underline;
+                    .blog-content .ql-indent-5 {
+                      padding-left: 150px !important;
+                    }
+
+                    .blog-content .ql-indent-6 {
+                      padding-left: 180px !important;
+                    }
+
+                    .blog-content .ql-indent-7 {
+                      padding-left: 210px !important;
+                    }
+
+                    .blog-content .ql-indent-8 {
+                      padding-left: 240px !important;
                     }
                   `}</style>
                 </div>
