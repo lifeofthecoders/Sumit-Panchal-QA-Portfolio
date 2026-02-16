@@ -72,7 +72,7 @@ export default function BlogView() {
     const handleScrollOptimized = () => {
       pendingScroll = true;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
+
       animationFrameId = requestAnimationFrame(() => {
         const currentScroll = window.scrollY;
         if (Math.abs(currentScroll - lastScrollY) > 15) {
@@ -138,6 +138,83 @@ export default function BlogView() {
 
     loadBlog();
   }, [id]);
+
+  /* ======================================================
+     ✅ NEW FEATURE: AUTO-GENERATE IDs FOR HEADINGS
+     + FIXED TOC SCROLLING FOR HASH ROUTER
+     (Same as BlogDetail screen)
+     ====================================================== */
+  useEffect(() => {
+    if (!blog) return;
+
+    const timer = setTimeout(() => {
+      const content = document.querySelector(".blog-content");
+      if (!content) return;
+
+      // Find headings inside blog content
+      const headings = content.querySelectorAll("h1, h2, h3");
+
+      headings.forEach((heading) => {
+        // If already has id, skip
+        if (heading.id) return;
+
+        // Generate slug from heading text
+        const slug = heading.innerText
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, "") // remove special chars
+          .replace(/\s+/g, "-"); // spaces -> hyphen
+
+        heading.id = slug;
+      });
+
+      // ✅ Scroll using ?section=
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get("section");
+
+      if (section) {
+        const targetEl = document.getElementById(section);
+
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      // ✅ Intercept TOC clicks (?section=...) to prevent reload/new tab
+      const handleTOCClick = (e) => {
+        const link = e.target.closest("a");
+        if (!link) return;
+
+        const href = link.getAttribute("href");
+        if (!href) return;
+
+        // Only handle ?section= links
+        if (href.startsWith("?section=")) {
+          e.preventDefault();
+
+          const sectionId = href.replace("?section=", "").trim();
+
+          // Update URL without reload
+          window.history.replaceState(null, "", `?section=${sectionId}`);
+
+          // Scroll
+          const targetEl = document.getElementById(sectionId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+      };
+
+      content.addEventListener("click", handleTOCClick);
+
+      // Cleanup for this event
+      return () => {
+        content.removeEventListener("click", handleTOCClick);
+      };
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [blog]);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -265,7 +342,9 @@ export default function BlogView() {
               </span>
 
               <span style={{ fontSize: "14px", color: "#666" }}>
-                By <strong style={{ color: "#4caf50" }}>{blog.author}</strong> • {blog.profession}
+                By{" "}
+                <strong style={{ color: "#4caf50" }}>{blog.author}</strong> •{" "}
+                {blog.profession}
               </span>
             </div>
 
@@ -298,6 +377,7 @@ export default function BlogView() {
                 margin-top: 30px;
                 margin-bottom: 15px;
                 font-weight: 700;
+                scroll-margin-top: 90px;
               }
               .blog-content h1 { font-size: 36px; }
               .blog-content h2 { font-size: 30px; }
