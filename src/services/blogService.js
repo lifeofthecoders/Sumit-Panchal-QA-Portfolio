@@ -61,7 +61,6 @@ export const deleteBlog = async (id) => {
   return true;
 };
 
-
 export const getBlogsPaginated = async (page = 1, limit = 10) => {
   const res = await fetch(`${API_BASE_URL}/api/blogs?page=${page}&limit=${limit}`);
 
@@ -72,3 +71,23 @@ export const getBlogsPaginated = async (page = 1, limit = 10) => {
   return await res.json();
 };
 
+/**
+ * ✅ Upload Blog Image (Computer Upload → Cloudinary)
+ */
+export const uploadBlogImage = async (file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const res = await fetch(`${API_BASE_URL}/api/blogs/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Image upload failed");
+  }
+
+  return data.imageUrl;
+};

@@ -382,10 +382,13 @@ export default function BlogDetail() {
                     <b>👁️📚 View Blog</b>
                   </h2>
 
-                  {/* Blog Image */}
+                  {/* ✅ Blog Image (Cloudinary Safe + Never Break) */}
                   <img
-                    src={blog.image}
+                    src={blog.image || "/image/default-blog.jpg"}
                     alt={blog.title}
+                    onError={(e) => {
+                      e.currentTarget.src = "/image/default-blog.jpg";
+                    }}
                     style={{
                       width: "100%",
                       height: "100%",

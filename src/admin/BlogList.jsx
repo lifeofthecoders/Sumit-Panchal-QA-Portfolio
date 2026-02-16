@@ -326,8 +326,11 @@ export default function BlogList() {
 
                       <td style={{ padding: "15px" }}>
                         <img
-                          src={blog.image}
+                          src={blog.image || "/image/default-blog.jpg"}
                           alt={blog.title}
+                          onError={(e) => {
+                            e.currentTarget.src = "/image/default-blog.jpg";
+                          }}
                           style={{
                             width: "60px",
                             height: "60px",
@@ -367,7 +370,6 @@ export default function BlogList() {
                             onMouseLeave={() => setViewHoverId(null)}
                             style={{
                               padding: "8px 10px",
-                              // backgroundColor: viewHoverId === blogId ? "#1565C0" : "#2196F3",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",
@@ -380,12 +382,15 @@ export default function BlogList() {
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              transform: viewHoverId === blogId ? "scale(1.1)" : "scale(1)",
+                              transform:
+                                viewHoverId === blogId
+                                  ? "scale(1.1)"
+                                  : "scale(1)",
                             }}
                             title="View"
                           >
                             <img
-                              src={`${import.meta.env.BASE_URL}image/View-Icon.png`} 
+                              src={`${import.meta.env.BASE_URL}image/View-Icon.png`}
                               alt="View"
                               style={{
                                 width: "20px",
@@ -395,7 +400,6 @@ export default function BlogList() {
                             />
                           </button>
 
-
                           <button
                             onClick={() =>
                               navigate(`/admin/blogs/edit/${blogId}`)
@@ -404,7 +408,6 @@ export default function BlogList() {
                             onMouseLeave={() => setEditHoverId(null)}
                             style={{
                               padding: "8px 10px",
-                              // backgroundColor: editHoverId === blogId ? "#E65100" : "#FF9800",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",
@@ -417,7 +420,10 @@ export default function BlogList() {
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              transform: editHoverId === blogId ? "scale(1.1)" : "scale(1)",
+                              transform:
+                                editHoverId === blogId
+                                  ? "scale(1.1)"
+                                  : "scale(1)",
                             }}
                             title="Edit"
                           >
@@ -438,7 +444,6 @@ export default function BlogList() {
                             onMouseLeave={() => setDeleteHoverId(null)}
                             style={{
                               padding: "8px 10px",
-                              // backgroundColor: deleteHoverId === blogId ? "#B71C1C" : "#f44336",
                               color: "white",
                               border: "none",
                               borderRadius: "6px",
@@ -451,7 +456,10 @@ export default function BlogList() {
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              transform: deleteHoverId === blogId ? "scale(1.1)" : "scale(1)",
+                              transform:
+                                deleteHoverId === blogId
+                                  ? "scale(1.1)"
+                                  : "scale(1)",
                             }}
                             title="Delete"
                           >

@@ -39,8 +39,11 @@ export default function BlogCard({ blog }) {
       {/* Blog Image + Author Info Overlay */}
       <div style={{ position: "relative", height: "280px" }}>
         <img
-          src={blog.image}
+          src={blog.image || "/image/default-blog.jpg"}
           alt={blog.title}
+          onError={(e) => {
+            e.currentTarget.src = "/image/default-blog.jpg";
+          }}
           style={{
             width: "100%",
             height: "100%",

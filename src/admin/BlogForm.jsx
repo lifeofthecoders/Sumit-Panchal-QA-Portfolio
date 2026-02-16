@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getBlogById, saveBlog } from "../services/blogService";
+import { getBlogById, saveBlog, uploadBlogImage } from "../services/blogService";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import AdminBlogHeader from "./AdminBlogHeader";
@@ -73,7 +73,7 @@ export default function BlogForm() {
     const handleScrollOptimized = () => {
       pendingScroll = true;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
+
       animationFrameId = requestAnimationFrame(() => {
         const currentScroll = window.scrollY;
         if (Math.abs(currentScroll - lastScrollY) > 15) {
@@ -114,6 +114,8 @@ export default function BlogForm() {
 
   const [formData, setFormData] = useState({
     image: "",
+    imageFile: null,
+    imagePreview: "",
     type: "",
     author: "",
     profession: "",
@@ -129,6 +131,9 @@ export default function BlogForm() {
   /* ✅ NEW Back button hover */
   const [backHover, setBackHover] = useState(false);
 
+  // ✅ NEW: Loader state (for instant action)
+  const [isPublishing, setIsPublishing] = useState(false);
+
   useEffect(() => {
     const loadBlog = async () => {
       if (id) {
@@ -136,7 +141,12 @@ export default function BlogForm() {
         if (blog) {
           // Map Mongo _id to id if needed
           const normalized = { ...blog, id: blog.id || blog._id };
-          setFormData(normalized);
+
+          setFormData({
+            ...normalized,
+            imageFile: null,
+            imagePreview: "",
+          });
         }
       }
     };
@@ -162,16 +172,38 @@ export default function BlogForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const plainText = formData.description.replace(/<[^>]*>/g, "");
-    const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+    // ✅ instant UI feedback
+    setIsPublishing(true);
 
-    if (wordCount > 10000) {
-      alert("Description exceeds 10,000 words limit!");
-      return;
+    try {
+      const plainText = formData.description.replace(/<[^>]*>/g, "");
+      const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+
+      if (wordCount > 10000) {
+        alert("Description exceeds 10,000 words limit!");
+        setIsPublishing(false);
+        return;
+      }
+
+      let finalImageUrl = formData.image;
+
+      // ✅ Upload to Cloudinary if file exists
+      if (formData.imageFile) {
+        finalImageUrl = await uploadBlogImage(formData.imageFile);
+      }
+
+      await saveBlog({
+        ...formData,
+        image: finalImageUrl,
+        id: id || undefined,
+      });
+
+      navigate("/admin/blogs");
+    } catch (error) {
+      console.error(error);
+      alert(error.message || "Something went wrong while publishing the blog.");
+      setIsPublishing(false);
     }
-
-    await saveBlog({ ...formData, id: id || undefined });
-    navigate("/admin/blogs");
   };
 
   const plainText = formData.description.replace(/<[^>]*>/g, "");
@@ -234,13 +266,15 @@ export default function BlogForm() {
           onClick={() => navigate("/admin/blogs")}
           onMouseEnter={() => setBackHover(true)}
           onMouseLeave={() => setBackHover(false)}
+          disabled={isPublishing}
           style={{
             padding: "16px 24px",
             backgroundColor: backHover ? "#21C87A" : "#4CAF50",
+            opacity: isPublishing ? 0.7 : 1,
             color: "white",
             border: "none",
             borderRadius: "6px",
-            cursor: "pointer",
+            cursor: isPublishing ? "not-allowed" : "pointer",
             fontSize: "16px",
             fontWeight: "600",
             transition: "all 0.3s ease",
@@ -256,29 +290,46 @@ export default function BlogForm() {
         </h2>
 
         <form onSubmit={handleSubmit}>
-          {/* Blog Image URL */}
+          {/* ✅ Blog Image Upload */}
           <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
-              <b>Blog Image URL</b> <span style={{ color: "red" }}>*</span>
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                fontWeight: "600",
+              }}
+            >
+              <b>Blog Image</b> <span style={{ color: "red" }}>*</span>
             </label>
+
             <input
-              type="url"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="https://example.com/image.jpg"
-              required
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                setFormData((prev) => ({
+                  ...prev,
+                  imageFile: file,
+                  imagePreview: URL.createObjectURL(file),
+                }));
+              }}
+              disabled={isPublishing}
               style={{
                 width: "100%",
                 padding: "12px",
                 fontSize: "14px",
                 border: "1px solid #ddd",
                 borderRadius: "6px",
+                backgroundColor: "white",
               }}
             />
-            {formData.image && (
+
+            {/* Preview */}
+            {(formData.imagePreview || formData.image) && (
               <img
-                src={formData.image}
+                src={formData.imagePreview || formData.image}
                 alt="Preview"
                 style={{
                   marginTop: "10px",
@@ -299,6 +350,7 @@ export default function BlogForm() {
               value={formData.type}
               onChange={handleChange}
               required
+              disabled={isPublishing}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -335,6 +387,7 @@ export default function BlogForm() {
               onChange={handleChange}
               placeholder="Author Name"
               required
+              disabled={isPublishing}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -357,6 +410,7 @@ export default function BlogForm() {
               onChange={handleChange}
               placeholder="Author's Profession"
               required
+              disabled={isPublishing}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -378,6 +432,7 @@ export default function BlogForm() {
               value={formData.date}
               onChange={handleChange}
               required
+              disabled={isPublishing}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -400,6 +455,7 @@ export default function BlogForm() {
               onChange={handleChange}
               placeholder="Enter Blog Title"
               required
+              disabled={isPublishing}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -439,6 +495,13 @@ export default function BlogForm() {
             >
               Word Count: {wordCount} / 10,000
             </p>
+
+            {/* ✅ NEW: Publishing status text */}
+            {isPublishing && (
+              <p style={{ fontSize: "13px", color: "#333", marginTop: "10px" }}>
+                ⏳ Publishing... Please wait (Uploading image + saving blog)
+              </p>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -447,19 +510,27 @@ export default function BlogForm() {
               type="submit"
               onMouseEnter={() => setPublishHover(true)}
               onMouseLeave={() => setPublishHover(false)}
+              disabled={isPublishing}
               style={{
                 padding: "16px 30px",
                 fontSize: "16px",
                 backgroundColor: publishHover ? "#21C87A" : "#4CAF50",
+                opacity: isPublishing ? 0.7 : 1,
                 color: "white",
                 border: "none",
                 borderRadius: "6px",
-                cursor: "pointer",
+                cursor: isPublishing ? "not-allowed" : "pointer",
                 fontWeight: "600",
                 transition: "all 0.3s ease",
               }}
             >
-              {id ? "Update Blog" : "Publish Blog"}
+              {isPublishing
+                ? id
+                  ? "Updating..."
+                  : "Publishing..."
+                : id
+                ? "Update Blog"
+                : "Publish Blog"}
             </button>
 
             <button
@@ -467,14 +538,16 @@ export default function BlogForm() {
               onClick={() => navigate("/admin/blogs")}
               onMouseEnter={() => setCancelHover(true)}
               onMouseLeave={() => setCancelHover(false)}
+              disabled={isPublishing}
               style={{
                 padding: "16px 30px",
                 fontSize: "16px",
                 backgroundColor: cancelHover ? "#ff5c5c" : "#f44336",
+                opacity: isPublishing ? 0.7 : 1,
                 color: "white",
                 border: "none",
                 borderRadius: "6px",
-                cursor: "pointer",
+                cursor: isPublishing ? "not-allowed" : "pointer",
                 fontWeight: "600",
                 transition: "all 0.3s ease",
               }}
