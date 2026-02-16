@@ -487,8 +487,26 @@ export default function BlogDetail() {
                     .blog-content ul,
                     .blog-content ol {
                       margin: 10px 0 18px 0;
-                      padding-left: 32px;
+                      padding-left: 22px; /* ✅ reduced so bullet comes closer */
                       list-style-position: outside;
+                    }
+
+                    /* ✅ remove extra spacing inside list items */
+                    .blog-content li {
+                      margin: 6px 0;
+                      line-height: 1.75;
+                      padding-left: 0px !important;
+                    }
+
+                    /* ✅ This is the MAIN FIX: bullet + text spacing */
+                    .blog-content li::marker {
+                      font-size: 1em;
+                    }
+
+                    /* ✅ Quill sometimes wraps list item text inside <p> */
+                    .blog-content li p {
+                      margin: 0 !important;
+                      display: inline;
                     }
 
                     /* Base list item */
@@ -508,37 +526,15 @@ export default function BlogDetail() {
                     }
 
                     /* ✅ QUILL INDENT LEVELS (Very Important) */
-                    .blog-content .ql-indent-1 {
-                      padding-left: 30px !important;
-                    }
+                    .blog-content .ql-indent-1 { padding-left: 30px !important; }
+                    .blog-content .ql-indent-2 { padding-left: 60px !important; }
+                    .blog-content .ql-indent-3 { padding-left: 90px !important; }
+                    .blog-content .ql-indent-4 { padding-left: 120px !important; }
+                    .blog-content .ql-indent-5 { padding-left: 150px !important; }
+                    .blog-content .ql-indent-6 { padding-left: 180px !important; }
+                    .blog-content .ql-indent-7 { padding-left: 210px !important; }
+                    .blog-content .ql-indent-8 { padding-left: 240px !important; }
 
-                    .blog-content .ql-indent-2 {
-                      padding-left: 60px !important;
-                    }
-
-                    .blog-content .ql-indent-3 {
-                      padding-left: 90px !important;
-                    }
-
-                    .blog-content .ql-indent-4 {
-                      padding-left: 120px !important;
-                    }
-
-                    .blog-content .ql-indent-5 {
-                      padding-left: 150px !important;
-                    }
-
-                    .blog-content .ql-indent-6 {
-                      padding-left: 180px !important;
-                    }
-
-                    .blog-content .ql-indent-7 {
-                      padding-left: 210px !important;
-                    }
-
-                    .blog-content .ql-indent-8 {
-                      padding-left: 240px !important;
-                    }
                   `}</style>
                 </div>
               </section>
