@@ -1,5 +1,20 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+// Determine API base URL. Prefer build-time VITE_API_BASE_URL, fallback to runtime detection
+// so the GitHub Pages build can still call the deployed backend without rebaking env vars.
+const RENDER_BACKEND = "https://sumit-panchal-qa-portfolio.onrender.com";
+let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+try {
+  // If running from GitHub Pages (frontend deployed at lifeofthecoders.github.io),
+  // prefer the Render backend URL so uploads don't attempt to contact localhost.
+  if (typeof window !== "undefined" && window.location && window.location.hostname) {
+    const host = window.location.hostname;
+    if (host.includes("github.io") || host.includes("githubusercontent.com")) {
+      API_BASE_URL = RENDER_BACKEND;
+    }
+  }
+} catch (e) {
+  // ignore in non-browser environments
+}
 
 /**
  * GET all blogs (latest first)
