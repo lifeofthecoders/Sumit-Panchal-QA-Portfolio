@@ -1,6 +1,6 @@
 import express from "express";
 import Blog from "../models/Blog.js";
-import upload from "../middlewares/uploadBlogImage.js";
+import upload, { isCloudinaryAvailable } from "../middlewares/uploadBlogImage.js";
 
 const router = express.Router();
 
