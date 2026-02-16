@@ -1,7 +1,8 @@
 import multer from "multer";
-import pkg from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary.js";
 
+// ✅ This is the correct way to import CommonJS packages in ESM
+import pkg from "multer-storage-cloudinary";
 const { CloudinaryStorage } = pkg;
 
 const storage = new CloudinaryStorage({
