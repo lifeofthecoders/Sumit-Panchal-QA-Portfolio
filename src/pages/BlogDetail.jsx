@@ -152,6 +152,8 @@ export default function BlogDetail() {
   useEffect(() => {
     if (!blog) return;
 
+    let cleanupTOC = null;
+
     const timer = setTimeout(() => {
       const content = document.querySelector(".blog-content");
       if (!content) return;
@@ -175,7 +177,6 @@ export default function BlogDetail() {
 
       /* ======================================================
          ✅ FIX: Scroll using ?section= (NOT #hash)
-         Because your project uses HashRouter (#) already
          ====================================================== */
       const params = new URLSearchParams(window.location.search);
       const section = params.get("section");
@@ -190,7 +191,6 @@ export default function BlogDetail() {
 
       /* ======================================================
          ✅ FIX: Prevent page reload / new tab when clicking TOC
-         Intercept links like ?section=what-is-ai-testing
          ====================================================== */
       const handleTOCClick = (e) => {
         const link = e.target.closest("a");
@@ -218,13 +218,15 @@ export default function BlogDetail() {
 
       content.addEventListener("click", handleTOCClick);
 
-      // Cleanup for this event
-      return () => {
+      cleanupTOC = () => {
         content.removeEventListener("click", handleTOCClick);
       };
     }, 250);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (cleanupTOC) cleanupTOC();
+    };
   }, [blog]);
 
   const formatDate = (dateString) => {
@@ -476,14 +478,31 @@ export default function BlogDetail() {
                       text-align: justify;
                     }
 
-                    .blog-content ul, .blog-content ol {
-                      margin-left: 30px;
-                      margin-bottom: 16px;
+                    /* ✅ FIXED: Tight Spacing List Alignment (Modern Blog Style) */
+                    .blog-content ul,
+                    .blog-content ol {
+                      margin: 0 0 16px 0;
+                      padding-left: 32px;
+                      list-style-position: outside;
                       text-align: justify;
                     }
 
+                    .blog-content ul ul,
+                    .blog-content ol ol,
+                    .blog-content ul ol,
+                    .blog-content ol ul {
+                      margin-top: 10px;
+                      margin-bottom: 10px;
+                      padding-left: 28px;
+                    }
+
                     .blog-content li {
-                      margin-bottom: 8px;
+                      margin-bottom: 10px;
+                      line-height: 1.8;
+                    }
+
+                    .blog-content li::marker {
+                      font-weight: 600;
                     }
 
                     .blog-content img {

@@ -1,11 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { getBlogById } from "../services/blogService";
 import { useEffect, useState } from "react";
-import AdminBlogHeader from "./AdminBlogHeader";
-import Loader from "../components/Loader";
+import "../assets/css/blogs.css";
 import usePageAnimations from "../hooks/usePageAnimations";
+import Loader from "../components/Loader";
 
-export default function BlogView() {
+export default function BlogDetail() {
   usePageAnimations();
 
   // ✅ ANIMATION HOOK - OPTIMIZED FOR SMOOTH SCROLL
@@ -58,7 +58,6 @@ export default function BlogView() {
     const logo = document.querySelector(".logo-slide");
     let lastScrollY = window.scrollY;
     let animationFrameId = null;
-    let pendingScroll = false;
 
     const restartLogoAnimation = () => {
       if (!logo) return;
@@ -70,7 +69,6 @@ export default function BlogView() {
     restartLogoAnimation();
 
     const handleScrollOptimized = () => {
-      pendingScroll = true;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
       animationFrameId = requestAnimationFrame(() => {
@@ -79,7 +77,6 @@ export default function BlogView() {
           restartLogoAnimation();
           lastScrollY = currentScroll;
         }
-        pendingScroll = false;
       });
     };
 
@@ -105,44 +102,52 @@ export default function BlogView() {
   const [blog, setBlog] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ Error State
-  const [errorMessage, setErrorMessage] = useState("");
+  // ✅ Error state
+  const [error, setError] = useState("");
 
-  /* ✅ Hover state added */
+  /* ✅ Hover state added for Back button */
   const [isHovering, setIsHovering] = useState(false);
 
-  useEffect(() => {
-    const loadBlog = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMessage("");
+  // Hover for error buttons
+  const [retryHover, setRetryHover] = useState(false);
+  const [backHover, setBackHover] = useState(false);
 
-        const foundBlog = await getBlogById(id);
+  const loadBlog = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
 
-        if (foundBlog) {
-          setBlog(foundBlog);
-        } else {
-          setErrorMessage("Blog not found. It may have been deleted.");
-          setBlog(null);
-        }
-      } catch (err) {
-        console.error("Failed to load blog:", err);
-        setErrorMessage(
-          "Failed to load blog. Please check your internet connection or try again."
-        );
-        setBlog(null);
-      } finally {
-        setIsLoading(false);
+      // Scroll to top when blog detail page loads
+      window.scrollTo(0, 0);
+
+      const foundBlog = await getBlogById(id);
+
+      if (foundBlog) {
+        setBlog(foundBlog);
+      } else {
+        // If blog not found
+        setError("⚠️ Blog not found. It may have been deleted.");
       }
-    };
+    } catch (err) {
+      console.error("Failed to load blog detail:", err);
 
+      // ✅ Friendly message
+      setError(
+        "❌ Unable to load this blog right now. Please check your internet connection or try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadBlog();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   /* ======================================================
      ✅ NEW FEATURE: AUTO-GENERATE IDs FOR HEADINGS
      + FIXED TOC SCROLLING FOR HASH ROUTER
-     (Same as BlogDetail screen)
      ====================================================== */
   useEffect(() => {
     if (!blog) return;
@@ -168,7 +173,10 @@ export default function BlogView() {
         heading.id = slug;
       });
 
-      // ✅ Scroll using ?section=
+      /* ======================================================
+         ✅ FIX: Scroll using ?section= (NOT #hash)
+         Because your project uses HashRouter (#) already
+         ====================================================== */
       const params = new URLSearchParams(window.location.search);
       const section = params.get("section");
 
@@ -180,7 +188,10 @@ export default function BlogView() {
         }
       }
 
-      // ✅ Intercept TOC clicks (?section=...) to prevent reload/new tab
+      /* ======================================================
+         ✅ FIX: Prevent page reload / new tab when clicking TOC
+         Intercept links like ?section=what-is-ai-testing
+         ====================================================== */
       const handleTOCClick = (e) => {
         const link = e.target.closest("a");
         if (!link) return;
@@ -223,205 +234,300 @@ export default function BlogView() {
 
   return (
     <>
-      <AdminBlogHeader />
-
       {isLoading && <Loader text="Loading blog..." />}
 
-      <div
-        style={{
-          minHeight: "calc(100vh - 160px)",
-          padding: "40px 40px",
-          maxWidth: "1200px",
-          margin: "0 auto",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: !blog ? "center" : "flex-start",
-        }}
-      >
-        {/* Back Button — Hover Enhanced */}
-        <button
-          onClick={() => navigate("/admin/blogs")}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-          style={{
-            padding: "16px 24px",
-            backgroundColor: isHovering ? "#21C87A" : "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "16px",
-            fontWeight: "600",
-            transition: "all 0.3s ease",
-            width: "fit-content",
-            marginBottom: "20px",
-          }}
-        >
-          ← Back to Blog List
-        </button>
+      {/* ✅ ERROR UI */}
+      {!isLoading && error && (
+        <section className="blogs-page">
+          <main className="blogs">
+            <section className="blogs-container">
+              <section className="blogs-card">
+                <div
+                  style={{
+                    padding: "40px 40px",
+                    maxWidth: "900px",
+                    margin: "0 auto",
+                    boxSizing: "border-box",
+                    width: "100%",
+                    minHeight: "70vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  <h2 style={{ fontSize: "22px", fontWeight: "800" }}>
+                    Something went wrong
+                  </h2>
 
-        {/* ✅ ERROR MESSAGE */}
-        {!isLoading && errorMessage && (
-          <div
-            style={{
-              padding: "18px",
-              borderRadius: "10px",
-              background: "#fff3f3",
-              border: "1px solid #f44336",
-              color: "#b71c1c",
-              fontWeight: "600",
-              marginTop: "10px",
-            }}
-          >
-            {errorMessage}
-            <div style={{ marginTop: "14px" }}>
-              <button
-                onClick={() => window.location.reload()}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  cursor: "pointer",
-                  background: "#f44336",
-                  color: "#fff",
-                  fontWeight: "700",
-                }}
-              >
-                🔄 Retry
-              </button>
-            </div>
-          </div>
-        )}
+                  <p
+                    style={{
+                      marginTop: "15px",
+                      fontSize: "16px",
+                      color: "#f44336",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {error}
+                  </p>
 
-        {/* ✅ Show blog only when loaded */}
-        {!isLoading && blog && (
-          <>
-            {/* Title */}
-            <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
-              <b>👁️📚 View Blog</b>
-            </h2>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "12px",
+                      marginTop: "30px",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <button
+                      onClick={loadBlog}
+                      onMouseEnter={() => setRetryHover(true)}
+                      onMouseLeave={() => setRetryHover(false)}
+                      style={{
+                        padding: "12px 22px",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontWeight: "700",
+                        background: retryHover ? "#21C87A" : "#4CAF50",
+                        color: "#fff",
+                        transition: "all 0.25s ease",
+                      }}
+                    >
+                      🔄 Try Again
+                    </button>
 
-            {/* Blog Image */}
-            <img
-              src={blog.image}
-              alt={blog.title}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: "16px",
-                marginBottom: "32px",
-              }}
-            />
+                    <button
+                      onClick={() => navigate("/blogs")}
+                      onMouseEnter={() => setBackHover(true)}
+                      onMouseLeave={() => setBackHover(false)}
+                      style={{
+                        padding: "12px 22px",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontWeight: "700",
+                        background: backHover ? "#1565C0" : "#2196F3",
+                        color: "#fff",
+                        transition: "all 0.25s ease",
+                      }}
+                    >
+                      ← Back to Blogs
+                    </button>
+                  </div>
+                </div>
+              </section>
+            </section>
+          </main>
+        </section>
+      )}
 
-            {/* Blog Meta */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "20px",
-                marginBottom: "20px",
-                flexWrap: "wrap",
-              }}
-            >
-              <span
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#6366f1",
-                  color: "white",
-                  borderRadius: "20px",
-                  fontSize: "13px",
-                  fontWeight: "600",
-                }}
-              >
-                {blog.type}
-              </span>
+      {/* ✅ BLOG UI */}
+      {!isLoading && blog && (
+        <section className="blogs-page">
+          <main className="blogs">
+            <section className="blogs-container">
+              <section className="blogs-card">
+                <div
+                  style={{
+                    padding: "40px 40px",
+                    maxWidth: "1200px",
+                    margin: "0 auto",
+                    boxSizing: "border-box",
+                    width: "100%",
+                  }}
+                >
+                  {/* Back Button */}
+                  <h3
+                    id="back-button"
+                    style={{ marginBottom: "20px", color: "#ffffff" }}
+                  >
+                    <button
+                      onClick={() => navigate("/blogs")}
+                      onMouseEnter={() => setIsHovering(true)}
+                      onMouseLeave={() => setIsHovering(false)}
+                      style={{
+                        fontFamily:
+                          "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+                        display: "inline-block",
+                        background: isHovering ? "#21C87A" : "#19A25E",
+                        color: "white",
+                        padding: "12px 24px",
+                        borderRadius: "5px",
+                        fontWeight: "bold",
+                        fontSize: "16px",
+                        marginLeft: "-10px",
+                        marginTop: "16px",
+                        marginBottom: "16px",
+                        border: "none",
+                        outline: "none",
+                        cursor: "pointer",
+                        transition: "all 0.3s ease",
+                      }}
+                    >
+                      ← Back to Blogs
+                    </button>
+                  </h3>
 
-              <span style={{ fontSize: "14px", color: "#666" }}>
-                {formatDate(blog.date)}
-              </span>
+                  {/* Title */}
+                  <h2
+                    style={{
+                      margin: "20px 20px 20px 0px",
+                      fontSize: "18.72px",
+                    }}
+                  >
+                    <b>👁️📚 View Blog</b>
+                  </h2>
 
-              <span style={{ fontSize: "14px", color: "#666" }}>
-                By{" "}
-                <strong style={{ color: "#4caf50" }}>{blog.author}</strong> •{" "}
-                {blog.profession}
-              </span>
-            </div>
+                  {/* Blog Image */}
+                  <img
+                    src={blog.image}
+                    alt={blog.title}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "16px",
+                      marginBottom: "32px",
+                    }}
+                  />
 
-            {/* Blog Title */}
-            <h1
-              style={{
-                fontSize: "48px",
-                fontWeight: "800",
-                marginBottom: "24px",
-                lineHeight: "1.2",
-              }}
-            >
-              {blog.title}
-            </h1>
+                  {/* Blog Meta */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                      marginBottom: "20px",
+                      fontWeight: "bolder",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <span
+                      style={{
+                        padding: "8px 16px",
+                        backgroundColor: "#6366f1",
+                        color: "white",
+                        borderRadius: "20px",
+                        fontSize: "13px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {blog.type}
+                    </span>
 
-            {/* Blog Content */}
-            <div
-              className="blog-content"
-              style={{
-                fontSize: "18px",
-                lineHeight: "1.8",
-                color: "#333",
-              }}
-              dangerouslySetInnerHTML={{ __html: blog.description }}
-            />
+                    <span style={{ fontSize: "14px", color: "#000" }}>
+                      {formatDate(blog.date)}
+                    </span>
 
-            {/* CSS */}
-            <style>{`
-              .blog-content h1, .blog-content h2, .blog-content h3 {
-                margin-top: 30px;
-                margin-bottom: 15px;
-                font-weight: 700;
-                scroll-margin-top: 90px;
-              }
-              .blog-content h1 { font-size: 36px; }
-              .blog-content h2 { font-size: 30px; }
-              .blog-content h3 { font-size: 24px; }
-              .blog-content p { margin-bottom: 16px; }
-              .blog-content ul, .blog-content ol {
-                margin-left: 30px;
-                margin-bottom: 16px;
-              }
-              .blog-content li { margin-bottom: 8px; }
-              .blog-content img {
-                max-width: 100%;
-                height: auto;
-                border-radius: 8px;
-                margin: 20px 0;
-              }
-              .blog-content blockquote {
-                border-left: 4px solid #6366f1;
-                padding-left: 20px;
-                margin: 20px 0;
-                font-style: italic;
-                color: #555;
-              }
-              .blog-content code {
-                background-color: #f5f5f5;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-family: monospace;
-              }
-              .blog-content pre {
-                background-color: #f5f5f5;
-                padding: 15px;
-                border-radius: 8px;
-                overflow-x: auto;
-                margin: 20px 0;
-              }
-              .blog-content a {
-                color: #6366f1;
-                text-decoration: underline;
-              }
-            `}</style>
-          </>
-        )}
-      </div>
+                    <span style={{ fontSize: "14px", color: "#000" }}>
+                      By{" "}
+                      <strong style={{ color: "#4caf50" }}>
+                        {blog.author}
+                      </strong>{" "}
+                      • {blog.profession}
+                    </span>
+                  </div>
+
+                  {/* Blog Title */}
+                  <h1
+                    style={{
+                      fontSize: "48px",
+                      fontWeight: "800",
+                      marginBottom: "24px",
+                      lineHeight: "1.2",
+                      color: "#000",
+                      overflowWrap: "break-word",
+                      wordBreak: "break-word",
+                      maxWidth: "100%",
+                      textAlign: "justify",
+                    }}
+                  >
+                    {blog.title}
+                  </h1>
+
+                  {/* Blog Content */}
+                  <div
+                    className="blog-content"
+                    style={{
+                      fontSize: "18px",
+                      lineHeight: "1.8",
+                      color: "#333",
+                      textAlign: "justify",
+                    }}
+                    dangerouslySetInnerHTML={{ __html: blog.description }}
+                  />
+
+                  {/* Content Styling */}
+                  <style>{`
+                    .blog-content h1, .blog-content h2, .blog-content h3 {
+                      margin-top: 30px;
+                      margin-bottom: 15px;
+                      font-weight: 700;
+                      scroll-margin-top: 90px;
+                    }
+                    .blog-content h1 { font-size: 36px; }
+                    .blog-content h2 { font-size: 30px; }
+                    .blog-content h3 { font-size: 24px; }
+
+                    .blog-content p {
+                      margin-bottom: 16px;
+                      text-align: justify;
+                    }
+
+                    .blog-content ul, .blog-content ol {
+                      margin-left: 30px;
+                      margin-bottom: 16px;
+                      text-align: justify;
+                    }
+
+                    .blog-content li {
+                      margin-bottom: 8px;
+                    }
+
+                    .blog-content img {
+                      max-width: 100%;
+                      height: auto;
+                      border-radius: 8px;
+                      margin: 20px 0;
+                    }
+
+                    .blog-content blockquote {
+                      border-left: 4px solid #6366f1;
+                      padding-left: 20px;
+                      margin: 20px 0;
+                      font-style: italic;
+                      color: #555;
+                      text-align: justify;
+                    }
+
+                    .blog-content code {
+                      background-color: #f5f5f5;
+                      padding: 2px 6px;
+                      border-radius: 4px;
+                      font-family: monospace;
+                    }
+
+                    .blog-content pre {
+                      background-color: #f5f5f5;
+                      padding: 15px;
+                      border-radius: 8px;
+                      overflow-x: auto;
+                      margin: 20px 0;
+                    }
+
+                    .blog-content a {
+                      color: #6366f1;
+                      text-decoration: underline;
+                    }
+                  `}</style>
+                </div>
+              </section>
+            </section>
+          </main>
+        </section>
+      )}
     </>
   );
 }
