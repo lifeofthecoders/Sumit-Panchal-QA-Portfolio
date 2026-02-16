@@ -42,22 +42,28 @@ router.get("/", async (req, res) => {
  * ✅ POST /api/blogs/upload
  * Upload image to Cloudinary
  * IMPORTANT: This MUST be above "/:id" route
+ * Implementation: call multer upload programmatically so we can catch middleware errors
  */
-router.post("/upload", upload.single("image"), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No image uploaded" });
+router.post("/upload", (req, res) => {
+  // run multer middleware manually to capture any errors it emits
+  upload.single("image")(req, res, async (err) => {
+    if (err) {
+      console.error("Upload middleware error:", err);
+      // If the middleware failed (e.g., Cloudinary or multer error), respond with JSON
+      return res.status(500).json({ message: "Upload failed", error: err.message || String(err) });
     }
 
-    return res.status(200).json({
-      imageUrl: req.file.path,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      message: "Upload failed",
-      error: err.message,
-    });
-  }
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image uploaded" });
+      }
+
+      return res.status(200).json({ imageUrl: req.file.path });
+    } catch (err2) {
+      console.error("Upload handler error:", err2);
+      return res.status(500).json({ message: "Upload failed", error: err2.message });
+    }
+  });
 });
 
 /**
