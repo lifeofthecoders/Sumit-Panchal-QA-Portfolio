@@ -303,7 +303,7 @@ export default function BlogDetail() {
                     </button>
 
                     <button
-                      onClick={() => navigate("/blogs")}
+                      onClick={() => navigate("/admin/blogs")}
                       onMouseEnter={() => setBackHover(true)}
                       onMouseLeave={() => setBackHover(false)}
                       style={{
@@ -348,7 +348,7 @@ export default function BlogDetail() {
                     style={{ marginBottom: "20px", color: "#ffffff" }}
                   >
                     <button
-                      onClick={() => navigate("/blogs")}
+                      onClick={() => navigate("/admin/blogs")}
                       onMouseEnter={() => setIsHovering(true)}
                       onMouseLeave={() => setIsHovering(false)}
                       style={{
