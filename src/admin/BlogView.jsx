@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getBlogById } from "../services/blogService";
 import { useEffect, useState } from "react";
 import "../assets/css/blogs.css";
+import AdminBlogHeader from "./AdminBlogHeader";
 import usePageAnimations from "../hooks/usePageAnimations";
 import Loader from "../components/Loader";
 
@@ -234,6 +235,9 @@ export default function BlogDetail() {
 
   return (
     <>
+
+      <AdminBlogHeader />
+
       {isLoading && <Loader text="Loading blog..." />}
 
       {/* ✅ ERROR UI */}
