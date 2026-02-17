@@ -105,6 +105,16 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const payload = req.body;
+    // Validate image URL: do not allow saving local file paths, blob URLs or data URIs
+    if (payload && payload.image && typeof payload.image === "string") {
+      const img = payload.image.trim();
+      if (
+        !img.startsWith("http://") &&
+        !img.startsWith("https://")
+      ) {
+        return res.status(400).json({ message: "Image must be an uploaded HTTP(S) URL. Please upload the image via /api/blogs/upload." });
+      }
+    }
 
     const blog = await Blog.create(payload);
     res.status(201).json(blog);
@@ -121,6 +131,17 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const payload = req.body;
+
+    // Validate image URL on update as well
+    if (payload && payload.image && typeof payload.image === "string") {
+      const img = payload.image.trim();
+      if (
+        !img.startsWith("http://") &&
+        !img.startsWith("https://")
+      ) {
+        return res.status(400).json({ message: "Image must be an uploaded HTTP(S) URL. Please upload the image via /api/blogs/upload." });
+      }
+    }
 
     const updated = await Blog.findByIdAndUpdate(req.params.id, payload, {
       new: true,
