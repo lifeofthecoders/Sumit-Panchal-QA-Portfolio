@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 
 import blogsRouter from "./src/routes/blogs.js";
 import cloudinary from "./src/config/cloudinary.js";
+import path from "path";
+import fs from "fs";
 
 dotenv.config();
 
@@ -71,6 +73,15 @@ app.get("/api/cloudinary-health", async (req, res) => {
 
 /* Routes */
 app.use("/api/blogs", blogsRouter);
+
+// Serve temporary uploaded files (used as fallback when Cloudinary is unavailable)
+const uploadsDir = path.join(process.cwd(), "public", "uploads");
+try {
+  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+} catch (err) {
+  console.warn("Failed to ensure uploads directory exists:", err && err.message ? err.message : err);
+}
+app.use("/uploads", express.static(uploadsDir));
 
 /* Start */
 const start = async () => {

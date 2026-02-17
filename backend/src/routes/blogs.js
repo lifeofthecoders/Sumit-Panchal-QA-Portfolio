@@ -1,4 +1,6 @@
 import express from "express";
+import fs from "fs/promises";
+import path from "path";
 import Blog from "../models/Blog.js";
 import upload, { isCloudinaryAvailable } from "../middlewares/uploadBlogImage.js";
 
@@ -42,11 +44,6 @@ router.get("/", async (req, res) => {
  * IMPORTANT: This MUST be above "/:id" route
  */
 router.post("/upload", (req, res) => {
-  if (!isCloudinaryAvailable) {
-    // Cloudinary not configured on the server — return descriptive error
-    return res.status(503).json({ message: "Image uploads are disabled on the server (Cloudinary not configured)." });
-  }
-
   // run multer middleware manually so we can catch middleware errors
   upload.single("image")(req, res, async (err) => {
     if (err) {
@@ -59,7 +56,29 @@ router.post("/upload", (req, res) => {
         return res.status(400).json({ message: "No image uploaded" });
       }
 
-      return res.status(200).json({ imageUrl: req.file.path });
+      // If Cloudinary storage was used, multer will set `req.file.path` (the remote URL)
+      if (req.file.path) {
+        return res.status(200).json({ imageUrl: req.file.path });
+      }
+
+      // Fallback: when using memoryStorage the file buffer will be present
+      if (req.file.buffer) {
+        // Ensure uploads directory exists under backend/public/uploads
+        const uploadsDir = path.join(process.cwd(), "public", "uploads");
+        await fs.mkdir(uploadsDir, { recursive: true });
+
+        // Create a safe filename
+        const safeName = `${Date.now()}-${req.file.originalname.replace(/[^a-zA-Z0-9.\-]/g, "_")}`;
+        const outPath = path.join(uploadsDir, safeName);
+        await fs.writeFile(outPath, req.file.buffer);
+
+        // Build a public URL for the saved file
+        const publicUrl = `${req.protocol}://${req.get("host")}/uploads/${safeName}`;
+        return res.status(200).json({ imageUrl: publicUrl });
+      }
+
+      // Neither path nor buffer present — unexpected
+      return res.status(500).json({ message: "Upload failed: no file data available" });
     } catch (err2) {
       console.error("Upload handler error:", err2 && err2.stack ? err2.stack : err2);
       return res.status(500).json({ message: "Upload failed", error: err2.message });
