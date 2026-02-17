@@ -25,6 +25,7 @@ Please change the parent <Route path="${p}"> to <Route path="${p==="/"?"*":`${p}
 
                     .blog-content p {
                       margin-bottom: 16px;
+                      margin-left:  30px;
                       text-align: justify;
                     }
 
@@ -45,6 +46,7 @@ Please change the parent <Route path="${p}"> to <Route path="${p==="/"?"*":`${p}
                     .blog-content li {
                       margin: 6px 0;
                       line-height: 1.75;
+                      margin-left: 40px !important;
                       padding-left: 0px !important;
                     }
 
@@ -133,6 +135,7 @@ Please change the parent <Route path="${p}"> to <Route path="${p==="/"?"*":`${p}
 
                     .blog-content p {
                       margin-bottom: 16px;
+                      margin-left:  30px;
                       text-align: justify;
                     }
 
@@ -153,6 +156,7 @@ Please change the parent <Route path="${p}"> to <Route path="${p==="/"?"*":`${p}
                     .blog-content li {
                       margin: 6px 0;
                       line-height: 1.75;
+                      margin-left: 40px !important;
                       padding-left: 0px !important;
                     }
 
