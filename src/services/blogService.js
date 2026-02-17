@@ -119,5 +119,18 @@ export const uploadBlogImage = async (file) => {
   }
 
   // ✅ FIX: support both backend response keys
-  return data.imageUrl || data.url;
+  const url = data.imageUrl || data.url;
+  if (!url || (typeof url !== "string") || !(url.startsWith("http://") || url.startsWith("https://"))) {
+    throw new Error("Upload succeeded but returned an invalid image URL");
+  }
+
+  return url;
+};
+
+// Helper to validate image value before saving blog
+export const ensureImageIsRemote = (image) => {
+  if (!image) return true;
+  if (typeof image !== "string") return false;
+  const v = image.trim();
+  return v.startsWith("http://") || v.startsWith("https://");
 };

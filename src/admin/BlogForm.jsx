@@ -192,6 +192,12 @@ export default function BlogForm() {
         finalImageUrl = await uploadBlogImage(formData.imageFile);
       }
 
+      // Final validation: do not allow saving blob/file/local paths
+      const isRemote = finalImageUrl && typeof finalImageUrl === "string" && (finalImageUrl.startsWith("http://") || finalImageUrl.startsWith("https://"));
+      if (!isRemote) {
+        throw new Error("Please upload the image to the server before saving. Local or blob URLs are not allowed.");
+      }
+
       await saveBlog({
         ...formData,
         image: finalImageUrl,
