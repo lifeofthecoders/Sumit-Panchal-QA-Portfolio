@@ -480,6 +480,7 @@ export default function BlogDetail() {
 
                     .blog-content p {
                       margin-bottom: 16px;
+                      margin-left:  30px;
                       text-align: justify;
                     }
 
@@ -500,6 +501,7 @@ export default function BlogDetail() {
                     .blog-content li {
                       margin: 6px 0;
                       line-height: 1.75;
+                      margin-left: 40px !important;
                       padding-left: 0px !important;
                     }
 
