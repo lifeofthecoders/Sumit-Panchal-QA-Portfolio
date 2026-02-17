@@ -4,66 +4,71 @@ import cloudinary from "../config/cloudinary.js";
 let upload;
 export let isCloudinaryAvailable = false;
 
-// Default safe fallback
-upload = multer({ storage: multer.memoryStorage() });
-
 try {
-  // Load multer-storage-cloudinary using top-level await to avoid race condition.
-  // This ensures Cloudinary storage is ready BEFORE routes start using `upload`.
-  const pkg = await import("multer-storage-cloudinary");
+  import("multer-storage-cloudinary")
+    .then((pkg) => {
+      try {
+        let CloudinaryStorage = undefined;
 
-  try {
-    // Handle possible module shapes:
-    // - pkg.CloudinaryStorage (ESM named export)
-    // - pkg.default.CloudinaryStorage (CommonJS wrapped)
-    // - pkg.default (module.exports = CloudinaryStorage)
-    let CloudinaryStorage = undefined;
+        if (pkg && pkg.CloudinaryStorage) {
+          CloudinaryStorage = pkg.CloudinaryStorage;
+        } else if (pkg && pkg.default && pkg.default.CloudinaryStorage) {
+          CloudinaryStorage = pkg.default.CloudinaryStorage;
+        } else if (pkg && pkg.default && typeof pkg.default === "function") {
+          CloudinaryStorage = pkg.default;
+        }
 
-    if (pkg && pkg.CloudinaryStorage) {
-      CloudinaryStorage = pkg.CloudinaryStorage;
-    } else if (pkg && pkg.default && pkg.default.CloudinaryStorage) {
-      CloudinaryStorage = pkg.default.CloudinaryStorage;
-    } else if (pkg && pkg.default && typeof pkg.default === "function") {
-      CloudinaryStorage = pkg.default;
-    }
+        if (typeof CloudinaryStorage !== "function") {
+          throw new Error("CloudinaryStorage export not found or not a constructor");
+        }
 
-    if (typeof CloudinaryStorage !== "function") {
-      throw new Error("CloudinaryStorage export not found or not a constructor");
-    }
+        // ✅ IMPORTANT FIX:
+        // multer-storage-cloudinary expects a cloudinary object that has `.uploader`
+        // Make sure we pass the correct v2 instance
+        if (!cloudinary || !cloudinary.uploader) {
+          throw new Error("Cloudinary instance is invalid (missing uploader)");
+        }
 
-    // Check env variables (if missing, keep fallback)
-    const CLOUD_NAME = (process.env.CLOUDINARY_CLOUD_NAME || "").trim();
-    const API_KEY = (process.env.CLOUDINARY_API_KEY || "").trim();
-    const API_SECRET = (process.env.CLOUDINARY_API_SECRET || "").trim();
+        const storage = new CloudinaryStorage({
+          cloudinary: cloudinary,
+          params: async (req, file) => {
+            return {
+              folder: "blogs",
+              allowed_formats: ["jpg", "jpeg", "png", "webp"],
+              resource_type: "image",
+            };
+          },
+        });
 
-    if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
+        upload = multer({ storage });
+        isCloudinaryAvailable = true;
+        console.log("✅ Cloudinary storage initialized successfully");
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to initialize Cloudinary storage, falling back to memory storage",
+          error && error.message ? error.message : String(error)
+        );
+        upload = multer({ storage: multer.memoryStorage() });
+      }
+    })
+    .catch((error) => {
       console.warn(
-        "⚠️ Cloudinary credentials missing. Upload will use memory storage (no permanent URL)."
+        "⚠️ multer-storage-cloudinary not available, using memory storage",
+        error && error.message ? error.message : String(error)
       );
-    } else {
-      const storage = new CloudinaryStorage({
-        cloudinary,
-        params: {
-          folder: "blogs",
-          allowed_formats: ["jpg", "jpeg", "png", "webp"],
-        },
-      });
-
-      upload = multer({ storage });
-      isCloudinaryAvailable = true;
-      console.log("✅ Cloudinary storage initialized successfully");
-    }
-  } catch (error) {
-    console.warn(
-      "⚠️ Failed to initialize Cloudinary storage, falling back to memory storage",
-      error && error.message ? error.message : String(error)
-    );
-  }
+      upload = multer({ storage: multer.memoryStorage() });
+    });
 } catch (error) {
   console.warn(
-    "⚠️ multer-storage-cloudinary not available, using memory storage",
-    error && error.message ? error.message : String(error)
+    "⚠️ Error loading Cloudinary storage module, using memory storage",
+    error.message
   );
+  upload = multer({ storage: multer.memoryStorage() });
+}
+
+// Fallback in case async initialization hasn't completed
+if (!upload) {
+  upload = multer({ storage: multer.memoryStorage() });
 }
 
 export default upload;
