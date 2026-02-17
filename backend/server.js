@@ -3,8 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-import blogsRouter from "./src/routes/blogs.js";
-import cloudinary from "./src/config/cloudinary.js";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -13,6 +11,14 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, ".env") });
+
+/**
+ * ✅ IMPORTANT FIX:
+ * In ESM, static imports run before dotenv.config().
+ * So we must import cloudinary + routes AFTER dotenv loads.
+ */
+const { default: blogsRouter } = await import("./src/routes/blogs.js");
+const { default: cloudinary } = await import("./src/config/cloudinary.js");
 
 const app = express();
 
@@ -34,7 +40,10 @@ app.use((req, res, next) => {
 
   // If no origin (server-to-server or local tools), allow by default
   if (!origin) {
-    res.setHeader("Access-Control-Allow-Origin", allowedOrigins.includes("*") ? "*" : allowedOrigins[0]);
+    res.setHeader(
+      "Access-Control-Allow-Origin",
+      allowedOrigins.includes("*") ? "*" : allowedOrigins[0]
+    );
   } else if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
@@ -58,20 +67,39 @@ app.get("/api/health", (req, res) => {
 // Cloudinary health check: verifies env vars and attempts a lightweight API call
 app.get("/api/cloudinary-health", async (req, res) => {
   // Quick config check
-  const configured = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+  const configured = !!(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  );
 
   if (!configured) {
-    return res.status(503).json({ ok: false, configured: false, message: "Cloudinary env vars are missing" });
+    return res
+      .status(503)
+      .json({ ok: false, configured: false, message: "Cloudinary env vars are missing" });
   }
 
   try {
     // Attempt a lightweight authenticated API call to validate credentials
     // Listing a single resource is sufficient to verify auth; it will fail fast if creds are invalid.
     const result = await cloudinary.api.resources({ max_results: 1 });
-    return res.status(200).json({ ok: true, configured: true, cloudinaryInfo: { total_count: result && result.total_count }, message: "Cloudinary reachable" });
+    return res.status(200).json({
+      ok: true,
+      configured: true,
+      cloudinaryInfo: { total_count: result && result.total_count },
+      message: "Cloudinary reachable",
+    });
   } catch (err) {
-    console.error("Cloudinary health check failed:", err && err.message ? err.message : err);
-    return res.status(503).json({ ok: false, configured: true, message: "Cloudinary auth or API error", error: err && err.message ? err.message : String(err) });
+    console.error(
+      "Cloudinary health check failed:",
+      err && err.message ? err.message : err
+    );
+    return res.status(503).json({
+      ok: false,
+      configured: true,
+      message: "Cloudinary auth or API error",
+      error: err && err.message ? err.message : String(err),
+    });
   }
 });
 
@@ -83,7 +111,10 @@ const uploadsDir = path.join(process.cwd(), "public", "uploads");
 try {
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 } catch (err) {
-  console.warn("Failed to ensure uploads directory exists:", err && err.message ? err.message : err);
+  console.warn(
+    "Failed to ensure uploads directory exists:",
+    err && err.message ? err.message : err
+  );
 }
 app.use("/uploads", express.static(uploadsDir));
 
