@@ -27,7 +27,12 @@ function Layout() {
 
   // ✅ Warm up API (Render Free sleep fix)
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/blogs?page=1&limit=1`)
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    // If env is missing, do nothing
+    if (!baseUrl) return;
+
+    fetch(`${baseUrl}/api/health`)
       .then(() => {})
       .catch(() => {});
   }, []);
