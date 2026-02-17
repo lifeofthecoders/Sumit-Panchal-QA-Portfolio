@@ -24,49 +24,66 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
 
-/* Middleware */
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-
-// Support multiple origins (comma-separated) and provide a safe CORS policy
+// Support multiple origins (comma-separated)
 const rawCors = process.env.CORS_ORIGIN || "*";
-const allowedOrigins = rawCors.split(",").map((s) => s.trim()).filter(Boolean);
+const allowedOrigins = rawCors
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
 console.log("CORS configured allowed origins:", allowedOrigins);
 
+/* =========================
+   Timeout Middleware (Fix 408 during upload)
+   ========================= */
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  // If no origin (server-to-server or local tools), allow by default
-  if (!origin) {
-    res.setHeader(
-      "Access-Control-Allow-Origin",
-      allowedOrigins.includes("*") ? "*" : allowedOrigins[0]
-    );
-  } else if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  // allow credentials only when explicitly set
-  res.setHeader("Access-Control-Allow-Credentials", "false");
-
-  // Handle preflight quickly
-  if (req.method === "OPTIONS") return res.sendStatus(204);
-
+  // Cloudinary uploads + cold starts can be slow on Render
+  req.setTimeout(120000); // 2 minutes
+  res.setTimeout(120000);
   next();
 });
 
-/* Health */
+/* =========================
+   Body Middleware
+   ========================= */
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+/* =========================
+   CORS (Correct + stable)
+   ========================= */
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow server-to-server / curl / postman
+      if (!origin) return callback(null, true);
+
+      // Allow all (not recommended, but supported)
+      if (allowedOrigins.includes("*")) return callback(null, true);
+
+      // Allow specific origins
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// Handle preflight
+app.options("*", cors());
+
+/* =========================
+   Health
+   ========================= */
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, message: "Backend is running" });
 });
 
 // Cloudinary health check: verifies env vars and attempts a lightweight API call
 app.get("/api/cloudinary-health", async (req, res) => {
-  // Quick config check
   const configured = !!(
     process.env.CLOUDINARY_CLOUD_NAME &&
     process.env.CLOUDINARY_API_KEY &&
@@ -74,14 +91,14 @@ app.get("/api/cloudinary-health", async (req, res) => {
   );
 
   if (!configured) {
-    return res
-      .status(503)
-      .json({ ok: false, configured: false, message: "Cloudinary env vars are missing" });
+    return res.status(503).json({
+      ok: false,
+      configured: false,
+      message: "Cloudinary env vars are missing",
+    });
   }
 
   try {
-    // Attempt a lightweight authenticated API call to validate credentials
-    // Listing a single resource is sufficient to verify auth; it will fail fast if creds are invalid.
     const result = await cloudinary.api.resources({ max_results: 1 });
     return res.status(200).json({
       ok: true,
@@ -103,11 +120,16 @@ app.get("/api/cloudinary-health", async (req, res) => {
   }
 });
 
-/* Routes */
+/* =========================
+   Routes
+   ========================= */
 app.use("/api/blogs", blogsRouter);
 
-// Serve temporary uploaded files (used as fallback when Cloudinary is unavailable)
+/* =========================
+   Serve temporary uploaded files (fallback)
+   ========================= */
 const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
 try {
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 } catch (err) {
@@ -116,9 +138,12 @@ try {
     err && err.message ? err.message : err
   );
 }
+
 app.use("/uploads", express.static(uploadsDir));
 
-/* Start */
+/* =========================
+   Start
+   ========================= */
 const start = async () => {
   try {
     if (!MONGODB_URI) {
@@ -140,7 +165,9 @@ const start = async () => {
 
 start();
 
-// Global error handlers to log crashes (helpful on platforms like Render)
+/* =========================
+   Global error handlers
+   ========================= */
 process.on("uncaughtException", (err) => {
   console.error("UNCAUGHT EXCEPTION:", err && err.stack ? err.stack : err);
 });
