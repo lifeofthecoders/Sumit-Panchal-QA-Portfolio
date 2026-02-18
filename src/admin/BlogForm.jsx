@@ -207,7 +207,17 @@ export default function BlogForm() {
       navigate("/admin/blogs");
     } catch (error) {
       console.error(error);
-      alert(error.message || "Something went wrong while publishing the blog.");
+      
+      // Provide more detailed error messages
+      let errorMsg = error.message || "Something went wrong while publishing the blog.";
+      
+      if (errorMsg.includes("Cloudinary") || errorMsg.includes("unavailable")) {
+        errorMsg += "\n\n⚠️ Image upload service is not available. Please check:\n1. Your backend is running\n2. CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET are set in backend/.env\n3. Your internet connection";
+      } else if (errorMsg.includes("blob") || errorMsg.includes("Local")) {
+        errorMsg += "\n\n💡 Tip: Select an image file from your computer and wait for it to upload to the server before saving.";
+      }
+      
+      alert(errorMsg);
       setIsPublishing(false);
     }
   };
