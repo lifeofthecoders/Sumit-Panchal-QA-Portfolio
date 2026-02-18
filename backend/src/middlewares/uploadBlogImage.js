@@ -1,6 +1,6 @@
 import multer from "multer";
 import cloudinary from "../config/cloudinary.js";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
+import CloudinaryStorage from "multer-storage-cloudinary";
 
 let upload;
 export let isCloudinaryAvailable = false;
