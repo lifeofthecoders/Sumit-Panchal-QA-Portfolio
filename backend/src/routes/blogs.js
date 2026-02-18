@@ -1,8 +1,49 @@
 import express from "express";
 import Blog from "../models/Blog.js";
-import upload, { isCloudinaryAvailable } from "../middlewares/uploadBlogImage.js";
+import multer from "multer";
+import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
+
+/**
+ * ============================
+ * Multer (Memory Storage) - FASTEST + Render Friendly
+ * ============================
+ */
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+});
+
+/**
+ * ============================
+ * Helpers
+ * ============================
+ */
+const isCloudinaryConfigured = () => {
+  return !!(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  );
+};
+
+const uploadToCloudinaryStream = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "qa-portfolio/blogs",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+
+    stream.end(buffer);
+  });
+};
 
 /**
  * GET /api/blogs
@@ -38,106 +79,69 @@ router.get("/", async (req, res) => {
 
 /**
  * ✅ POST /api/blogs/upload
- * Upload image to Cloudinary for persistent, stable storage
+ * FAST + STABLE Cloudinary upload (NO disk storage)
  * IMPORTANT: This MUST be above "/:id" route
  */
-router.post("/upload", (req, res) => {
-  console.log("📤 [UPLOAD START] New upload request received");
-  const uploadStartTime = Date.now();
-  
-  // Add timeout protection for the entire upload
-  const uploadTimeout = setTimeout(() => {
-    console.error("❌ [UPLOAD TIMEOUT] Request timeout after 4 minutes");
-    if (!res.headersSent) {
-      res.status(408).json({ 
-        message: "Upload request timeout. Server took too long to process the upload. Try a smaller image or check Cloudinary credentials.",
-        error: "timeout"
-      });
-    }
-    req.socket.destroy();
-  }, 240000); // 4 minute timeout (leaves 1 min buffer before client timeout)
-  
-  // Clear timeout when response is sent
-  res.on("finish", () => {
-    clearTimeout(uploadTimeout);
-  });
-  
-  res.on("close", () => {
-    clearTimeout(uploadTimeout);
-  });
+router.post("/upload", upload.single("image"), async (req, res) => {
+  const startTime = Date.now();
 
-  // run multer middleware manually so we can catch middleware errors
-  upload.single("image")(req, res, async (err) => {
-    const elapsed = ((Date.now() - uploadStartTime) / 1000).toFixed(1);
-    
-    if (err) {
-      clearTimeout(uploadTimeout);
-      console.error(`❌ [UPLOAD ERROR] Multer middleware error (${elapsed}s):`, err && err.stack ? err.stack : err);
-      
-      if (err.code === "LIMIT_FILE_SIZE") {
-        return res.status(413).json({ 
-          message: "File too large. Max size is 50MB.",
-          error: err.message 
-        });
-      }
-      
-      if (err.code === "LIMIT_PART_COUNT") {
-        return res.status(400).json({ 
-          message: "Too many file parts.",
-          error: err.message 
-        });
-      }
-      
-      return res.status(500).json({ 
-        message: "Upload middleware error", 
-        error: err.message || String(err) 
+  try {
+    console.log("📤 [UPLOAD START] New upload request received");
+
+    if (!isCloudinaryConfigured()) {
+      return res.status(503).json({
+        message:
+          "Image upload service is not available. Please ensure Cloudinary is configured in the backend environment variables (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET).",
       });
     }
 
-    try {
-      console.log("✅ [UPLOAD RECEIVED] File received by server");
-      
-      if (!req.file) {
-        clearTimeout(uploadTimeout);
-        console.error("❌ [UPLOAD ERROR] No file uploaded");
-        return res.status(400).json({ message: "No image uploaded" });
-      }
-
-      console.log(`📤 [UPLOAD PROCESSING] Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
-
-      // ✅ CLOUDINARY (preferred): Returns req.file.path = stable HTTPS URL
-      if (isCloudinaryAvailable && req.file.path) {
-        clearTimeout(uploadTimeout);
-        const totalTime = ((Date.now() - uploadStartTime) / 1000).toFixed(1);
-        console.log(`✅ [UPLOAD SUCCESS] Image uploaded to Cloudinary in ${totalTime}s: ${req.file.path}`);
-        return res.status(200).json({ imageUrl: req.file.path });
-      }
-
-      clearTimeout(uploadTimeout);
-
-      // ❌ If Cloudinary failed or is not available, reject the upload
-      // Do NOT fall back to local storage which becomes inaccessible after restart
-      if (!isCloudinaryAvailable) {
-        console.error("❌ [UPLOAD ERROR] Cloudinary not available");
-        return res.status(503).json({
-          message:
-            "Image upload service is not available. Please ensure Cloudinary is configured in the backend environment variables (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET).",
-        });
-      }
-
-      // Edge case: Cloudinary claims to be available but didn't return a path
-      if (!req.file.path) {
-        console.error("❌ [UPLOAD ERROR] Cloudinary didn't return a path");
-        return res.status(500).json({
-          message: "Upload to Cloudinary succeeded but no URL was returned. This is an unexpected error.",
-        });
-      }
-    } catch (err2) {
-      clearTimeout(uploadTimeout);
-      console.error("❌ [UPLOAD ERROR] Upload handler exception:", err2 && err2.stack ? err2.stack : err2);
-      return res.status(500).json({ message: "Upload failed", error: err2.message });
+    if (!req.file) {
+      return res.status(400).json({ message: "No image uploaded" });
     }
-  });
+
+    if (!req.file.buffer) {
+      return res.status(400).json({ message: "Invalid image buffer" });
+    }
+
+    console.log(
+      `📤 [UPLOAD RECEIVED] ${req.file.originalname} (${req.file.size} bytes, ${req.file.mimetype})`
+    );
+
+    // Upload directly to Cloudinary (fast)
+    const result = await uploadToCloudinaryStream(req.file.buffer);
+
+    const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+    console.log(
+      `✅ [UPLOAD SUCCESS] Cloudinary upload done in ${totalTime}s: ${result.secure_url}`
+    );
+
+    return res.status(200).json({
+      imageUrl: result.secure_url,
+      public_id: result.public_id,
+    });
+  } catch (err) {
+    const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+    console.error(`❌ [UPLOAD ERROR] Failed after ${totalTime}s:`, err);
+
+    // Better error message for client
+    if (
+      err?.message?.toLowerCase()?.includes("timeout") ||
+      err?.message?.toLowerCase()?.includes("timed out")
+    ) {
+      return res.status(408).json({
+        message:
+          "Cloudinary upload timeout. Please try again. If it continues, upload a smaller image.",
+        error: err.message || String(err),
+      });
+    }
+
+    return res.status(500).json({
+      message: "Image upload failed",
+      error: err.message || String(err),
+    });
+  }
 });
 
 /**
@@ -159,23 +163,22 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const payload = req.body;
+
     // Validate image URL: do not allow saving local file paths, blob URLs or data URIs
     if (payload && payload.image && typeof payload.image === "string") {
       const img = payload.image.trim();
-      if (
-        !img.startsWith("http://") &&
-        !img.startsWith("https://")
-      ) {
-        return res.status(400).json({ message: "Image must be an uploaded HTTP(S) URL. Please upload the image via /api/blogs/upload." });
+      if (!img.startsWith("http://") && !img.startsWith("https://")) {
+        return res.status(400).json({
+          message:
+            "Image must be an uploaded HTTP(S) URL. Please upload the image via /api/blogs/upload.",
+        });
       }
     }
 
     const blog = await Blog.create(payload);
     res.status(201).json(blog);
   } catch (err) {
-    res
-      .status(400)
-      .json({ message: "Failed to create blog", error: err.message });
+    res.status(400).json({ message: "Failed to create blog", error: err.message });
   }
 });
 
@@ -189,11 +192,11 @@ router.put("/:id", async (req, res) => {
     // Validate image URL on update as well
     if (payload && payload.image && typeof payload.image === "string") {
       const img = payload.image.trim();
-      if (
-        !img.startsWith("http://") &&
-        !img.startsWith("https://")
-      ) {
-        return res.status(400).json({ message: "Image must be an uploaded HTTP(S) URL. Please upload the image via /api/blogs/upload." });
+      if (!img.startsWith("http://") && !img.startsWith("https://")) {
+        return res.status(400).json({
+          message:
+            "Image must be an uploaded HTTP(S) URL. Please upload the image via /api/blogs/upload.",
+        });
       }
     }
 
@@ -206,9 +209,7 @@ router.put("/:id", async (req, res) => {
 
     res.json(updated);
   } catch (err) {
-    res
-      .status(400)
-      .json({ message: "Failed to update blog", error: err.message });
+    res.status(400).json({ message: "Failed to update blog", error: err.message });
   }
 });
 

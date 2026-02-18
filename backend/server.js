@@ -39,7 +39,6 @@ console.log("CORS configured allowed origins:", allowedOrigins);
    ========================= */
 app.use((req, res, next) => {
   // Cloudinary uploads + cold starts can be slow on Render
-  // Increased from 2 to 5 minutes for reliability
   req.setTimeout(300000); // 5 minutes
   res.setTimeout(300000);
   next();
@@ -54,27 +53,31 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 /* =========================
    CORS (Correct + stable)
    ========================= */
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow server-to-server / curl / postman
-      if (!origin) return callback(null, true);
 
-      // Allow all (not recommended, but supported)
-      if (allowedOrigins.includes("*")) return callback(null, true);
+// ✅ Make a single CORS config and reuse it for BOTH normal requests and preflight
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow server-to-server / curl / postman
+    if (!origin) return callback(null, true);
 
-      // Allow specific origins
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow all (not recommended, but supported)
+    if (allowedOrigins.includes("*")) return callback(null, true);
 
-      return callback(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+    // Allow specific origins
+    if (allowedOrigins.includes(origin)) return callback(null, true);
 
-// Handle preflight
-app.options("*", cors());
+    console.log("❌ Blocked by CORS:", origin);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+// Apply cors for all routes
+app.use(cors(corsOptions));
+
+// ✅ FIX: Preflight must use SAME corsOptions (this was your bug)
+app.options("*", cors(corsOptions));
 
 /* =========================
    Health
