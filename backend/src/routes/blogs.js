@@ -42,27 +42,83 @@ router.get("/", async (req, res) => {
  * IMPORTANT: This MUST be above "/:id" route
  */
 router.post("/upload", (req, res) => {
+  console.log("📤 [UPLOAD START] New upload request received");
+  const uploadStartTime = Date.now();
+  
+  // Add timeout protection for the entire upload
+  const uploadTimeout = setTimeout(() => {
+    console.error("❌ [UPLOAD TIMEOUT] Request timeout after 4 minutes");
+    if (!res.headersSent) {
+      res.status(408).json({ 
+        message: "Upload request timeout. Server took too long to process the upload. Try a smaller image or check Cloudinary credentials.",
+        error: "timeout"
+      });
+    }
+    req.socket.destroy();
+  }, 240000); // 4 minute timeout (leaves 1 min buffer before client timeout)
+  
+  // Clear timeout when response is sent
+  res.on("finish", () => {
+    clearTimeout(uploadTimeout);
+  });
+  
+  res.on("close", () => {
+    clearTimeout(uploadTimeout);
+  });
+
   // run multer middleware manually so we can catch middleware errors
   upload.single("image")(req, res, async (err) => {
+    const elapsed = ((Date.now() - uploadStartTime) / 1000).toFixed(1);
+    
     if (err) {
-      console.error("Upload middleware error:", err && err.stack ? err.stack : err);
-      return res.status(500).json({ message: "Upload middleware error", error: err.message || String(err) });
+      clearTimeout(uploadTimeout);
+      console.error(`❌ [UPLOAD ERROR] Multer middleware error (${elapsed}s):`, err && err.stack ? err.stack : err);
+      
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(413).json({ 
+          message: "File too large. Max size is 50MB.",
+          error: err.message 
+        });
+      }
+      
+      if (err.code === "LIMIT_PART_COUNT") {
+        return res.status(400).json({ 
+          message: "Too many file parts.",
+          error: err.message 
+        });
+      }
+      
+      return res.status(500).json({ 
+        message: "Upload middleware error", 
+        error: err.message || String(err) 
+      });
     }
 
     try {
+      console.log("✅ [UPLOAD RECEIVED] File received by server");
+      
       if (!req.file) {
+        clearTimeout(uploadTimeout);
+        console.error("❌ [UPLOAD ERROR] No file uploaded");
         return res.status(400).json({ message: "No image uploaded" });
       }
 
+      console.log(`📤 [UPLOAD PROCESSING] Processing file: ${req.file.originalname} (${req.file.size} bytes)`);
+
       // ✅ CLOUDINARY (preferred): Returns req.file.path = stable HTTPS URL
       if (isCloudinaryAvailable && req.file.path) {
-        console.log("✅ Image uploaded to Cloudinary:", req.file.path);
+        clearTimeout(uploadTimeout);
+        const totalTime = ((Date.now() - uploadStartTime) / 1000).toFixed(1);
+        console.log(`✅ [UPLOAD SUCCESS] Image uploaded to Cloudinary in ${totalTime}s: ${req.file.path}`);
         return res.status(200).json({ imageUrl: req.file.path });
       }
+
+      clearTimeout(uploadTimeout);
 
       // ❌ If Cloudinary failed or is not available, reject the upload
       // Do NOT fall back to local storage which becomes inaccessible after restart
       if (!isCloudinaryAvailable) {
+        console.error("❌ [UPLOAD ERROR] Cloudinary not available");
         return res.status(503).json({
           message:
             "Image upload service is not available. Please ensure Cloudinary is configured in the backend environment variables (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET).",
@@ -71,12 +127,14 @@ router.post("/upload", (req, res) => {
 
       // Edge case: Cloudinary claims to be available but didn't return a path
       if (!req.file.path) {
+        console.error("❌ [UPLOAD ERROR] Cloudinary didn't return a path");
         return res.status(500).json({
           message: "Upload to Cloudinary succeeded but no URL was returned. This is an unexpected error.",
         });
       }
     } catch (err2) {
-      console.error("Upload handler error:", err2 && err2.stack ? err2.stack : err2);
+      clearTimeout(uploadTimeout);
+      console.error("❌ [UPLOAD ERROR] Upload handler exception:", err2 && err2.stack ? err2.stack : err2);
       return res.status(500).json({ message: "Upload failed", error: err2.message });
     }
   });

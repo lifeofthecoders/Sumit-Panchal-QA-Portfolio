@@ -236,8 +236,12 @@ export default function BlogForm() {
       // Clean up the error message for display (remove endpoint details, keep key info)
       if (errorMsg.includes("Cannot reach")) {
         errorMsg = "❌ Cannot connect to backend server.\n\nPlease:\n1. Refresh the page\n2. Wait 1-2 minutes (server may be starting up)\n3. Try again\n\nIf problem persists, your internet connection may be blocked by a firewall.";
+      } else if (errorMsg.includes("File too large")) {
+        errorMsg = "📦 File too large!\n\nMaximum size is 50MB.\n\nPlease:\n- Compress your image (use online tools like TinyPNG)\n- Or use a smaller image\n- Then try again";
+      } else if (errorMsg.includes("Server upload timeout") || errorMsg.includes("Cloudinary is taking too long")) {
+        errorMsg = "⏱️ Upload is taking too long (Cloudinary is slow).\n\nTry:\n- Using a smaller or compressed image\n- Waiting a few moments and trying again\n- Checking your internet connection\n\nIf problem persists, Cloudinary service may be experiencing issues.";
       } else if (errorMsg.includes("timeout")) {
-        errorMsg = "⏱️ Upload is taking too long (over 5 minutes).\n\nTry:\n- Using a smaller/compressed image\n- Checking your internet speed\n- Waiting a few moments and trying again";
+        errorMsg = "⏱️ Upload is taking too long.\n\nTry:\n- Using a smaller/compressed image\n- Checking your internet speed\n- Waiting a few moments and trying again";
       } else if (errorMsg.includes("Failed to fetch")) {
         errorMsg = "❌ Cannot reach the server. Please check:\n1. Your internet connection\n2. If connection is fine, the backend may be down\n3. Try again in a few moments";
       } else if (errorMsg.includes("404")) {

@@ -119,16 +119,16 @@ export const uploadBlogImage = async (file, onProgress) => {
   const formData = new FormData();
   formData.append("image", file);
 
-  // Pre-flight: Wake up Render backend if cold
+  // Pre-flight: Wake up Render backend if cold (but don't block upload on failure)
   if (API_BASE_URL.includes("onrender.com")) {
     console.log("🔄 Waking up Render backend...");
     if (onProgress) onProgress(5);
     
-    const isHealthy = await checkBackendHealth(60000); // 60 sec to wake up
-    
-    if (!isHealthy) {
-      console.warn("⚠️ Backend did not respond to health check. Proceeding anyway...");
-    }
+    // Fire and forget - don't wait for health check, start upload immediately
+    checkBackendHealth(30000).catch(() => {
+      // Health check failed, but we'll proceed anyway
+      console.warn("⚠️ Backend health check failed, but proceeding with upload anyway");
+    });
   }
   
   // Use XMLHttpRequest for progress tracking
@@ -172,6 +172,17 @@ export const uploadBlogImage = async (file, onProgress) => {
           } catch (err) {
             reject(new Error("Upload response is invalid: " + err.message));
           }
+        } else if (xhr.status === 408) {
+          // Server timeout - Cloudinary upload took too long
+          try {
+            const data = JSON.parse(xhr.responseText);
+            reject(new Error(`⏱️ Server upload timeout (${xhr.status})\n\nCloudinary is taking too long. Try:\n- Using a smaller/compressed image\n- Waiting a few moments and trying again\n- Checking if Cloudinary service is having issues`));
+          } catch {
+            reject(new Error(`⏱️ Server upload timeout (${xhr.status})\n\nThe server couldn't complete the upload in time. Please try again with a smaller image.`));
+          }
+        } else if (xhr.status === 413) {
+          // File too large
+          reject(new Error(`❌ File too large (${xhr.status})\n\nMaximum file size is 50MB. Please use a smaller image.`));
         } else {
           try {
             const data = JSON.parse(xhr.responseText);

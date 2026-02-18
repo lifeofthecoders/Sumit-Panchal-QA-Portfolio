@@ -20,17 +20,26 @@ if (isCloudinaryConfigured) {
     const storage = new CloudinaryStorage({
       cloudinary: cloudinary,
       params: async (req, file) => {
+        console.log("📝 Preparing Cloudinary upload for file:", file.originalname);
         return {
           folder: "blogs",
           allowed_formats: ["jpg", "jpeg", "png", "webp"],
           resource_type: "image",
           // ✅ Use HTTP instead of HTTPS to avoid redirect issues on some CDNs
           secure: true,
+          // Add timeout to Cloudinary API calls
+          timeout: 60000, // 60 seconds
         };
       },
     });
 
-    upload = multer({ storage });
+    upload = multer({ 
+      storage,
+      limits: {
+        fileSize: 50 * 1024 * 1024, // 50MB max file size
+      },
+      timeout: 300000, // 5 minute timeout for multipart form parsing
+    });
     isCloudinaryAvailable = true;
     console.log("✅ Cloudinary storage initialized successfully");
   } catch (error) {
