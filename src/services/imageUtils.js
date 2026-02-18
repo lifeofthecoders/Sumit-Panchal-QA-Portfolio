@@ -8,6 +8,11 @@
  */
 export const compressImage = (file) => {
   return new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error("No file selected"));
+      return;
+    }
+
     const reader = new FileReader();
 
     reader.onload = (event) => {
@@ -16,6 +21,11 @@ export const compressImage = (file) => {
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+          reject(new Error("Failed to initialize canvas context"));
+          return;
+        }
 
         // Set canvas dimensions (limit to 1920px max width)
         const maxWidth = 1920;
@@ -36,8 +46,17 @@ export const compressImage = (file) => {
         // Convert to blob with reduced quality (0.75 = 75% quality)
         canvas.toBlob(
           (blob) => {
+            if (!blob) {
+              reject(new Error("Image compression failed (blob is null)"));
+              return;
+            }
+
+            // Preserve original name but ensure .jpg extension (since output is jpeg)
+            const baseName = file.name?.replace(/\.[^/.]+$/, "") || "image";
+            const newFileName = `${baseName}.jpg`;
+
             // Create a new File object from the blob
-            const compressedFile = new File([blob], file.name, {
+            const compressedFile = new File([blob], newFileName, {
               type: "image/jpeg",
               lastModified: Date.now(),
             });
@@ -66,6 +85,9 @@ export const compressImage = (file) => {
 
 /**
  * Validate image file
+ * NOTE:
+ * - Type errors should block upload
+ * - Size errors should NOT block (because we compress automatically)
  */
 export const validateImageFile = (file) => {
   if (!file) {
@@ -81,12 +103,14 @@ export const validateImageFile = (file) => {
     };
   }
 
-  // Check file size (max 10MB)
+  // Check file size (max 10MB) — WARNING ONLY
   const maxSize = 10 * 1024 * 1024; // 10MB
   if (file.size > maxSize) {
     return {
-      valid: false,
-      error: `File size (${(file.size / 1024 / 1024).toFixed(2)}MB) exceeds 10MB limit. Will compress automatically.`,
+      valid: true,
+      warning: `File size (${(file.size / 1024 / 1024).toFixed(
+        2
+      )}MB) is above 10MB. Compressing automatically...`,
     };
   }
 
@@ -97,9 +121,9 @@ export const validateImageFile = (file) => {
  * Format file size for display
  */
 export const formatFileSize = (bytes) => {
-  if (bytes === 0) return "0 Bytes";
+  if (!bytes || bytes === 0) return "0 Bytes";
   const k = 1024;
   const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
 };
