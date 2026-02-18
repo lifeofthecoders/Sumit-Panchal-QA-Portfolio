@@ -84,6 +84,13 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
     const result = await uploadToCloudinary(req.file.buffer);
 
+    // ✅ Safety: Cloudinary should always return secure_url
+    if (!result || !result.secure_url) {
+      return res.status(500).json({
+        message: "Cloudinary upload failed: No secure_url returned",
+      });
+    }
+
     return res.status(200).json({
       imageUrl: result.secure_url,
       public_id: result.public_id,

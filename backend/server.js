@@ -29,7 +29,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 const rawCors = process.env.CORS_ORIGIN || "*";
 const allowedOrigins = rawCors
   .split(",")
-  .map((s) => s.trim())
+  .map((s) => s.trim().replace(/\/$/, "")) // ✅ remove ending slash
   .filter(Boolean);
 
 console.log("CORS configured allowed origins:", allowedOrigins);
@@ -38,7 +38,6 @@ console.log("CORS configured allowed origins:", allowedOrigins);
    Timeout Middleware (Fix 408 during upload)
    ========================= */
 app.use((req, res, next) => {
-  // Cloudinary uploads + cold starts can be slow on Render
   req.setTimeout(300000); // 5 minutes
   res.setTimeout(300000);
   next();
@@ -60,26 +59,36 @@ const corsOptions = {
     // Allow server-to-server / curl / postman
     if (!origin) return callback(null, true);
 
+    // Normalize origin
+    const cleanOrigin = origin.replace(/\/$/, "");
+
     // Allow all (not recommended, but supported)
     if (allowedOrigins.includes("*")) return callback(null, true);
 
     // Allow specific origins
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (allowedOrigins.includes(cleanOrigin)) return callback(null, true);
 
-    console.log("❌ Blocked by CORS:", origin);
-
-    // ✅ FIX: Do NOT throw error (this causes random failures)
-    return callback(null, false);
+    console.log("❌ Blocked by CORS:", cleanOrigin);
+    return callback(new Error("Not allowed by CORS"));
   },
+
+  // ✅ VERY IMPORTANT FOR FILE UPLOAD PREFLIGHT
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+  ],
   credentials: false,
+  optionsSuccessStatus: 200,
 };
 
 // Apply cors for all routes
 app.use(cors(corsOptions));
 
-// ✅ FIX: Preflight must use SAME corsOptions
+// ✅ Preflight must use SAME corsOptions
 app.options("*", cors(corsOptions));
 
 /* =========================
