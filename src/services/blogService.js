@@ -90,11 +90,63 @@ export const getBlogsPaginated = async (page = 1, limit = 10) => {
 
 /**
  * ✅ Upload Blog Image (Computer Upload → Cloudinary)
+ * @param {File} file - Image file to upload
+ * @param {Function} onProgress - Optional callback for upload progress (0-100)
  */
-export const uploadBlogImage = async (file) => {
+export const uploadBlogImage = async (file, onProgress) => {
   const formData = new FormData();
   formData.append("image", file);
 
+  // Use XMLHttpRequest for progress tracking
+  if (onProgress && typeof onProgress === "function") {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      // Track upload progress
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = (e.loaded / e.total) * 100;
+          onProgress(percentComplete);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status === 200) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            const url = data.imageUrl || data.url;
+            if (!url || typeof url !== "string" || !(url.startsWith("http://") || url.startsWith("https://"))) {
+              reject(new Error("Upload succeeded but returned an invalid image URL"));
+              return;
+            }
+            resolve(url);
+          } catch (err) {
+            reject(new Error("Upload response is invalid: " + err.message));
+          }
+        } else {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            reject(new Error(data.message || `Upload failed with status ${xhr.status}`));
+          } catch {
+            reject(new Error(`Upload failed with status ${xhr.status}`));
+          }
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        reject(new Error("Network error during upload. Please check your connection."));
+      });
+
+      xhr.addEventListener("abort", () => {
+        reject(new Error("Upload was cancelled"));
+      });
+
+      xhr.open("POST", `${API_BASE_URL}/api/blogs/upload`);
+      xhr.send(formData);
+    });
+  }
+
+  // Fallback to fetch for simple upload without progress
   const res = await fetch(`${API_BASE_URL}/api/blogs/upload`, {
     method: "POST",
     body: formData,

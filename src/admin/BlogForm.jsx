@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getBlogById, saveBlog, uploadBlogImage } from "../services/blogService";
+import { compressImage, validateImageFile, formatFileSize } from "../services/imageUtils";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import AdminBlogHeader from "./AdminBlogHeader";
@@ -134,6 +135,11 @@ export default function BlogForm() {
   // ✅ NEW: Loader state (for instant action)
   const [isPublishing, setIsPublishing] = useState(false);
 
+  // ✅ NEW: Upload progress state
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
   useEffect(() => {
     const loadBlog = async () => {
       if (id) {
@@ -189,7 +195,13 @@ export default function BlogForm() {
 
       // ✅ Upload to Cloudinary if file exists
       if (formData.imageFile) {
-        finalImageUrl = await uploadBlogImage(formData.imageFile);
+        setUploadProgress(0);
+        setIsUploadingImage(true);
+        finalImageUrl = await uploadBlogImage(formData.imageFile, (progress) => {
+          setUploadProgress(Math.round(progress));
+        });
+        setIsUploadingImage(false);
+        setUploadProgress(0);
       }
 
       // Final validation: do not allow saving blob/file/local paths
@@ -321,26 +333,117 @@ export default function BlogForm() {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
 
-                setFormData((prev) => ({
-                  ...prev,
-                  imageFile: file,
-                  imagePreview: URL.createObjectURL(file),
-                }));
+                // Clear previous error
+                setUploadError("");
+
+                // Validate file
+                const validation = validateImageFile(file);
+                if (!validation.valid) {
+                  setUploadError(validation.error);
+                  return;
+                }
+
+                // Show loading state and compress image
+                setIsUploadingImage(true);
+                setUploadProgress(0);
+
+                try {
+                  const compressedFile = await compressImage(file);
+                  const originalSize = formatFileSize(file.size);
+                  const compressedSize = formatFileSize(compressedFile.size);
+                  const savings = Math.round((1 - compressedFile.size / file.size) * 100);
+
+                  console.log(
+                    `✅ Image compressed: ${originalSize} → ${compressedSize} (${savings}% smaller)`
+                  );
+
+                  setFormData((prev) => ({
+                    ...prev,
+                    imageFile: compressedFile,
+                    imagePreview: URL.createObjectURL(compressedFile),
+                  }));
+
+                  setIsUploadingImage(false);
+                  setUploadProgress(0);
+                } catch (error) {
+                  console.error("Image compression error:", error);
+                  setUploadError(`Failed to compress image: ${error.message}`);
+                  setIsUploadingImage(false);
+                  setUploadProgress(0);
+                }
               }}
-              disabled={isPublishing}
+              disabled={isPublishing || isUploadingImage}
               style={{
                 width: "100%",
                 padding: "12px",
                 fontSize: "14px",
-                border: "1px solid #ddd",
+                border: uploadError ? "2px solid #f44336" : "1px solid #ddd",
                 borderRadius: "6px",
-                backgroundColor: "white",
+                backgroundColor: isUploadingImage ? "#f5f5f5" : "white",
+                opacity: isUploadingImage ? 0.7 : 1,
               }}
             />
+
+            {/* ✅ Error Message */}
+            {uploadError && (
+              <div
+                style={{
+                  marginTop: "8px",
+                  padding: "10px",
+                  backgroundColor: "#ffebee",
+                  color: "#c62828",
+                  borderRadius: "4px",
+                  fontSize: "13px",
+                  fontWeight: "500",
+                }}
+              >
+                ⚠️ {uploadError}
+              </div>
+            )}
+
+            {/* ✅ Compression Progress */}
+            {isUploadingImage && (
+              <div style={{ marginTop: "10px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <div style={{ flexGrow: 1 }}>
+                    <div
+                      style={{
+                        height: "6px",
+                        backgroundColor: "#e0e0e0",
+                        borderRadius: "3px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "100%",
+                          backgroundColor: "#4CAF50",
+                          width: `${uploadProgress}%`,
+                          transition: "width 0.3s ease",
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <span style={{ fontSize: "12px", color: "#666", minWidth: "30px" }}>
+                    {Math.round(uploadProgress)}%
+                  </span>
+                </div>
+                <p style={{ fontSize: "12px", color: "#666", margin: "0" }}>
+                  🖼️ Compressing image...
+                </p>
+              </div>
+            )}
 
             {/* Preview */}
             {(formData.imagePreview || formData.image) && (
@@ -512,11 +615,38 @@ export default function BlogForm() {
               Word Count: {wordCount} / 10,000
             </p>
 
-            {/* ✅ NEW: Publishing status text */}
+            {/* ✅ NEW: Publishing status text with progress */}
             {isPublishing && (
-              <p style={{ fontSize: "13px", color: "#333", marginTop: "10px" }}>
-                ⏳ Publishing... Please wait (Uploading image + saving blog)
-              </p>
+              <div style={{ marginTop: "15px" }}>
+                {isUploadingImage ? (
+                  <>
+                    <p style={{ fontSize: "13px", color: "#1976D2", marginTop: "10px", marginBottom: "8px" }}>
+                      📤 Uploading image: {uploadProgress}%
+                    </p>
+                    <div
+                      style={{
+                        height: "4px",
+                        backgroundColor: "#e0e0e0",
+                        borderRadius: "2px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "100%",
+                          backgroundColor: "#1976D2",
+                          width: `${uploadProgress}%`,
+                          transition: "width 0.3s ease",
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p style={{ fontSize: "13px", color: "#333", marginTop: "10px" }}>
+                    ⏳ Publishing... Please wait (saving blog)
+                  </p>
+                )}
+              </div>
             )}
           </div>
 
