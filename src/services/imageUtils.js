@@ -4,7 +4,8 @@
 
 /**
  * Compress image before upload
- * Reduces file size while maintaining reasonable quality
+ * (kept because your BlogForm imports it)
+ * You can remove later if you want.
  */
 export const compressImage = (file) => {
   return new Promise((resolve, reject) => {
@@ -40,10 +41,8 @@ export const compressImage = (file) => {
         canvas.width = width;
         canvas.height = height;
 
-        // Draw and compress
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Convert to blob with reduced quality (0.75 = 75% quality)
         canvas.toBlob(
           (blob) => {
             if (!blob) {
@@ -51,11 +50,9 @@ export const compressImage = (file) => {
               return;
             }
 
-            // Preserve original name but ensure .jpg extension (since output is jpeg)
             const baseName = file.name?.replace(/\.[^/.]+$/, "") || "image";
             const newFileName = `${baseName}.jpg`;
 
-            // Create a new File object from the blob
             const compressedFile = new File([blob], newFileName, {
               type: "image/jpeg",
               lastModified: Date.now(),
@@ -64,30 +61,21 @@ export const compressImage = (file) => {
             resolve(compressedFile);
           },
           "image/jpeg",
-          0.75 // Quality setting (0-1)
+          0.75
         );
       };
 
-      img.onerror = () => {
-        reject(new Error("Failed to load image"));
-      };
-
+      img.onerror = () => reject(new Error("Failed to load image"));
       img.src = event.target.result;
     };
 
-    reader.onerror = () => {
-      reject(new Error("Failed to read file"));
-    };
-
+    reader.onerror = () => reject(new Error("Failed to read file"));
     reader.readAsDataURL(file);
   });
 };
 
 /**
  * Validate image file
- * NOTE:
- * - Type errors should block upload
- * - Size errors should NOT block (because we compress automatically)
  */
 export const validateImageFile = (file) => {
   if (!file) {
@@ -103,14 +91,29 @@ export const validateImageFile = (file) => {
     };
   }
 
-  // Check file size (max 10MB) — WARNING ONLY
-  const maxSize = 10 * 1024 * 1024; // 10MB
+  /**
+   * IMPORTANT FIX:
+   * DO NOT block large files here.
+   * Let Cloudinary/backend handle it.
+   */
+  const maxSize = 50 * 1024 * 1024; // 50MB (matches your backend message)
   if (file.size > maxSize) {
     return {
-      valid: true,
-      warning: `File size (${(file.size / 1024 / 1024).toFixed(
+      valid: false,
+      error: `File size (${(file.size / 1024 / 1024).toFixed(
         2
-      )}MB) is above 10MB. Compressing automatically...`,
+      )}MB) exceeds 50MB limit. Please upload a smaller image.`,
+    };
+  }
+
+  // If file is >10MB, allow it (do not block)
+  const warningSize = 10 * 1024 * 1024;
+  if (file.size > warningSize) {
+    return {
+      valid: true,
+      warning: `File is ${(file.size / 1024 / 1024).toFixed(
+        2
+      )}MB. Upload may take longer.`,
     };
   }
 
