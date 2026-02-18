@@ -197,9 +197,18 @@ export default function BlogForm() {
       if (formData.imageFile) {
         setUploadProgress(0);
         setIsUploadingImage(true);
-        finalImageUrl = await uploadBlogImage(formData.imageFile, (progress) => {
-          setUploadProgress(Math.round(progress));
-        });
+        setUploadError("");
+        
+        try {
+          finalImageUrl = await uploadBlogImage(formData.imageFile, (progress) => {
+            setUploadProgress(Math.round(progress));
+          });
+        } catch (uploadErr) {
+          setIsUploadingImage(false);
+          setUploadProgress(0);
+          throw uploadErr;
+        }
+        
         setIsUploadingImage(false);
         setUploadProgress(0);
       }
@@ -219,18 +228,22 @@ export default function BlogForm() {
       navigate("/admin/blogs");
     } catch (error) {
       console.error(error);
+      setIsPublishing(false);
       
       // Provide more detailed error messages
       let errorMsg = error.message || "Something went wrong while publishing the blog.";
       
-      if (errorMsg.includes("Cloudinary") || errorMsg.includes("unavailable")) {
+      if (errorMsg.includes("timeout")) {
+        errorMsg = "⏱️ Upload is taking too long. This usually means:\n\n1. Your internet connection is slow\n2. The backend server (Render) is overloaded\n3. The image file is very large\n\nTry:\n- Using a smaller image\n- Waiting a moment and trying again\n- Checking your internet connection";
+      } else if (errorMsg.includes("Failed to fetch")) {
+        errorMsg = "❌ Cannot connect to the server. Please check:\n\n1. Your internet connection is working\n2. The backend is running (https://sumit-panchal-qa-portfolio.onrender.com/api/health)\n3. If issue persists, wait a minute and try again (Render free tier may need time to wake up)";
+      } else if (errorMsg.includes("Cloudinary") || errorMsg.includes("unavailable")) {
         errorMsg += "\n\n⚠️ Image upload service is not available. Please check:\n1. Your backend is running\n2. CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET are set in backend/.env\n3. Your internet connection";
       } else if (errorMsg.includes("blob") || errorMsg.includes("Local")) {
         errorMsg += "\n\n💡 Tip: Select an image file from your computer and wait for it to upload to the server before saving.";
       }
       
       alert(errorMsg);
-      setIsPublishing(false);
     }
   };
 

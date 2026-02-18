@@ -97,21 +97,30 @@ export const uploadBlogImage = async (file, onProgress) => {
   const formData = new FormData();
   formData.append("image", file);
 
-  // Use XMLHttpRequest for progress tracking
+  // Try XMLHttpRequest first for progress tracking
   if (onProgress && typeof onProgress === "function") {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
+      const timeout = setTimeout(() => {
+        xhr.abort();
+        reject(new Error("Upload timeout. The backend took too long to respond. Please check your internet connection or try again."));
+      }, 120000); // 2 minute timeout
 
-      // Track upload progress
+      // Track upload progress (0-90% during upload)
       xhr.upload.addEventListener("progress", (e) => {
         if (e.lengthComputable) {
-          const percentComplete = (e.loaded / e.total) * 100;
+          const percentComplete = Math.min((e.loaded / e.total) * 90, 90);
           onProgress(percentComplete);
         }
       });
 
       xhr.addEventListener("load", () => {
-        if (xhr.status === 200) {
+        clearTimeout(timeout);
+        
+        // Move to 95% when response received
+        onProgress(95);
+
+        if (xhr.status === 200 || xhr.status === 201) {
           try {
             const data = JSON.parse(xhr.responseText);
             const url = data.imageUrl || data.url;
@@ -119,6 +128,7 @@ export const uploadBlogImage = async (file, onProgress) => {
               reject(new Error("Upload succeeded but returned an invalid image URL"));
               return;
             }
+            onProgress(100);
             resolve(url);
           } catch (err) {
             reject(new Error("Upload response is invalid: " + err.message));
@@ -128,55 +138,69 @@ export const uploadBlogImage = async (file, onProgress) => {
             const data = JSON.parse(xhr.responseText);
             reject(new Error(data.message || `Upload failed with status ${xhr.status}`));
           } catch {
-            reject(new Error(`Upload failed with status ${xhr.status}`));
+            reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`));
           }
         }
       });
 
       xhr.addEventListener("error", () => {
-        reject(new Error("Network error during upload. Please check your connection."));
+        clearTimeout(timeout);
+        reject(new Error("Network error during upload. Please check your internet connection and try again."));
       });
 
       xhr.addEventListener("abort", () => {
+        clearTimeout(timeout);
         reject(new Error("Upload was cancelled"));
       });
 
       xhr.open("POST", `${API_BASE_URL}/api/blogs/upload`);
+      // Important: Don't set Content-Type header, let browser set it with boundary
       xhr.send(formData);
     });
   }
 
   // Fallback to fetch for simple upload without progress
-  const res = await fetch(`${API_BASE_URL}/api/blogs/upload`, {
-    method: "POST",
-    body: formData,
-  });
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
-  // ✅ FIX: If response is HTML instead of JSON, don't crash
-  const contentType = res.headers.get("content-type") || "";
-  let data = null;
+    const res = await fetch(`${API_BASE_URL}/api/blogs/upload`, {
+      method: "POST",
+      body: formData,
+      signal: controller.signal,
+    });
 
-  if (contentType.includes("application/json")) {
-    data = await res.json();
-  } else {
-    const text = await res.text();
-    throw new Error(
-      "Upload API returned invalid response (not JSON). " +
-        "This usually means your VITE_API_BASE_URL is wrong or backend is not running."
-    );
+    clearTimeout(timeout);
+
+    const contentType = res.headers.get("content-type") || "";
+    let data = null;
+
+    if (contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      const text = await res.text();
+      throw new Error(
+        "Upload API returned invalid response (not JSON). " +
+          "This usually means your VITE_API_BASE_URL is wrong or backend is not running."
+      );
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message || "Image upload failed");
+    }
+
+    const url = data.imageUrl || data.url;
+    if (!url || (typeof url !== "string") || !(url.startsWith("http://") || url.startsWith("https://"))) {
+      throw new Error("Upload succeeded but returned an invalid image URL");
+    }
+
+    return url;
+  } catch (err) {
+    if (err.name === "AbortError") {
+      throw new Error("Upload timeout. The backend took too long to respond. Please try again.");
+    }
+    throw err;
   }
-
-  if (!res.ok) {
-    throw new Error(data.message || "Image upload failed");
-  }
-
-  // ✅ FIX: support both backend response keys
-  const url = data.imageUrl || data.url;
-  if (!url || (typeof url !== "string") || !(url.startsWith("http://") || url.startsWith("https://"))) {
-    throw new Error("Upload succeeded but returned an invalid image URL");
-  }
-
-  return url;
 };
 
 // Helper to validate image value before saving blog
