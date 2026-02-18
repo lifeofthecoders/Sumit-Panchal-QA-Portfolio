@@ -1,23 +1,23 @@
 import { v2 as cloudinary } from "cloudinary";
 
+const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+const apiKey = process.env.CLOUDINARY_API_KEY;
+const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+if (!cloudName || !apiKey || !apiSecret) {
+  console.warn("⚠️ Cloudinary env vars missing:");
+  console.warn("CLOUDINARY_CLOUD_NAME:", !!cloudName);
+  console.warn("CLOUDINARY_API_KEY:", !!apiKey);
+  console.warn("CLOUDINARY_API_SECRET:", !!apiSecret);
+} else {
+  console.log("✅ Cloudinary env vars loaded successfully");
+}
+
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "",
-  api_key: process.env.CLOUDINARY_API_KEY || "",
-  api_secret: process.env.CLOUDINARY_API_SECRET || "",
+  cloud_name: cloudName,
+  api_key: apiKey,
+  api_secret: apiSecret,
+  secure: true,
 });
-
-if (!cloudinary.uploader) {
-  console.warn("⚠️ Cloudinary uploader is not available (bad cloudinary init).");
-}
-
-if (
-  !process.env.CLOUDINARY_CLOUD_NAME ||
-  !process.env.CLOUDINARY_API_KEY ||
-  !process.env.CLOUDINARY_API_SECRET
-) {
-  console.warn(
-    "⚠️ Cloudinary credentials are not fully configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in your environment."
-  );
-}
 
 export default cloudinary;
