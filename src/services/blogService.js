@@ -16,6 +16,27 @@ try {
   // ignore in non-browser environments
 }
 
+console.log("🔧 Blog API configured to:", API_BASE_URL);
+
+/**
+ * Check if backend is accessible
+ */
+const checkBackendHealth = async (timeout = 10000) => {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    const res = await fetch(`${API_BASE_URL}/api/health`, {
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    return res.ok;
+  } catch (err) {
+    return false;
+  }
+};
+
 /**
  * GET all blogs (latest first)
  */
@@ -94,30 +115,45 @@ export const getBlogsPaginated = async (page = 1, limit = 10) => {
  * @param {Function} onProgress - Optional callback for upload progress (0-100)
  */
 export const uploadBlogImage = async (file, onProgress) => {
+  const uploadUrl = `${API_BASE_URL}/api/blogs/upload`;
   const formData = new FormData();
   formData.append("image", file);
 
-  // Try XMLHttpRequest first for progress tracking
+  // Pre-flight: Wake up Render backend if cold
+  if (API_BASE_URL.includes("onrender.com")) {
+    console.log("🔄 Waking up Render backend...");
+    if (onProgress) onProgress(5);
+    
+    const isHealthy = await checkBackendHealth(30000); // 30 sec to wake up
+    
+    if (!isHealthy) {
+      console.warn("⚠️ Backend did not respond to health check. Proceeding anyway...");
+    }
+  }
+  
+  // Use XMLHttpRequest for progress tracking
   if (onProgress && typeof onProgress === "function") {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
+      let uploadStartTime = Date.now();
       const timeout = setTimeout(() => {
         xhr.abort();
-        reject(new Error("Upload timeout. The backend took too long to respond. Please check your internet connection or try again."));
+        reject(new Error(`Upload timeout at endpoint: ${uploadUrl}\n\nThe server took longer than 2 minutes. This could mean:\n1. Backend is not running\n2. Cloudinary API is very slow\n3. Network connection is unstable`));
       }, 120000); // 2 minute timeout
 
       // Track upload progress (0-90% during upload)
       xhr.upload.addEventListener("progress", (e) => {
         if (e.lengthComputable) {
           const percentComplete = Math.min((e.loaded / e.total) * 90, 90);
-          onProgress(percentComplete);
+          onProgress(Math.max(5, percentComplete)); // Don't go below 5%
         }
       });
 
       xhr.addEventListener("load", () => {
         clearTimeout(timeout);
+        const uploadTime = ((Date.now() - uploadStartTime) / 1000).toFixed(1);
+        console.log(`✅ Upload response received in ${uploadTime}s (status: ${xhr.status})`);
         
-        // Move to 95% when response received
         onProgress(95);
 
         if (xhr.status === 200 || xhr.status === 201) {
@@ -129,6 +165,7 @@ export const uploadBlogImage = async (file, onProgress) => {
               return;
             }
             onProgress(100);
+            console.log("✅ Upload complete:", url);
             resolve(url);
           } catch (err) {
             reject(new Error("Upload response is invalid: " + err.message));
@@ -136,16 +173,16 @@ export const uploadBlogImage = async (file, onProgress) => {
         } else {
           try {
             const data = JSON.parse(xhr.responseText);
-            reject(new Error(data.message || `Upload failed with status ${xhr.status}`));
+            reject(new Error(`❌ Upload failed (${xhr.status}): ${data.message || xhr.statusText}\n\nEndpoint: ${uploadUrl}`));
           } catch {
-            reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`));
+            reject(new Error(`❌ Upload failed with status ${xhr.status}\n\nEndpoint: ${uploadUrl}\n\nThis usually means:\n- Backend is not responding\n- Endpoint doesn't exist\n- CORS is blocking the request`));
           }
         }
       });
 
       xhr.addEventListener("error", () => {
         clearTimeout(timeout);
-        reject(new Error("Network error during upload. Please check your internet connection and try again."));
+        reject(new Error(`❌ Network error: Cannot reach ${uploadUrl}\n\nMake sure:\n1. Backend is running (check: https://sumit-panchal-qa-portfolio.onrender.com/api/health)\n2. Internet connection is stable\n3. Firewall isn't blocking Cloudinary`));
       });
 
       xhr.addEventListener("abort", () => {
@@ -153,18 +190,19 @@ export const uploadBlogImage = async (file, onProgress) => {
         reject(new Error("Upload was cancelled"));
       });
 
-      xhr.open("POST", `${API_BASE_URL}/api/blogs/upload`);
-      // Important: Don't set Content-Type header, let browser set it with boundary
+      console.log("📤 Uploading to:", uploadUrl);
+      xhr.open("POST", uploadUrl);
       xhr.send(formData);
     });
   }
 
   // Fallback to fetch for simple upload without progress
   try {
+    console.log("📤 Uploading (no progress tracking) to:", uploadUrl);
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
 
-    const res = await fetch(`${API_BASE_URL}/api/blogs/upload`, {
+    const res = await fetch(uploadUrl, {
       method: "POST",
       body: formData,
       signal: controller.signal,
@@ -180,13 +218,12 @@ export const uploadBlogImage = async (file, onProgress) => {
     } else {
       const text = await res.text();
       throw new Error(
-        "Upload API returned invalid response (not JSON). " +
-          "This usually means your VITE_API_BASE_URL is wrong or backend is not running."
+        `Upload API returned invalid response (not JSON)\n\nEndpoint: ${uploadUrl}\n\nThis usually means:\n- Backend is not running\n- VITE_API_BASE_URL is wrong\n- Endpoint doesn't exist`
       );
     }
 
     if (!res.ok) {
-      throw new Error(data.message || "Image upload failed");
+      throw new Error(`❌ ${data.message || "Image upload failed"}\n\nEndpoint: ${uploadUrl}\nStatus: ${res.status}`);
     }
 
     const url = data.imageUrl || data.url;
@@ -194,10 +231,11 @@ export const uploadBlogImage = async (file, onProgress) => {
       throw new Error("Upload succeeded but returned an invalid image URL");
     }
 
+    console.log("✅ Upload complete:", url);
     return url;
   } catch (err) {
     if (err.name === "AbortError") {
-      throw new Error("Upload timeout. The backend took too long to respond. Please try again.");
+      throw new Error(`❌ Upload timeout (2 minutes exceeded)\n\nEndpoint: ${uploadUrl}\n\nThe server did not respond in time. Possible reasons:\n1. Backend is overloaded\n2. Cloudinary API is slow\n3. Network connection is unstable`);
     }
     throw err;
   }

@@ -227,20 +227,23 @@ export default function BlogForm() {
 
       navigate("/admin/blogs");
     } catch (error) {
-      console.error(error);
+      console.error("Publish error:", error);
       setIsPublishing(false);
       
       // Provide more detailed error messages
       let errorMsg = error.message || "Something went wrong while publishing the blog.";
       
-      if (errorMsg.includes("timeout")) {
-        errorMsg = "⏱️ Upload is taking too long. This usually means:\n\n1. Your internet connection is slow\n2. The backend server (Render) is overloaded\n3. The image file is very large\n\nTry:\n- Using a smaller image\n- Waiting a moment and trying again\n- Checking your internet connection";
+      // Clean up the error message for display (remove endpoint details, keep key info)
+      if (errorMsg.includes("Cannot reach")) {
+        errorMsg = "❌ Cannot connect to backend server.\n\nPlease:\n1. Refresh the page\n2. Wait 30 seconds (server may be starting up)\n3. Try again\n\nIf problem persists, your internet connection may be blocked by a firewall.";
+      } else if (errorMsg.includes("timeout")) {
+        errorMsg = "⏱️ Upload is taking too long (over 2 minutes).\n\nTry:\n- Using a smaller/compressed image\n- Checking your internet speed\n- Waiting a few moments and trying again";
       } else if (errorMsg.includes("Failed to fetch")) {
-        errorMsg = "❌ Cannot connect to the server. Please check:\n\n1. Your internet connection is working\n2. The backend is running (https://sumit-panchal-qa-portfolio.onrender.com/api/health)\n3. If issue persists, wait a minute and try again (Render free tier may need time to wake up)";
-      } else if (errorMsg.includes("Cloudinary") || errorMsg.includes("unavailable")) {
-        errorMsg += "\n\n⚠️ Image upload service is not available. Please check:\n1. Your backend is running\n2. CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET are set in backend/.env\n3. Your internet connection";
-      } else if (errorMsg.includes("blob") || errorMsg.includes("Local")) {
-        errorMsg += "\n\n💡 Tip: Select an image file from your computer and wait for it to upload to the server before saving.";
+        errorMsg = "❌ Cannot reach the server. Please check:\n1. Your internet connection\n2. If connection is fine, the backend may be down\n3. Try again in a few moments";
+      } else if (errorMsg.includes("404")) {
+        errorMsg = "❌ Upload endpoint not found on server.\n\nThis means:\n- Backend is not properly configured\n- Or the server needs to be restarted\n\nPlease try again or contact support.";
+      } else if (errorMsg.includes("Cloudinary")) {
+        errorMsg = "⚠️ Cloudinary image service error.\n\nPlease:\n1. Verify CLOUDINARY credentials are set\n2. Check your internet connection\n3. Try again";
       }
       
       alert(errorMsg);
