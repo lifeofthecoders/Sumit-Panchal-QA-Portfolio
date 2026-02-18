@@ -49,7 +49,6 @@ const uploadToCloudinary = (buffer) => {
       }
     );
 
-    // ✅ FIX: Hard timeout so request never hangs forever
     const timeout = setTimeout(() => {
       try {
         stream.destroy();
@@ -73,45 +72,48 @@ router.post("/upload", upload.single("image"), async (req, res) => {
   try {
     if (!isCloudinaryConfigured()) {
       return res.status(503).json({
-        message:
-          "Cloudinary is not configured. Please set environment variables.",
+        success: false,
+        message: "Cloudinary not configured",
       });
     }
 
     if (!req.file || !req.file.buffer) {
-      return res.status(400).json({ message: "No image uploaded" });
+      return res.status(400).json({
+        success: false,
+        message: "No image provided",
+      });
     }
 
     const result = await uploadToCloudinary(req.file.buffer);
 
-    // ✅ Safety: Cloudinary should always return secure_url
     if (!result || !result.secure_url) {
       return res.status(500).json({
-        message: "Cloudinary upload failed: No secure_url returned",
+        success: false,
+        message: "Cloudinary upload failed",
       });
     }
 
     return res.status(200).json({
+      success: true,
       imageUrl: result.secure_url,
       public_id: result.public_id,
     });
   } catch (err) {
     console.error("❌ Image upload error:", err);
 
-    // ✅ Better error for timeout
     if (
       err?.message?.toLowerCase()?.includes("timeout") ||
       err?.message?.toLowerCase()?.includes("timed out")
     ) {
       return res.status(408).json({
-        message: "Image upload timeout. Please try again.",
-        error: err.message,
+        success: false,
+        message: "Upload timeout",
       });
     }
 
     return res.status(500).json({
+      success: false,
       message: "Image upload failed",
-      error: err.message,
     });
   }
 });
@@ -133,7 +135,8 @@ router.get("/", async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    res.json({
+    res.status(200).json({
+      success: true,
       data: blogs,
       pagination: {
         total,
@@ -143,7 +146,11 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch blogs" });
+    console.error("Error fetching blogs:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch blogs",
+    });
   }
 });
 
@@ -156,11 +163,21 @@ router.get("/:id", async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
     }
-    res.json(blog);
-  } catch {
-    res.status(400).json({ message: "Invalid blog id" });
+    res.status(200).json({
+      success: true,
+      data: blog,
+    });
+  } catch (err) {
+    console.error("Error fetching blog:", err);
+    res.status(400).json({
+      success: false,
+      message: "Invalid blog ID",
+    });
   }
 });
 
@@ -173,20 +190,23 @@ router.post("/", async (req, res) => {
   try {
     const payload = req.body;
 
-    // Validate image URL
     if (payload.image && !payload.image.startsWith("https://")) {
       return res.status(400).json({
-        message:
-          "Image must be uploaded via /api/blogs/upload and be a valid URL",
+        success: false,
+        message: "Invalid image URL",
       });
     }
 
     const blog = await Blog.create(payload);
-    res.status(201).json(blog);
+    res.status(201).json({
+      success: true,
+      data: blog,
+    });
   } catch (err) {
+    console.error("Error creating blog:", err);
     res.status(400).json({
+      success: false,
       message: "Failed to create blog",
-      error: err.message,
     });
   }
 });
@@ -202,9 +222,25 @@ router.put("/:id", async (req, res) => {
 
     if (payload.image && !payload.image.startsWith("https://")) {
       return res.status(400).json({
-        message:
-          "Image must be uploaded via /api/blogs/upload and be a valid URL",
+        success: false,
+        message: "Invalid image URL",
       });
+    }
+
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
+    }
+
+    if (payload.image && payload.image !== blog.image && blog.public_id) {
+      try {
+        await cloudinary.uploader.destroy(blog.public_id);
+      } catch (deleteErr) {
+        console.warn("Failed to delete old image:", deleteErr.message);
+      }
     }
 
     const updated = await Blog.findByIdAndUpdate(req.params.id, payload, {
@@ -212,15 +248,15 @@ router.put("/:id", async (req, res) => {
       runValidators: true,
     });
 
-    if (!updated) {
-      return res.status(404).json({ message: "Blog not found" });
-    }
-
-    res.json(updated);
+    res.status(200).json({
+      success: true,
+      data: updated,
+    });
   } catch (err) {
+    console.error("Error updating blog:", err);
     res.status(400).json({
+      success: false,
       message: "Failed to update blog",
-      error: err.message,
     });
   }
 });
@@ -232,13 +268,34 @@ router.put("/:id", async (req, res) => {
  */
 router.delete("/:id", async (req, res) => {
   try {
-    const deleted = await Blog.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ message: "Blog not found" });
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
     }
-    res.json({ success: true });
-  } catch {
-    res.status(400).json({ message: "Failed to delete blog" });
+
+    if (blog.public_id) {
+      try {
+        await cloudinary.uploader.destroy(blog.public_id);
+      } catch (deleteErr) {
+        console.warn("Failed to delete image:", deleteErr.message);
+      }
+    }
+
+    await Blog.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: "Blog deleted",
+    });
+  } catch (err) {
+    console.error("Error deleting blog:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete blog",
+    });
   }
 });
 
