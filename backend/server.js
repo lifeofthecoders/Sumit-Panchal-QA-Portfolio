@@ -1,4 +1,4 @@
-import express from "express"; 
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -67,17 +67,19 @@ const corsOptions = {
     if (allowedOrigins.includes(origin)) return callback(null, true);
 
     console.log("❌ Blocked by CORS:", origin);
-    return callback(new Error("Not allowed by CORS"));
+
+    // ✅ FIX: Do NOT throw error (this causes random failures)
+    return callback(null, false);
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: false, // ✅ FIXED (was true)
+  credentials: false,
 };
 
 // Apply cors for all routes
 app.use(cors(corsOptions));
 
-// ✅ FIX: Preflight must use SAME corsOptions (this was your bug)
+// ✅ FIX: Preflight must use SAME corsOptions
 app.options("*", cors(corsOptions));
 
 /* =========================
