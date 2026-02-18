@@ -39,8 +39,9 @@ console.log("CORS configured allowed origins:", allowedOrigins);
    ========================= */
 app.use((req, res, next) => {
   // Cloudinary uploads + cold starts can be slow on Render
-  req.setTimeout(120000); // 2 minutes
-  res.setTimeout(120000);
+  // Increased from 2 to 5 minutes for reliability
+  req.setTimeout(300000); // 5 minutes
+  res.setTimeout(300000);
   next();
 });
 

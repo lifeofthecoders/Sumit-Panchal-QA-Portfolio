@@ -124,7 +124,7 @@ export const uploadBlogImage = async (file, onProgress) => {
     console.log("🔄 Waking up Render backend...");
     if (onProgress) onProgress(5);
     
-    const isHealthy = await checkBackendHealth(30000); // 30 sec to wake up
+    const isHealthy = await checkBackendHealth(60000); // 60 sec to wake up
     
     if (!isHealthy) {
       console.warn("⚠️ Backend did not respond to health check. Proceeding anyway...");
@@ -136,10 +136,12 @@ export const uploadBlogImage = async (file, onProgress) => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       let uploadStartTime = Date.now();
+      let timeoutOccurred = false;
+      
       const timeout = setTimeout(() => {
+        timeoutOccurred = true;
         xhr.abort();
-        reject(new Error(`Upload timeout at endpoint: ${uploadUrl}\n\nThe server took longer than 2 minutes. This could mean:\n1. Backend is not running\n2. Cloudinary API is very slow\n3. Network connection is unstable`));
-      }, 120000); // 2 minute timeout
+      }, 300000); // 5 minute timeout (matches server timeout)
 
       // Track upload progress (0-90% during upload)
       xhr.upload.addEventListener("progress", (e) => {
@@ -187,7 +189,11 @@ export const uploadBlogImage = async (file, onProgress) => {
 
       xhr.addEventListener("abort", () => {
         clearTimeout(timeout);
-        reject(new Error("Upload was cancelled"));
+        if (timeoutOccurred) {
+          reject(new Error(`❌ Upload timeout at endpoint: ${uploadUrl}\n\nThe server took longer than 5 minutes. This usually means:\n1. Backend is starting/loading (cold start)\n2. Cloudinary service is experiencing issues\n3. Network connection is unstable\n\nPlease try:\n- Refreshing the page and waiting 1 minute\n- Using a smaller image file\n- Checking your internet connection\n- Trying again later`));
+        } else {
+          reject(new Error("Upload was cancelled"));
+        }
       });
 
       console.log("📤 Uploading to:", uploadUrl);
@@ -200,7 +206,7 @@ export const uploadBlogImage = async (file, onProgress) => {
   try {
     console.log("📤 Uploading (no progress tracking) to:", uploadUrl);
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
+    const timeout = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
 
     const res = await fetch(uploadUrl, {
       method: "POST",
@@ -235,7 +241,7 @@ export const uploadBlogImage = async (file, onProgress) => {
     return url;
   } catch (err) {
     if (err.name === "AbortError") {
-      throw new Error(`❌ Upload timeout (2 minutes exceeded)\n\nEndpoint: ${uploadUrl}\n\nThe server did not respond in time. Possible reasons:\n1. Backend is overloaded\n2. Cloudinary API is slow\n3. Network connection is unstable`);
+      throw new Error(`❌ Upload timeout (5 minutes exceeded)\n\nEndpoint: ${uploadUrl}\n\nThe server did not respond in time. Possible reasons:\n1. Backend is starting/loading (cold start)\n2. Cloudinary service is experiencing issues\n3. Network connection is unstable\n\nPlease try:\n- Refreshing the page\n- Using a smaller image file\n- Checking your internet connection`);
     }
     throw err;
   }

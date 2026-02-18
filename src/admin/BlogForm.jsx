@@ -235,9 +235,9 @@ export default function BlogForm() {
       
       // Clean up the error message for display (remove endpoint details, keep key info)
       if (errorMsg.includes("Cannot reach")) {
-        errorMsg = "❌ Cannot connect to backend server.\n\nPlease:\n1. Refresh the page\n2. Wait 30 seconds (server may be starting up)\n3. Try again\n\nIf problem persists, your internet connection may be blocked by a firewall.";
+        errorMsg = "❌ Cannot connect to backend server.\n\nPlease:\n1. Refresh the page\n2. Wait 1-2 minutes (server may be starting up)\n3. Try again\n\nIf problem persists, your internet connection may be blocked by a firewall.";
       } else if (errorMsg.includes("timeout")) {
-        errorMsg = "⏱️ Upload is taking too long (over 2 minutes).\n\nTry:\n- Using a smaller/compressed image\n- Checking your internet speed\n- Waiting a few moments and trying again";
+        errorMsg = "⏱️ Upload is taking too long (over 5 minutes).\n\nTry:\n- Using a smaller/compressed image\n- Checking your internet speed\n- Waiting a few moments and trying again";
       } else if (errorMsg.includes("Failed to fetch")) {
         errorMsg = "❌ Cannot reach the server. Please check:\n1. Your internet connection\n2. If connection is fine, the backend may be down\n3. Try again in a few moments";
       } else if (errorMsg.includes("404")) {
