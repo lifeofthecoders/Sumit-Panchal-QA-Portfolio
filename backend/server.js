@@ -1,4 +1,4 @@
-import express from "express";
+import express from "express"; 
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -71,7 +71,7 @@ const corsOptions = {
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+  credentials: false, // ✅ FIXED (was true)
 };
 
 // Apply cors for all routes
