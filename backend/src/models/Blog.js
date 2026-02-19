@@ -1,17 +1,19 @@
-// src/models/Blog.js
 import mongoose from "mongoose";
 
-const blogSchema = new mongoose.Schema({
-  title: { type: String, required: true, trim: true },
-  content: { type: String },
-  description: { type: String, required: true },
-  image: { type: String },
-  public_id: { type: String },
-  type: { type: String },
-  author: { type: String },
-  profession: { type: String },
-  date: { type: Date },
-  createdAt: { type: Date, default: Date.now },
-});
+const BlogSchema = new mongoose.Schema(
+  {
+    image: { type: String, required: true },
+    type: { type: String, required: true },
+    author: { type: String, required: true },
+    profession: { type: String, required: true },
+    date: { type: String, required: true }, // stored as YYYY-MM-DD from admin form
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model("Blog", blogSchema);
+// Ensure consistent default sorting if needed
+// (We'll sort in queries instead)
+
+export default mongoose.model("Blog", BlogSchema);
