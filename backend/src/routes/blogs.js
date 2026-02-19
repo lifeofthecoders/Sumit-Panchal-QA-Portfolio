@@ -83,30 +83,56 @@ const uploadToCloudinary = (buffer) => {
  * ============================
  */
 router.post("/upload", upload.single("image"), async (req, res) => {
+  console.log("[UPLOAD] Request received at", new Date().toISOString());
+
   try {
+    // Step 1: Log environment (without exposing full secret)
+    console.log("[UPLOAD] Cloud name prefix:", process.env.CLOUDINARY_CLOUD_NAME?.substring(0, 5) || "missing");
+    console.log("[UPLOAD] API key prefix:", process.env.CLOUDINARY_API_KEY?.substring(0, 5) || "missing");
+    console.log("[UPLOAD] API secret prefix:", process.env.CLOUDINARY_API_SECRET ? "present" : "missing");
+
     if (!isCloudinaryConfigured()) {
+      console.error("[UPLOAD] Cloudinary credentials MISSING in env");
       return res.status(503).json({
         success: false,
-        message: "Cloudinary not configured",
+        message: "Cloudinary configuration missing",
       });
     }
 
-    if (!req.file || !req.file.buffer) {
+    console.log("[UPLOAD] Cloudinary config check passed");
+
+    if (!req.file) {
+      console.log("[UPLOAD] No file in request");
       return res.status(400).json({
         success: false,
-        message: "No image provided",
+        message: "No image file received",
       });
     }
 
-    console.log(`Upload started - file: ${req.file.originalname}, size: ${(req.file.size / 1024).toFixed(2)} KB`);
+    if (!req.file.buffer || req.file.buffer.length === 0) {
+      console.log("[UPLOAD] Empty buffer received");
+      return res.status(400).json({
+        success: false,
+        message: "Image file is empty",
+      });
+    }
+
+    console.log(
+      `[UPLOAD] File info → name: ${req.file.originalname}, ` +
+      `size: ${(req.file.size / 1024).toFixed(2)} KB, ` +
+      `mimetype: ${req.file.mimetype}`
+    );
+
+    console.log("[UPLOAD] Starting upload to Cloudinary...");
 
     const result = await uploadToCloudinary(req.file.buffer);
 
-    if (!result?.secure_url) {
-      throw new Error("Cloudinary response missing secure_url");
-    }
+    console.log("[UPLOAD] Cloudinary returned → public_id:", result?.public_id);
 
-    console.log(`Upload success - public_id: ${result.public_id}`);
+    if (!result?.secure_url) {
+      console.error("[UPLOAD] Missing secure_url in result");
+      throw new Error("Cloudinary did not return image URL");
+    }
 
     return res.status(200).json({
       success: true,
@@ -114,32 +140,38 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       public_id: result.public_id,
     });
   } catch (err) {
-    console.error("UPLOAD ERROR:", {
-      message: err.message,
-      stack: err.stack?.substring(0, 300), // truncate long stacks
-      code: err.code || err.http_code || "unknown",
+    const errorInfo = {
+      timestamp: new Date().toISOString(),
+      message: err.message || "Unknown error",
       name: err.name,
+      code: err.code || err.http_code || null,
+      isAuth: /auth|key|secret|signature|credential/i.test(err.message || ""),
+      isTimeout: /timeout|timed out/i.test(err.message || ""),
+      stackFirst: err.stack ? err.stack.split("\n")[0] : null,
       fileSize: req.file?.size,
-    });
+      fileName: req.file?.originalname,
+    };
 
-    const isTimeout = err.message?.toLowerCase().includes("timeout") || err.message?.toLowerCase().includes("timed out");
-    const isAuthError = err.message?.toLowerCase().includes("authentication") || err.message?.toLowerCase().includes("api key") || err.message?.toLowerCase().includes("signature");
+    console.error("[UPLOAD CRASH]", JSON.stringify(errorInfo, null, 2));
 
     let status = 500;
-    let message = "Image upload failed";
+    let clientMessage = "Image upload failed";
 
-    if (isTimeout) {
+    if (errorInfo.isTimeout) {
       status = 408;
-      message = "Upload timeout";
-    } else if (isAuthError) {
+      clientMessage = "Upload timed out (30s)";
+    } else if (errorInfo.isAuth) {
       status = 503;
-      message = "Cloudinary authentication failed";
+      clientMessage = "Cloudinary authentication error – check API credentials";
+    } else if (err.message?.includes("stream setup failed")) {
+      status = 503;
+      clientMessage = "Cloudinary initialization failed";
     }
 
     return res.status(status).json({
       success: false,
-      message,
-      error: err.message || "Internal error",
+      message: clientMessage,
+      errorCode: err.code || "unknown",
     });
   }
 });
