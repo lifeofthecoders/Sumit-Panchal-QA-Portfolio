@@ -5,16 +5,11 @@ import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
 
-/**
- * ============================
- * Multer (Memory Storage)
- * ============================
- */
+// ───────────────────────────────────────────────
+// Multer config (same as before)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB
-  },
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith("image/")) {
       return cb(new Error("Only image files are allowed"), false);
@@ -23,38 +18,27 @@ const upload = multer({
   },
 });
 
-/**
- * ============================
- * Cloudinary Helpers
- * ============================
- */
+// ───────────────────────────────────────────────
+// Cloudinary helpers (enhanced logging)
 const isCloudinaryConfigured = () => {
   const name = process.env.CLOUDINARY_CLOUD_NAME;
   const key = process.env.CLOUDINARY_API_KEY;
   const secret = process.env.CLOUDINARY_API_SECRET;
 
-  const configured = Boolean(name && key && secret);
-
   console.log("[CLOUDINARY-CHECK] Status:", {
     name: name ? name.substring(0, 5) + '...' : 'MISSING',
     key: key ? key.substring(0, 5) + '...' : 'MISSING',
-    secret: secret ? 'present' : 'MISSING',
-    configured,
+    secret: !!secret ? 'present' : 'MISSING',
   });
 
-  return configured;
+  return Boolean(name && key && secret);
 };
 
 const uploadToCloudinary = async (buffer) => {
-  console.log("[CLOUDINARY] uploadToCloudinary called - buffer length:", buffer?.length || 0);
+  console.log("[CLOUDINARY] Starting upload - buffer size:", buffer?.length || 0);
 
   return new Promise((resolve, reject) => {
-    console.log("[CLOUDINARY] Creating upload stream...");
-
-    const timeout = setTimeout(() => {
-      console.log("[CLOUDINARY] Timeout 30s triggered");
-      reject(new Error("Cloudinary upload timeout (30s)"));
-    }, 30000);
+    const timeout = setTimeout(() => reject(new Error("Cloudinary timeout (30s)")), 30000);
 
     const stream = cloudinary.uploader.upload_stream(
       {
@@ -65,77 +49,63 @@ const uploadToCloudinary = async (buffer) => {
       },
       (error, result) => {
         clearTimeout(timeout);
-        if (error) {
-          console.error("[CLOUDINARY] Upload stream error:", error.message);
-          reject(error);
-        } else {
-          console.log("[CLOUDINARY] Upload success - public_id:", result?.public_id);
-          resolve(result);
-        }
+        if (error) reject(error);
+        else resolve(result);
       }
     );
 
-    console.log("[CLOUDINARY] Stream created, writing buffer...");
     stream.end(buffer, (err) => {
-      if (err) {
-        console.error("[CLOUDINARY] stream.end error:", err.message);
-        clearTimeout(timeout);
-        reject(err);
-      }
+      if (err) reject(err);
     });
   });
 };
 
-/**
- * ============================
- * POST /api/blogs/upload - FINAL SAFE VERSION
- * ============================
- */
-router.post("/upload", (req, res, next) => {
-  console.log("╔════════════════════════════════════════════╗");
-  console.log("║ UPLOAD ROUTE ENTERED - " + new Date().toISOString() + " ║");
-  console.log("╚════════════════════════════════════════════╝");
+// ───────────────────────────────────────────────
+// UPLOAD ROUTE - Manual Multer + full safety
+router.post("/upload", (req, res) => {
+  console.log("╔═══════════════════════════════╗");
+  console.log("║ UPLOAD ROUTE STARTED " + new Date().toISOString() + " ║");
+  console.log("╚═══════════════════════════════╝");
 
-  // Multer middleware is applied here - any sync error from multer will be caught
+  // Manually run Multer
   upload.single("image")(req, res, async (multerErr) => {
     if (multerErr) {
-      console.error("[UPLOAD] Multer error:", multerErr.message, multerErr.stack?.substring(0, 200));
+      console.error("[UPLOAD] MULTER FAILED:", {
+        message: multerErr.message,
+        code: multerErr.code,
+        stack: multerErr.stack?.substring(0, 300),
+      });
+
       return res.status(400).json({
         success: false,
-        message: "File processing error: " + (multerErr.message || "Multer failed"),
+        message: "File upload processing error: " + (multerErr.message || "Multer error"),
       });
     }
 
     try {
-      console.log("[UPLOAD] Multer completed successfully");
-
-      if (!isCloudinaryConfigured()) {
-        return res.status(503).json({
-          success: false,
-          message: "Cloudinary credentials missing",
-        });
-      }
+      console.log("[UPLOAD] Multer success - file present:", !!req.file);
 
       if (!req.file) {
-        return res.status(400).json({
-          success: false,
-          message: "No image received",
-        });
+        return res.status(400).json({ success: false, message: "No image file" });
       }
 
-      console.log("[UPLOAD] File:", {
+      console.log("[UPLOAD] File details:", {
         name: req.file.originalname,
         sizeKB: (req.file.size / 1024).toFixed(2),
-        bufferBytes: req.file.buffer?.length || 0,
+        bufferBytes: req.file.buffer.length,
       });
+
+      if (!isCloudinaryConfigured()) {
+        return res.status(503).json({ success: false, message: "Cloudinary not configured" });
+      }
 
       const result = await uploadToCloudinary(req.file.buffer);
 
       if (!result?.secure_url) {
-        throw new Error("Cloudinary missing secure_url");
+        throw new Error("No secure_url from Cloudinary");
       }
 
-      console.log("[UPLOAD] SUCCESS → URL:", result.secure_url.substring(0, 60) + "...");
+      console.log("[UPLOAD] SUCCESS - public_id:", result.public_id);
 
       return res.status(200).json({
         success: true,
@@ -143,37 +113,33 @@ router.post("/upload", (req, res, next) => {
         public_id: result.public_id,
       });
     } catch (err) {
-      console.error("[UPLOAD CRASH FULL]", {
+      console.error("[UPLOAD CRASH]", {
         message: err.message,
-        name: err.name,
         code: err.code,
-        http_code: err.http_code,
-        isAuth: /auth|key|secret|signature/i.test(err.message || ""),
-        stack: err.stack?.substring(0, 400),
+        isAuth: /auth|key|signature/i.test(err.message || ""),
+        stack: err.stack?.substring(0, 300),
       });
 
       const status = /timeout/i.test(err.message) ? 408 : /auth|key|signature/i.test(err.message) ? 503 : 500;
 
       return res.status(status).json({
         success: false,
-        message: status === 503 ? "Cloudinary auth failed" : status === 408 ? "Timeout" : "Upload failed",
+        message: status === 503 ? "Cloudinary auth failed" : "Upload failed",
         error: err.message.substring(0, 150),
       });
     } finally {
-      console.log("╔════════════════════════════════════════════╗");
-      console.log("║ UPLOAD ROUTE EXITED                        ║");
-      console.log("╚════════════════════════════════════════════╝");
+      console.log("╭─────────────────────────────────────╮");
+      console.log("│ UPLOAD ROUTE FINISHED               │");
+      console.log("╰─────────────────────────────────────╯");
     }
   });
 });
 
-// ──────────────────────────────────────────────────────────────────────────────
-// All other routes remain EXACTLY the same as your current code
-// ──────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────
+// All other routes unchanged - keep exactly as they are
+// (GET /, GET /:id, POST /, PUT /:id, DELETE /:id)
+// ───────────────────────────────────────────────
 
-/**
- * GET /api/blogs
- */
 router.get("/", async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page || "1", 10), 1);
@@ -202,9 +168,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-/**
- * GET /api/blogs/:id
- */
 router.get("/:id", async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -216,9 +179,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-/**
- * POST /api/blogs
- */
 router.post("/", async (req, res) => {
   try {
     const payload = req.body;
@@ -233,9 +193,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-/**
- * PUT /api/blogs/:id
- */
 router.put("/:id", async (req, res) => {
   try {
     const payload = req.body;
@@ -267,9 +224,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-/**
- * DELETE /api/blogs/:id
- */
 router.delete("/:id", async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
