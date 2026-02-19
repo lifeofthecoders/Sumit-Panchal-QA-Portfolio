@@ -29,157 +29,150 @@ const upload = multer({
  * ============================
  */
 const isCloudinaryConfigured = () => {
-  const configured = Boolean(
-    process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET
-  );
+  const name = process.env.CLOUDINARY_CLOUD_NAME;
+  const key = process.env.CLOUDINARY_API_KEY;
+  const secret = process.env.CLOUDINARY_API_SECRET;
 
-  if (!configured) {
-    console.error("Cloudinary credentials missing in environment variables");
-  }
+  const configured = Boolean(name && key && secret);
+
+  console.log("[CLOUDINARY-CHECK] Status:", {
+    name: name ? name.substring(0, 5) + '...' : 'MISSING',
+    key: key ? key.substring(0, 5) + '...' : 'MISSING',
+    secret: secret ? 'present' : 'MISSING',
+    configured,
+  });
 
   return configured;
 };
 
-const uploadToCloudinary = (buffer) => {
-  return new Promise((resolve, reject) => {
-    let stream;
+const uploadToCloudinary = async (buffer) => {
+  console.log("[CLOUDINARY] uploadToCloudinary called - buffer length:", buffer?.length || 0);
 
-    try {
-      stream = cloudinary.uploader.upload_stream(
-        {
-          folder: "qa-portfolio/blogs",
-          resource_type: "image",
-          quality: "auto:good",
-          fetch_format: "auto",
-        },
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        }
-      );
-    } catch (setupError) {
-      return reject(new Error(`Cloudinary stream setup failed: ${setupError.message}`));
-    }
+  return new Promise((resolve, reject) => {
+    console.log("[CLOUDINARY] Creating upload stream...");
 
     const timeout = setTimeout(() => {
-      try {
-        stream?.destroy();
-      } catch {}
+      console.log("[CLOUDINARY] Timeout 30s triggered");
       reject(new Error("Cloudinary upload timeout (30s)"));
     }, 30000);
 
-    stream.on("finish", () => clearTimeout(timeout));
-    stream.on("error", () => clearTimeout(timeout));
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "qa-portfolio/blogs",
+        resource_type: "image",
+        quality: "auto:good",
+        fetch_format: "auto",
+      },
+      (error, result) => {
+        clearTimeout(timeout);
+        if (error) {
+          console.error("[CLOUDINARY] Upload stream error:", error.message);
+          reject(error);
+        } else {
+          console.log("[CLOUDINARY] Upload success - public_id:", result?.public_id);
+          resolve(result);
+        }
+      }
+    );
 
-    stream.end(buffer);
+    console.log("[CLOUDINARY] Stream created, writing buffer...");
+    stream.end(buffer, (err) => {
+      if (err) {
+        console.error("[CLOUDINARY] stream.end error:", err.message);
+        clearTimeout(timeout);
+        reject(err);
+      }
+    });
   });
 };
 
 /**
  * ============================
- * POST /api/blogs/upload
+ * POST /api/blogs/upload - FINAL SAFE VERSION
  * ============================
  */
-router.post("/upload", upload.single("image"), async (req, res) => {
-  console.log("[UPLOAD] Request received at", new Date().toISOString());
+router.post("/upload", (req, res, next) => {
+  console.log("╔════════════════════════════════════════════╗");
+  console.log("║ UPLOAD ROUTE ENTERED - " + new Date().toISOString() + " ║");
+  console.log("╚════════════════════════════════════════════╝");
 
-  try {
-    // Step 1: Log environment (without exposing full secret)
-    console.log("[UPLOAD] Cloud name prefix:", process.env.CLOUDINARY_CLOUD_NAME?.substring(0, 5) || "missing");
-    console.log("[UPLOAD] API key prefix:", process.env.CLOUDINARY_API_KEY?.substring(0, 5) || "missing");
-    console.log("[UPLOAD] API secret prefix:", process.env.CLOUDINARY_API_SECRET ? "present" : "missing");
-
-    if (!isCloudinaryConfigured()) {
-      console.error("[UPLOAD] Cloudinary credentials MISSING in env");
-      return res.status(503).json({
-        success: false,
-        message: "Cloudinary configuration missing",
-      });
-    }
-
-    console.log("[UPLOAD] Cloudinary config check passed");
-
-    if (!req.file) {
-      console.log("[UPLOAD] No file in request");
+  // Multer middleware is applied here - any sync error from multer will be caught
+  upload.single("image")(req, res, async (multerErr) => {
+    if (multerErr) {
+      console.error("[UPLOAD] Multer error:", multerErr.message, multerErr.stack?.substring(0, 200));
       return res.status(400).json({
         success: false,
-        message: "No image file received",
+        message: "File processing error: " + (multerErr.message || "Multer failed"),
       });
     }
 
-    if (!req.file.buffer || req.file.buffer.length === 0) {
-      console.log("[UPLOAD] Empty buffer received");
-      return res.status(400).json({
+    try {
+      console.log("[UPLOAD] Multer completed successfully");
+
+      if (!isCloudinaryConfigured()) {
+        return res.status(503).json({
+          success: false,
+          message: "Cloudinary credentials missing",
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "No image received",
+        });
+      }
+
+      console.log("[UPLOAD] File:", {
+        name: req.file.originalname,
+        sizeKB: (req.file.size / 1024).toFixed(2),
+        bufferBytes: req.file.buffer?.length || 0,
+      });
+
+      const result = await uploadToCloudinary(req.file.buffer);
+
+      if (!result?.secure_url) {
+        throw new Error("Cloudinary missing secure_url");
+      }
+
+      console.log("[UPLOAD] SUCCESS → URL:", result.secure_url.substring(0, 60) + "...");
+
+      return res.status(200).json({
+        success: true,
+        imageUrl: result.secure_url,
+        public_id: result.public_id,
+      });
+    } catch (err) {
+      console.error("[UPLOAD CRASH FULL]", {
+        message: err.message,
+        name: err.name,
+        code: err.code,
+        http_code: err.http_code,
+        isAuth: /auth|key|secret|signature/i.test(err.message || ""),
+        stack: err.stack?.substring(0, 400),
+      });
+
+      const status = /timeout/i.test(err.message) ? 408 : /auth|key|signature/i.test(err.message) ? 503 : 500;
+
+      return res.status(status).json({
         success: false,
-        message: "Image file is empty",
+        message: status === 503 ? "Cloudinary auth failed" : status === 408 ? "Timeout" : "Upload failed",
+        error: err.message.substring(0, 150),
       });
+    } finally {
+      console.log("╔════════════════════════════════════════════╗");
+      console.log("║ UPLOAD ROUTE EXITED                        ║");
+      console.log("╚════════════════════════════════════════════╝");
     }
-
-    console.log(
-      `[UPLOAD] File info → name: ${req.file.originalname}, ` +
-      `size: ${(req.file.size / 1024).toFixed(2)} KB, ` +
-      `mimetype: ${req.file.mimetype}`
-    );
-
-    console.log("[UPLOAD] Starting upload to Cloudinary...");
-
-    const result = await uploadToCloudinary(req.file.buffer);
-
-    console.log("[UPLOAD] Cloudinary returned → public_id:", result?.public_id);
-
-    if (!result?.secure_url) {
-      console.error("[UPLOAD] Missing secure_url in result");
-      throw new Error("Cloudinary did not return image URL");
-    }
-
-    return res.status(200).json({
-      success: true,
-      imageUrl: result.secure_url,
-      public_id: result.public_id,
-    });
-  } catch (err) {
-    const errorInfo = {
-      timestamp: new Date().toISOString(),
-      message: err.message || "Unknown error",
-      name: err.name,
-      code: err.code || err.http_code || null,
-      isAuth: /auth|key|secret|signature|credential/i.test(err.message || ""),
-      isTimeout: /timeout|timed out/i.test(err.message || ""),
-      stackFirst: err.stack ? err.stack.split("\n")[0] : null,
-      fileSize: req.file?.size,
-      fileName: req.file?.originalname,
-    };
-
-    console.error("[UPLOAD CRASH]", JSON.stringify(errorInfo, null, 2));
-
-    let status = 500;
-    let clientMessage = "Image upload failed";
-
-    if (errorInfo.isTimeout) {
-      status = 408;
-      clientMessage = "Upload timed out (30s)";
-    } else if (errorInfo.isAuth) {
-      status = 503;
-      clientMessage = "Cloudinary authentication error – check API credentials";
-    } else if (err.message?.includes("stream setup failed")) {
-      status = 503;
-      clientMessage = "Cloudinary initialization failed";
-    }
-
-    return res.status(status).json({
-      success: false,
-      message: clientMessage,
-      errorCode: err.code || "unknown",
-    });
-  }
+  });
 });
 
+// ──────────────────────────────────────────────────────────────────────────────
+// All other routes remain EXACTLY the same as your current code
+// ──────────────────────────────────────────────────────────────────────────────
+
 /**
- * ============================
  * GET /api/blogs
- * ============================
  */
 router.get("/", async (req, res) => {
   try {
@@ -205,93 +198,53 @@ router.get("/", async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching blogs:", err.message);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch blogs",
-    });
+    res.status(500).json({ success: false, message: "Failed to fetch blogs" });
   }
 });
 
 /**
- * ============================
  * GET /api/blogs/:id
- * ============================
  */
 router.get("/:id", async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
-    if (!blog) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog not found",
-      });
-    }
-    res.status(200).json({
-      success: true,
-      data: blog,
-    });
+    if (!blog) return res.status(404).json({ success: false, message: "Blog not found" });
+    res.status(200).json({ success: true, data: blog });
   } catch (err) {
     console.error("Error fetching blog:", err.message);
-    res.status(400).json({
-      success: false,
-      message: "Invalid blog ID",
-    });
+    res.status(400).json({ success: false, message: "Invalid blog ID" });
   }
 });
 
 /**
- * ============================
  * POST /api/blogs
- * ============================
  */
 router.post("/", async (req, res) => {
   try {
     const payload = req.body;
-
     if (payload.image && !payload.image.startsWith("https://")) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid image URL",
-      });
+      return res.status(400).json({ success: false, message: "Invalid image URL" });
     }
-
     const blog = await Blog.create(payload);
-    res.status(201).json({
-      success: true,
-      data: blog,
-    });
+    res.status(201).json({ success: true, data: blog });
   } catch (err) {
     console.error("Error creating blog:", err.message);
-    res.status(400).json({
-      success: false,
-      message: "Failed to create blog",
-    });
+    res.status(400).json({ success: false, message: "Failed to create blog" });
   }
 });
 
 /**
- * ============================
  * PUT /api/blogs/:id
- * ============================
  */
 router.put("/:id", async (req, res) => {
   try {
     const payload = req.body;
-
     if (payload.image && !payload.image.startsWith("https://")) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid image URL",
-      });
+      return res.status(400).json({ success: false, message: "Invalid image URL" });
     }
 
     const blog = await Blog.findById(req.params.id);
-    if (!blog) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog not found",
-      });
-    }
+    if (!blog) return res.status(404).json({ success: false, message: "Blog not found" });
 
     if (payload.image && payload.image !== blog.image && blog.public_id) {
       try {
@@ -307,55 +260,35 @@ router.put("/:id", async (req, res) => {
       runValidators: true,
     });
 
-    res.status(200).json({
-      success: true,
-      data: updated,
-    });
+    res.status(200).json({ success: true, data: updated });
   } catch (err) {
     console.error("Error updating blog:", err.message);
-    res.status(400).json({
-      success: false,
-      message: "Failed to update blog",
-    });
+    res.status(400).json({ success: false, message: "Failed to update blog" });
   }
 });
 
 /**
- * ============================
  * DELETE /api/blogs/:id
- * ============================
  */
 router.delete("/:id", async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
-    if (!blog) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog not found",
-      });
-    }
+    if (!blog) return res.status(404).json({ success: false, message: "Blog not found" });
 
     if (blog.public_id) {
       try {
         await cloudinary.uploader.destroy(blog.public_id);
-        console.log(`Deleted image on blog delete: ${blog.public_id}`);
+        console.log(`Deleted image: ${blog.public_id}`);
       } catch (deleteErr) {
         console.warn("Failed to delete image:", deleteErr.message);
       }
     }
 
     await Blog.findByIdAndDelete(req.params.id);
-
-    res.status(200).json({
-      success: true,
-      message: "Blog deleted",
-    });
+    res.status(200).json({ success: true, message: "Blog deleted" });
   } catch (err) {
     console.error("Error deleting blog:", err.message);
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete blog",
-    });
+    res.status(500).json({ success: false, message: "Failed to delete blog" });
   }
 });
 
