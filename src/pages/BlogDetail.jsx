@@ -384,10 +384,10 @@ export default function BlogDetail() {
 
                   {/* ✅ Blog Image (Cloudinary Safe + Never Break) */}
                   <img
-                    src={blog.image || "/image/default-blog.jpg"}
+                    src={blog.image || `${import.meta.env.BASE_URL}image/default-blog.jpg`}
                     alt={blog.title}
                     onError={(e) => {
-                      e.currentTarget.src = "/image/default-blog.jpg";
+                      e.currentTarget.src = `${import.meta.env.BASE_URL}image/default-blog.jpg`;
                     }}
                     style={{
                       width: "100%",

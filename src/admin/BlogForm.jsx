@@ -427,10 +427,6 @@ export default function BlogForm() {
                   const compressedSize = formatFileSize(compressedFile.size);
                   const savings = Math.round((1 - compressedFile.size / file.size) * 100);
 
-                  console.log(
-                    `✅ Image compressed: ${originalSize} → ${compressedSize} (${savings}% smaller)`
-                  );
-
                   // Revoke old preview URL
                   if (previewUrlRef.current) {
                     URL.revokeObjectURL(previewUrlRef.current);

@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
-import fs from "fs";
 import { fileURLToPath } from "url";
 
 // Load .env from backend folder
@@ -24,10 +23,16 @@ const MONGODB_URI = process.env.MONGODB_URI;
 const rawCors = process.env.CORS_ORIGIN || "*";
 const allowedOrigins = rawCors
   .split(",")
-  .map(s => s.trim().replace(/\/$/, ""))
+  .map((s) => s.trim().replace(/\/$/, ""))
   .filter(Boolean);
 
-console.log("CORS allowed origins:", allowedOrigins);
+/* =========================
+   Request Logger (SAFE)
+   ========================= */
+app.use((req, res, next) => {
+  const origin = req.headers.origin || "NO_ORIGIN";
+  next();
+});
 
 /* =========================
    Timeout Middleware
@@ -49,39 +54,53 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
    ========================= */
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes("*")) {
-      return callback(null, true);
-    }
+    // Allow server-to-server requests (Postman, curl)
+    if (!origin) return callback(null, true);
+
+    // Allow all
+    if (allowedOrigins.includes("*")) return callback(null, true);
 
     const cleanOrigin = origin.replace(/\/$/, "");
+
     if (allowedOrigins.includes(cleanOrigin)) {
       return callback(null, true);
     }
 
-    console.log(`CORS blocked: ${cleanOrigin}`);
-    callback(new Error("Not allowed by CORS"));
+    return callback(new Error("Not allowed by CORS"));
   },
+
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+  ],
+
   credentials: false,
   optionsSuccessStatus: 200,
 };
 
+// ✅ IMPORTANT: Apply CORS BEFORE routes
 app.use(cors(corsOptions));
+
+// ✅ IMPORTANT: Preflight must be handled correctly
 app.options("*", cors(corsOptions));
 
 /* =========================
    Health Endpoints
    ========================= */
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ ok: true, message: "Backend is running" });
+  return res.status(200).json({ ok: true, message: "Backend is running" });
 });
 
 app.get("/api/cloudinary-health", async (req, res) => {
   const configured = Boolean(
     process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET
   );
 
   if (!configured) {
@@ -92,12 +111,12 @@ app.get("/api/cloudinary-health", async (req, res) => {
   }
 
   try {
-    // Lightweight check — just ping usage stats
-    await cloudinary.api.usage();
-    res.status(200).json({ ok: true, message: "Cloudinary connected" });
+    // lightweight ping
+    await cloudinary.api.ping();
+    return res.status(200).json({ ok: true, message: "Cloudinary connected" });
   } catch (err) {
-    console.error("Cloudinary health check failed:", err.message);
-    res.status(503).json({
+    console.error("❌ Cloudinary health check failed:", err.message);
+    return res.status(503).json({
       ok: false,
       message: "Cloudinary connection failed",
       error: err.message,
@@ -111,25 +130,10 @@ app.get("/api/cloudinary-health", async (req, res) => {
 app.use("/api/blogs", blogsRouter);
 
 /* =========================
-   Serve temporary uploads (fallback)
-   ========================= */
-const uploadsDir = path.join(process.cwd(), "public", "uploads");
-
-if (!fs.existsSync(uploadsDir)) {
-  try {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  } catch (err) {
-    console.warn("Could not create uploads directory:", err.message);
-  }
-}
-
-app.use("/uploads", express.static(uploadsDir));
-
-/* =========================
    404 Handler
    ========================= */
 app.use((req, res) => {
-  res.status(404).json({
+  return res.status(404).json({
     ok: false,
     message: "Route not found",
   });
@@ -139,11 +143,22 @@ app.use((req, res) => {
    Global Error Handler
    ========================= */
 app.use((err, req, res, next) => {
-  console.error("Server error:", err.stack || err);
+  console.error("❌ Server error:", err.stack || err);
+
+  // Better visibility for CORS errors
+  if (err.message && err.message.includes("Not allowed by CORS")) {
+    return res.status(403).json({
+      ok: false,
+      message: "CORS blocked this request",
+      error: err.message,
+    });
+  }
+
   const status = err.status || 500;
-  res.status(status).json({
+  return res.status(status).json({
     ok: false,
-    message: status === 500 ? "Internal server error" : err.message || "Server error",
+    message:
+      status === 500 ? "Internal server error" : err.message || "Server error",
   });
 });
 
@@ -152,19 +167,16 @@ app.use((err, req, res, next) => {
    ========================= */
 const start = async () => {
   if (!MONGODB_URI) {
-    console.error("MONGODB_URI is missing in environment variables");
+    console.error("❌ MONGODB_URI is missing in environment variables");
     process.exit(1);
   }
 
   try {
     await mongoose.connect(MONGODB_URI);
-    console.log("MongoDB connected successfully");
-
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error("Failed to start server:", err.message);
+    console.error("❌ Failed to start server:", err.message);
     process.exit(1);
   }
 };
@@ -175,9 +187,7 @@ start();
    Graceful shutdown
    ========================= */
 process.on("SIGTERM", () => {
-  console.log("SIGTERM received. Shutting down gracefully...");
   mongoose.connection.close(false).then(() => {
-    console.log("MongoDB connection closed.");
     process.exit(0);
   });
 });

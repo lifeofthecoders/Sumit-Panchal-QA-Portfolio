@@ -5,9 +5,7 @@
       headers: { 'Content-Type': 'application/json', 'Origin': 'https://lifeofthecoders.github.io' },
       body: JSON.stringify({ imageBase64: 'data:text/plain;base64,dGVzdA==' })
     });
-    console.log('STATUS', res.status);
     const text = await res.text();
-    console.log('BODY', text);
   }catch(e){
     console.error('ERROR', e);
   }

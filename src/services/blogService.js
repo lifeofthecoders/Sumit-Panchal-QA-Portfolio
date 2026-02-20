@@ -16,8 +16,6 @@ try {
   // ignore in non-browser environments
 }
 
-console.log("🔧 Blog API configured to:", API_BASE_URL);
-
 /**
  * Check if backend is accessible
  */
@@ -121,7 +119,6 @@ export const uploadBlogImage = async (file, onProgress) => {
 
   // Pre-flight: Wake up Render backend if cold (but don't block upload on failure)
   if (API_BASE_URL.includes("onrender.com")) {
-    console.log("🔄 Waking up Render backend...");
     if (onProgress) onProgress(5);
     
     // Fire and forget - don't wait for health check, start upload immediately
@@ -154,7 +151,6 @@ export const uploadBlogImage = async (file, onProgress) => {
       xhr.addEventListener("load", () => {
         clearTimeout(timeout);
         const uploadTime = ((Date.now() - uploadStartTime) / 1000).toFixed(1);
-        console.log(`✅ Upload response received in ${uploadTime}s (status: ${xhr.status})`);
         
         onProgress(95);
 
@@ -167,7 +163,6 @@ export const uploadBlogImage = async (file, onProgress) => {
               return;
             }
             onProgress(100);
-            console.log("✅ Upload complete:", url);
             resolve(url);
           } catch (err) {
             reject(new Error("Upload response is invalid: " + err.message));
@@ -207,7 +202,6 @@ export const uploadBlogImage = async (file, onProgress) => {
         }
       });
 
-      console.log("📤 Uploading to:", uploadUrl);
       xhr.open("POST", uploadUrl);
       xhr.send(formData);
     });
@@ -215,7 +209,6 @@ export const uploadBlogImage = async (file, onProgress) => {
 
   // Fallback to fetch for simple upload without progress
   try {
-    console.log("📤 Uploading (no progress tracking) to:", uploadUrl);
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
 
@@ -248,7 +241,6 @@ export const uploadBlogImage = async (file, onProgress) => {
       throw new Error("Upload succeeded but returned an invalid image URL");
     }
 
-    console.log("✅ Upload complete:", url);
     return url;
   } catch (err) {
     if (err.name === "AbortError") {

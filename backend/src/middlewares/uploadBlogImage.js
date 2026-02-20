@@ -38,7 +38,6 @@ try {
 
         upload = multer({ storage });
         isCloudinaryAvailable = true;
-        console.log("✅ Cloudinary storage initialized successfully");
       } catch (error) {
         console.warn(
           "⚠️ Failed to initialize Cloudinary storage, falling back to memory storage",
