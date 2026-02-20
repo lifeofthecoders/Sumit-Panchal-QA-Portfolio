@@ -5,12 +5,16 @@ import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Load .env from backend folder
+/* =========================
+   Load Environment Variables
+   ========================= */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, ".env") });
 
-// Dynamic imports after dotenv
+/* =========================
+   Dynamic Imports (after dotenv)
+   ========================= */
 const { default: blogsRouter } = await import("./src/routes/blogs.js");
 const { default: cloudinary } = await import("./src/config/cloudinary.js");
 
@@ -19,20 +23,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Parse allowed CORS origins
+/* =========================
+   Parse Allowed CORS Origins
+   ========================= */
 const rawCors = process.env.CORS_ORIGIN || "*";
 const allowedOrigins = rawCors
   .split(",")
   .map((s) => s.trim().replace(/\/$/, ""))
   .filter(Boolean);
-
-/* =========================
-   Request Logger (SAFE)
-   ========================= */
-app.use((req, res, next) => {
-  const origin = req.headers.origin || "NO_ORIGIN";
-  next();
-});
 
 /* =========================
    Timeout Middleware
@@ -54,10 +52,8 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
    ========================= */
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow server-to-server requests (Postman, curl)
     if (!origin) return callback(null, true);
 
-    // Allow all
     if (allowedOrigins.includes("*")) return callback(null, true);
 
     const cleanOrigin = origin.replace(/\/$/, "");
@@ -70,7 +66,6 @@ const corsOptions = {
   },
 
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-
   allowedHeaders: [
     "Content-Type",
     "Authorization",
@@ -78,22 +73,24 @@ const corsOptions = {
     "Accept",
     "Origin",
   ],
-
   credentials: false,
   optionsSuccessStatus: 200,
 };
 
-// ✅ IMPORTANT: Apply CORS BEFORE routes
+/* =========================
+   Apply CORS
+   ========================= */
 app.use(cors(corsOptions));
-
-// ✅ IMPORTANT: Preflight must be handled correctly
 app.options("*", cors(corsOptions));
 
 /* =========================
    Health Endpoints
    ========================= */
 app.get("/api/health", (req, res) => {
-  return res.status(200).json({ ok: true, message: "Backend is running" });
+  return res.status(200).json({
+    ok: true,
+    message: "Backend is running",
+  });
 });
 
 app.get("/api/cloudinary-health", async (req, res) => {
@@ -111,9 +108,11 @@ app.get("/api/cloudinary-health", async (req, res) => {
   }
 
   try {
-    // lightweight ping
     await cloudinary.api.ping();
-    return res.status(200).json({ ok: true, message: "Cloudinary connected" });
+    return res.status(200).json({
+      ok: true,
+      message: "Cloudinary connected successfully",
+    });
   } catch (err) {
     console.error("❌ Cloudinary health check failed:", err.message);
     return res.status(503).json({
@@ -145,7 +144,6 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error("❌ Server error:", err.stack || err);
 
-  // Better visibility for CORS errors
   if (err.message && err.message.includes("Not allowed by CORS")) {
     return res.status(403).json({
       ok: false,
@@ -155,10 +153,13 @@ app.use((err, req, res, next) => {
   }
 
   const status = err.status || 500;
+
   return res.status(status).json({
     ok: false,
     message:
-      status === 500 ? "Internal server error" : err.message || "Server error",
+      status === 500
+        ? "Internal server error"
+        : err.message || "Server error",
   });
 });
 
@@ -172,9 +173,18 @@ const start = async () => {
   }
 
   try {
+    // MongoDB Connection
     await mongoose.connect(MONGODB_URI);
+    console.log("✅ MongoDB connected successfully");
+
+    // Start Server
     app.listen(PORT, () => {
+      console.log("=======================================");
+      console.log(`🚀 Server established successfully`);
+      console.log(`🌍 Running on: http://localhost:${PORT}`);
+      console.log("=======================================");
     });
+
   } catch (err) {
     console.error("❌ Failed to start server:", err.message);
     process.exit(1);
@@ -184,20 +194,20 @@ const start = async () => {
 start();
 
 /* =========================
-   Graceful shutdown
+   Graceful Shutdown
    ========================= */
-process.on("SIGTERM", () => {
-  mongoose.connection.close(false).then(() => {
-    process.exit(0);
-  });
+process.on("SIGTERM", async () => {
+  console.log("⚠️ SIGTERM received. Shutting down gracefully...");
+  await mongoose.connection.close(false);
+  process.exit(0);
 });
 
 process.on("uncaughtException", (err) => {
-  console.error("UNCAUGHT EXCEPTION:", err.stack || err);
+  console.error("❌ UNCAUGHT EXCEPTION:", err.stack || err);
   process.exit(1);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-  console.error("UNHANDLED REJECTION at:", promise, "reason:", reason);
+  console.error("❌ UNHANDLED REJECTION at:", promise, "reason:", reason);
   process.exit(1);
 });
