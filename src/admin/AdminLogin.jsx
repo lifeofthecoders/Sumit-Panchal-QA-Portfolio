@@ -18,11 +18,18 @@ const AdminLogin = () => {
       setError("");
       setLoading(true);
 
-      // Prefer env var, but on production builds always use the deployed endpoint.
-      const baseUrl = import.meta.env.VITE_API_BASE_URL
-        || (import.meta.env.MODE === 'production'
-            ? "https://sumit-panchal-qa-portfolio.onrender.com"
-            : "http://localhost:5000");
+      // Determine API base URL at runtime so the built bundle
+      // can't accidentally lock in localhost for the deployed site.
+      let baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+      if (!baseUrl) {
+        // running in browser, choose based on hostname
+        const host = typeof window !== "undefined" ? window.location.hostname : "";
+        if (host.includes("github.io") || host.includes("sumit-panchal-qa-portfolio")) {
+          baseUrl = "https://sumit-panchal-qa-portfolio.onrender.com";
+        } else {
+          baseUrl = "http://localhost:5000";
+        }
+      }
 
       console.log("BASE URL =", baseUrl);
 

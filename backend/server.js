@@ -197,6 +197,30 @@ const start = async () => {
     });
     console.log("✅ MongoDB connected successfully");
 
+    // ---------- default admin seeding ----------
+    try {
+      const Admin = (await import("./src/models/Admin.js")).default;
+      const bcrypt = await import("bcryptjs");
+      const existing = await Admin.findOne({
+        email: "sumitpanchal2552@gmail.com",
+      });
+      if (!existing) {
+        const hashed = await bcrypt.hash("Sumit@2552", 10);
+        await Admin.create({
+          name: "Sumit Panchal",
+          email: "sumitpanchal2552@gmail.com",
+          password: hashed,
+          phone: "",
+          isVerified: true,
+        });
+        console.log("🎉 Default admin account created automatically");
+      } else {
+        console.log("⚠️ Default admin already exists");
+      }
+    } catch (seedErr) {
+      console.error("⚠️ Admin seeding failed:", seedErr.message);
+    }
+
     app.listen(PORT, () => {
       console.log("=======================================");
       console.log(`🚀 Server established successfully🚀`);
