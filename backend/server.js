@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
+import cookieParser from "cookie-parser"; // ✅ NEW
 
 /* =========================
    Load Environment Variables
@@ -17,6 +18,11 @@ dotenv.config({ path: path.join(__dirname, ".env") });
    ========================= */
 const { default: blogsRouter } = await import("./src/routes/blogs.js");
 const { default: cloudinary } = await import("./src/config/cloudinary.js");
+
+// ✅ NEW: Admin Auth Routes
+const { default: adminAuthRoutes } = await import(
+  "./src/routes/adminAuth.route.js"
+);
 
 const app = express();
 
@@ -36,7 +42,7 @@ const allowedOrigins = rawCors
    Timeout Middleware
    ========================= */
 app.use((req, res, next) => {
-  req.setTimeout(300000); // 5 minutes
+  req.setTimeout(300000);
   res.setTimeout(300000);
   next();
 });
@@ -46,6 +52,11 @@ app.use((req, res, next) => {
    ========================= */
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+/* =========================
+   Cookie Parser (Required for JWT)
+   ========================= */
+app.use(cookieParser()); // ✅ NEW
 
 /* =========================
    CORS Configuration
@@ -73,7 +84,8 @@ const corsOptions = {
     "Accept",
     "Origin",
   ],
-  credentials: false,
+
+  credentials: true, // ✅ IMPORTANT FOR JWT COOKIE
   optionsSuccessStatus: 200,
 };
 
@@ -96,8 +108,8 @@ app.get("/api/health", (req, res) => {
 app.get("/api/cloudinary-health", async (req, res) => {
   const configured = Boolean(
     process.env.CLOUDINARY_CLOUD_NAME &&
-      process.env.CLOUDINARY_API_KEY &&
-      process.env.CLOUDINARY_API_SECRET
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
   );
 
   if (!configured) {
@@ -126,7 +138,12 @@ app.get("/api/cloudinary-health", async (req, res) => {
 /* =========================
    Routes
    ========================= */
+
+// ✅ Existing Blog Routes (UNCHANGED)
 app.use("/api/blogs", blogsRouter);
+
+// ✅ NEW: Admin Auth Routes
+app.use("/api/admin", adminAuthRoutes);
 
 /* =========================
    404 Handler
@@ -173,18 +190,19 @@ const start = async () => {
   }
 
   try {
-    // MongoDB Connection
-    await mongoose.connect(MONGODB_URI);
+    console.log("MONGODB_URI =", MONGODB_URI);
+    await mongoose.connect(MONGODB_URI, {
+      tls: true,
+      serverSelectionTimeoutMS: 30000,
+    });
     console.log("✅ MongoDB connected successfully");
 
-    // Start Server
     app.listen(PORT, () => {
       console.log("=======================================");
-      console.log(`🚀 Server established successfully`);
+      console.log(`🚀 Server established successfully🚀`);
       console.log(`🌍 Running on: http://localhost:${PORT}`);
       console.log("=======================================");
     });
-
   } catch (err) {
     console.error("❌ Failed to start server:", err.message);
     process.exit(1);
