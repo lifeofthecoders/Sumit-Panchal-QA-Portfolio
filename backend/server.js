@@ -190,7 +190,7 @@ const start = async () => {
   }
 
   try {
-    console.log("MONGODB_URI =", MONGODB_URI);
+    // console.log("MONGODB_URI =", MONGODB_URI);
     await mongoose.connect(MONGODB_URI, {
       tls: true,
       serverSelectionTimeoutMS: 30000,

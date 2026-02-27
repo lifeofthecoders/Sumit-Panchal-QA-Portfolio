@@ -1,26 +1,97 @@
-.login-page3 {
+.login-container {
   --login-bg: #f3f2f2;
   --login-color: #333;
   --login-inner-bg: #fff;
   --login-input: #333;
-  --login-input-icon: #dddddd;
-  --login-input-bg: transparent;
   --login-input-border: rgba(0, 0, 0, 0.13);
   --login-input-placeholder: #999999;
   --login-btn: #fff;
   --login-btn-bg: #b08bf8;
   --login-btn-bg-hover: #0070bd;
   --login-btn-bg-active: #00528a;
+
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--login-bg);
+  color: var(--login-color);
 }
 
-.login-page3 section button:focus {
+.login-box {
+  background: var(--login-inner-bg);
+  padding: 40px;
+  width: 380px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.logo {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.welcome-text {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-box input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--login-input-border);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--login-input);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 44px; /* space for the toggle button */
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+}
+
+.login-box input::placeholder {
+  color: var(--login-input-placeholder);
+}
+
+.login-box button {
+  padding: 10px;
+  border: none;
+  background: var(--login-btn-bg);
+  color: var(--login-btn);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.login-box button:focus {
   box-shadow: 0 0 0 2px rgba(0, 142, 240, 0.26);
 }
 
-.login-page3 section button:hover {
-  background-color: #0070bd;
+.login-box button:hover {
+  background-color: var(--login-btn-bg-hover);
 }
 
-.login-page3 section button:active {
-  background-color: #00528a;
+.login-box button:active {
+  background-color: var(--login-btn-bg-active);
 }
