@@ -17,9 +17,14 @@ import Sitemap from "./pages/Sitemap";
 import Blogs from "./pages/Blogs";
 import BlogDetail from "./pages/BlogDetail";
 
+import AdminLogin from "./admin/AdminLogin";
+import ProtectedRoute from "./admin/ProtectedRoute";
+import AdminLayout from "./admin/AdminLayout";
 import BlogList from "./admin/BlogList";
 import BlogForm from "./admin/BlogForm";
 import BlogView from "./admin/BlogView";
+import AdminProfile from "./admin/AdminProfile";
+import AdminSettings from "./admin/AdminSettings";
 
 function Layout() {
   const location = useLocation();
@@ -29,7 +34,6 @@ function Layout() {
   useEffect(() => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-    // If env is missing, do nothing
     if (!baseUrl) return;
 
     fetch(`${baseUrl}/api/health`)
@@ -52,7 +56,8 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        {/* Public Routes */}
+
+        {/* ================= PUBLIC ROUTES ================= */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
@@ -64,11 +69,31 @@ export default function App() {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin/blogs" element={<BlogList />} />
-        <Route path="/admin/blogs/add" element={<BlogForm />} />
-        <Route path="/admin/blogs/edit/:id" element={<BlogForm />} />
-        <Route path="/admin/blogs/view/:id" element={<BlogView />} />
+        {/* ================= ADMIN LOGIN ================= */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+
+        {/* ================= PROTECTED ADMIN ROUTES ================= */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Blog Management */}
+          <Route path="blogs" element={<BlogList />} />
+          <Route path="blogs/add" element={<BlogForm />} />
+          <Route path="blogs/edit/:id" element={<BlogForm />} />
+          <Route path="blogs/view/:id" element={<BlogView />} />
+
+          {/* NEW: Admin Profile */}
+          <Route path="profile" element={<AdminProfile />} />
+
+          {/* NEW: Admin Settings */}
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
+
       </Route>
     </Routes>
   );

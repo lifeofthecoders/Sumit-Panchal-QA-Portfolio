@@ -1,0 +1,26 @@
+.login-page3 {
+  --login-bg: #f3f2f2;
+  --login-color: #333;
+  --login-inner-bg: #fff;
+  --login-input: #333;
+  --login-input-icon: #dddddd;
+  --login-input-bg: transparent;
+  --login-input-border: rgba(0, 0, 0, 0.13);
+  --login-input-placeholder: #999999;
+  --login-btn: #fff;
+  --login-btn-bg: #b08bf8;
+  --login-btn-bg-hover: #0070bd;
+  --login-btn-bg-active: #00528a;
+}
+
+.login-page3 section button:focus {
+  box-shadow: 0 0 0 2px rgba(0, 142, 240, 0.26);
+}
+
+.login-page3 section button:hover {
+  background-color: #0070bd;
+}
+
+.login-page3 section button:active {
+  background-color: #00528a;
+}
