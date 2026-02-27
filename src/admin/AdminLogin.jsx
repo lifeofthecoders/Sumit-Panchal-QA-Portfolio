@@ -18,8 +18,11 @@ const AdminLogin = () => {
       setError("");
       setLoading(true);
 
-      // Prefer an explicit environment variable, otherwise fall back to the deployed API
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://sumit-panchal-qa-portfolio.onrender.com";
+      // Prefer env var, but on production builds always use the deployed endpoint.
+      const baseUrl = import.meta.env.VITE_API_BASE_URL
+        || (import.meta.env.MODE === 'production'
+            ? "https://sumit-panchal-qa-portfolio.onrender.com"
+            : "http://localhost:5000");
 
       console.log("BASE URL =", baseUrl);
 
@@ -51,54 +54,54 @@ const AdminLogin = () => {
 
   return (
     <div className="login-container">
-      <form className="login-box" onSubmit={handleLogin}>
-        <div className="logo">🛡️</div>
-
-        <h2>Admin Login</h2>
-
-        <p className="welcome-text">
-          Welcome back! Log in to your admin account.
-        </p>
-
-        <input
-          type="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <div className="password-wrapper">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Enter Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            aria-label="Admin password"
-          />
-
-          <button
-            type="button"
-            className="toggle-eye"
-            onClick={() => setShowPassword((s) => !s)}
-            aria-label={showPassword ? "Hide password" : "Show password"}
-          >
-            {showPassword ? "🙈" : "👁️"}
-          </button>
+      <form className="login-card" onSubmit={handleLogin}>
+        <div className="left-panel">
+          <div className="brand">L</div>
         </div>
 
-        {loading && (
-          <p style={{ color: "#333" }}>Authenticating...</p>
-        )}
+        <div className="right-panel">
+          <h2 className="title">We are <span className="highlight">Login</span></h2>
+          <p className="welcome-text">Welcome back! Log in to your account.</p>
 
-        {error && (
-          <p style={{ color: "red" }}>{error}</p>
-        )}
+          <div className="form-field">
+            <span className="input-icon">📧</span>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Please wait..." : "Login"}
-        </button>
+          <div className="form-field">
+            <span className="input-icon">🔒</span>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <button
+              type="button"
+              className="toggle-eye"
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
+
+          {error && <p className="error-text">{error}</p>}
+
+          <div className="form-action">
+            <button className="pill-btn" type="submit" disabled={loading}>
+              {loading ? "Please wait..." : "Log in"}
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   );
