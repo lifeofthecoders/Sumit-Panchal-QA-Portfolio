@@ -1,20 +1,4 @@
-// Determine API base URL. Prefer build-time VITE_API_BASE_URL, fallback to runtime detection
-// so the GitHub Pages build can still call the deployed backend without rebaking env vars.
-const RENDER_BACKEND = "https://sumit-panchal-qa-portfolio.onrender.com";
-let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
-try {
-  // If running from GitHub Pages (frontend deployed at lifeofthecoders.github.io),
-  // prefer the Render backend URL so uploads don't attempt to contact localhost.
-  if (typeof window !== "undefined" && window.location && window.location.hostname) {
-    const host = window.location.hostname;
-    if (host.includes("github.io") || host.includes("githubusercontent.com")) {
-      API_BASE_URL = RENDER_BACKEND;
-    }
-  }
-} catch (e) {
-  // ignore in non-browser environments
-}
+import API_BASE_URL from "../config/api";
 
 /**
  * Check if backend is accessible
@@ -23,11 +7,11 @@ const checkBackendHealth = async (timeout = 10000) => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
+
     const res = await fetch(`${API_BASE_URL}/api/health`, {
       signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
     return res.ok;
   } catch (err) {
@@ -95,6 +79,9 @@ export const deleteBlog = async (id) => {
   return true;
 };
 
+/**
+ * Paginated Blogs
+ */
 export const getBlogsPaginated = async (page = 1, limit = 10) => {
   const res = await fetch(
     `${API_BASE_URL}/api/blogs?page=${page}&limit=${limit}`
@@ -108,97 +95,80 @@ export const getBlogsPaginated = async (page = 1, limit = 10) => {
 };
 
 /**
- * ✅ Upload Blog Image (Computer Upload → Cloudinary)
- * @param {File} file - Image file to upload
- * @param {Function} onProgress - Optional callback for upload progress (0-100)
+ * Upload Blog Image (Computer Upload → Cloudinary)
  */
 export const uploadBlogImage = async (file, onProgress) => {
   const uploadUrl = `${API_BASE_URL}/api/blogs/upload`;
   const formData = new FormData();
   formData.append("image", file);
 
-  // Pre-flight: Wake up Render backend if cold (but don't block upload on failure)
+  // Optional: warm backend (Render cold start protection)
   if (API_BASE_URL.includes("onrender.com")) {
     if (onProgress) onProgress(5);
-    
-    // Fire and forget - don't wait for health check, start upload immediately
     checkBackendHealth(30000).catch(() => {
-      // Health check failed, but we'll proceed anyway
-      console.warn("⚠️ Backend health check failed, but proceeding with upload anyway");
+      console.warn("⚠️ Backend health check failed, proceeding anyway");
     });
   }
-  
-  // Use XMLHttpRequest for progress tracking
+
+  // Progress-based upload
   if (onProgress && typeof onProgress === "function") {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      let uploadStartTime = Date.now();
       let timeoutOccurred = false;
-      
+
       const timeout = setTimeout(() => {
         timeoutOccurred = true;
         xhr.abort();
-      }, 300000); // 5 minute timeout (matches server timeout)
+      }, 300000);
 
-      // Track upload progress (0-90% during upload)
       xhr.upload.addEventListener("progress", (e) => {
         if (e.lengthComputable) {
-          const percentComplete = Math.min((e.loaded / e.total) * 90, 90);
-          onProgress(Math.max(5, percentComplete)); // Don't go below 5%
+          const percent = Math.min((e.loaded / e.total) * 90, 90);
+          onProgress(Math.max(5, percent));
         }
       });
 
       xhr.addEventListener("load", () => {
         clearTimeout(timeout);
-        const uploadTime = ((Date.now() - uploadStartTime) / 1000).toFixed(1);
-        
         onProgress(95);
 
         if (xhr.status === 200 || xhr.status === 201) {
           try {
             const data = JSON.parse(xhr.responseText);
             const url = data.imageUrl || data.url;
-            if (!url || typeof url !== "string" || !(url.startsWith("http://") || url.startsWith("https://"))) {
-              reject(new Error("Upload succeeded but returned an invalid image URL"));
+
+            if (!url || !url.startsWith("http")) {
+              reject(new Error("Upload returned invalid image URL"));
               return;
             }
+
             onProgress(100);
             resolve(url);
           } catch (err) {
-            reject(new Error("Upload response is invalid: " + err.message));
+            reject(new Error("Invalid upload response"));
           }
-        } else if (xhr.status === 408) {
-          // Server timeout - Cloudinary upload took too long
-          try {
-            const data = JSON.parse(xhr.responseText);
-            reject(new Error(`⏱️ Server upload timeout (${xhr.status})\n\nCloudinary is taking too long. Try:\n- Using a smaller/compressed image\n- Waiting a few moments and trying again\n- Checking if Cloudinary service is having issues`));
-          } catch {
-            reject(new Error(`⏱️ Server upload timeout (${xhr.status})\n\nThe server couldn't complete the upload in time. Please try again with a smaller image.`));
-          }
-        } else if (xhr.status === 413) {
-          // File too large
-          reject(new Error(`❌ File too large (${xhr.status})\n\nMaximum file size is 50MB. Please use a smaller image.`));
         } else {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            reject(new Error(`❌ Upload failed (${xhr.status}): ${data.message || xhr.statusText}\n\nEndpoint: ${uploadUrl}`));
-          } catch {
-            reject(new Error(`❌ Upload failed with status ${xhr.status}\n\nEndpoint: ${uploadUrl}\n\nThis usually means:\n- Backend is not responding\n- Endpoint doesn't exist\n- CORS is blocking the request`));
-          }
+          reject(
+            new Error(`Upload failed (${xhr.status}) at ${uploadUrl}`)
+          );
         }
       });
 
       xhr.addEventListener("error", () => {
         clearTimeout(timeout);
-        reject(new Error(`❌ Network error: Cannot reach ${uploadUrl}\n\nMake sure:\n1. Backend is running (check: https://sumit-panchal-qa-portfolio.onrender.com/api/health)\n2. Internet connection is stable\n3. Firewall isn't blocking Cloudinary`));
+        reject(new Error(`Network error: Cannot reach ${uploadUrl}`));
       });
 
       xhr.addEventListener("abort", () => {
         clearTimeout(timeout);
         if (timeoutOccurred) {
-          reject(new Error(`❌ Upload timeout at endpoint: ${uploadUrl}\n\nThe server took longer than 5 minutes. This usually means:\n1. Backend is starting/loading (cold start)\n2. Cloudinary service is experiencing issues\n3. Network connection is unstable\n\nPlease try:\n- Refreshing the page and waiting 1 minute\n- Using a smaller image file\n- Checking your internet connection\n- Trying again later`));
+          reject(
+            new Error(
+              `Upload timeout (5 min exceeded) at ${uploadUrl}`
+            )
+          );
         } else {
-          reject(new Error("Upload was cancelled"));
+          reject(new Error("Upload cancelled"));
         }
       });
 
@@ -207,50 +177,36 @@ export const uploadBlogImage = async (file, onProgress) => {
     });
   }
 
-  // Fallback to fetch for simple upload without progress
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
+  // Simple upload fallback
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 300000);
 
-    const res = await fetch(uploadUrl, {
-      method: "POST",
-      body: formData,
-      signal: controller.signal,
-    });
+  const res = await fetch(uploadUrl, {
+    method: "POST",
+    body: formData,
+    signal: controller.signal,
+  });
 
-    clearTimeout(timeout);
+  clearTimeout(timeout);
 
-    const contentType = res.headers.get("content-type") || "";
-    let data = null;
+  const data = await res.json();
 
-    if (contentType.includes("application/json")) {
-      data = await res.json();
-    } else {
-      const text = await res.text();
-      throw new Error(
-        `Upload API returned invalid response (not JSON)\n\nEndpoint: ${uploadUrl}\n\nThis usually means:\n- Backend is not running\n- VITE_API_BASE_URL is wrong\n- Endpoint doesn't exist`
-      );
-    }
-
-    if (!res.ok) {
-      throw new Error(`❌ ${data.message || "Image upload failed"}\n\nEndpoint: ${uploadUrl}\nStatus: ${res.status}`);
-    }
-
-    const url = data.imageUrl || data.url;
-    if (!url || (typeof url !== "string") || !(url.startsWith("http://") || url.startsWith("https://"))) {
-      throw new Error("Upload succeeded but returned an invalid image URL");
-    }
-
-    return url;
-  } catch (err) {
-    if (err.name === "AbortError") {
-      throw new Error(`❌ Upload timeout (5 minutes exceeded)\n\nEndpoint: ${uploadUrl}\n\nThe server did not respond in time. Possible reasons:\n1. Backend is starting/loading (cold start)\n2. Cloudinary service is experiencing issues\n3. Network connection is unstable\n\nPlease try:\n- Refreshing the page\n- Using a smaller image file\n- Checking your internet connection`);
-    }
-    throw err;
+  if (!res.ok) {
+    throw new Error(data.message || "Image upload failed");
   }
+
+  const url = data.imageUrl || data.url;
+
+  if (!url || !url.startsWith("http")) {
+    throw new Error("Upload returned invalid image URL");
+  }
+
+  return url;
 };
 
-// Helper to validate image value before saving blog
+/**
+ * Validate image URL
+ */
 export const ensureImageIsRemote = (image) => {
   if (!image) return true;
   if (typeof image !== "string") return false;

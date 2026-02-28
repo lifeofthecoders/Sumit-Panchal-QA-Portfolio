@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./admin-login.css";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config/api";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -18,27 +19,14 @@ const AdminLogin = () => {
       setError("");
       setLoading(true);
 
-      // Determine API base URL at runtime so the built bundle
-      // can't accidentally lock in localhost for the deployed site.
-      let baseUrl = import.meta.env.VITE_API_BASE_URL || "";
-      if (!baseUrl) {
-        // running in browser, choose based on hostname
-        const host = typeof window !== "undefined" ? window.location.hostname : "";
-        if (host.includes("github.io") || host.includes("sumit-panchal-qa-portfolio")) {
-          baseUrl = "https://sumit-panchal-qa-portfolio.onrender.com";
-        } else {
-          baseUrl = "http://localhost:5000";
-        }
-      }
+      console.log("🔥 USING API BASE URL:", API_BASE_URL);
 
-      console.log("BASE URL =", baseUrl);
-
-      const response = await fetch(`${baseUrl}/api/admin/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // Required for JWT cookies
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -48,7 +36,6 @@ const AdminLogin = () => {
         throw new Error(data.message || "Invalid Email or Password");
       }
 
-      // ✅ Successful login
       navigate("/admin/blogs");
 
     } catch (err) {
@@ -67,8 +54,12 @@ const AdminLogin = () => {
         </div>
 
         <div className="right-panel">
-          <h2 className="title">We are <span className="highlight">Login</span></h2>
-          <p className="welcome-text">Welcome back! Log in to your account.</p>
+          <h2 className="title">
+            We are <span className="highlight">Login</span>
+          </h2>
+          <p className="welcome-text">
+            Welcome back! Log in to your account.
+          </p>
 
           <div className="form-field">
             <span className="input-icon">📧</span>
