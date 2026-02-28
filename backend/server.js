@@ -32,11 +32,14 @@ const MONGODB_URI = process.env.MONGODB_URI;
 /* =========================
    Parse Allowed CORS Origins
    ========================= */
-const rawCors = process.env.CORS_ORIGIN || "*";
+const rawCors = process.env.CORS_ORIGIN || "";
 const allowedOrigins = rawCors
   .split(",")
   .map((s) => s.trim().replace(/\/$/, ""))
   .filter(Boolean);
+
+// Always allow your frontend explicitly
+allowedOrigins.push("https://lifeofthecoders.github.io");
 
 /* =========================
    Timeout Middleware
@@ -65,8 +68,6 @@ const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
 
-    if (allowedOrigins.includes("*")) return callback(null, true);
-
     const cleanOrigin = origin.replace(/\/$/, "");
 
     if (allowedOrigins.includes(cleanOrigin)) {
@@ -85,7 +86,7 @@ const corsOptions = {
     "Origin",
   ],
 
-  credentials: true, // ✅ IMPORTANT FOR JWT COOKIE
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 

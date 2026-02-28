@@ -16,7 +16,7 @@ export const verifyAdmin = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Auth Middleware Error:", error);
+    console.error("Verify Admin Error:", error);
     return res.status(401).json({ message: "Unauthorized" });
   }
 };
