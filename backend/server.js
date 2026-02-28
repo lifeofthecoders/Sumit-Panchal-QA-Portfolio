@@ -195,7 +195,7 @@ const start = async () => {
       tls: true,
       serverSelectionTimeoutMS: 30000,
     });
-    console.log("✅ MongoDB connected successfully");
+    console.log("✅ 🎉MongoDB connected successfully...!🎉");
 
     // ---------- default admin seeding ----------
     try {
@@ -215,7 +215,7 @@ const start = async () => {
         });
         console.log("🎉 Default admin account created automatically");
       } else {
-        console.log("⚠️ Default admin already exists");
+        console.log("⚠️ Default admin already exists...!");
       }
     } catch (seedErr) {
       console.error("⚠️ Admin seeding failed:", seedErr.message);
@@ -223,7 +223,7 @@ const start = async () => {
 
     app.listen(PORT, () => {
       console.log("=======================================");
-      console.log(`🚀 Server established successfully🚀`);
+      console.log(`🚀 🎉Server established successfully🎉 🚀`);
       console.log(`🌍 Running on: http://localhost:${PORT}`);
       console.log("=======================================");
     });

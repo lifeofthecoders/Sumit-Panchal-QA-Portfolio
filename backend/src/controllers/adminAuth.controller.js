@@ -26,10 +26,11 @@ export const loginAdmin = async (req, res) => {
       expiresIn: "1d",
     });
 
+    // ✅ FIXED COOKIE CONFIG FOR PRODUCTION
     res.cookie("adminToken", token, {
       httpOnly: true,
-      secure: false, // change to true in production (HTTPS)
-      sameSite: "lax",
+      secure: true,       // required for HTTPS
+      sameSite: "none",   // required for cross-site (GitHub Pages -> Render)
     });
 
     return res.json({ message: "Login successful" });
