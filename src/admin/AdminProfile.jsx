@@ -1,30 +1,72 @@
 import React, { useState, useEffect } from "react";
 
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://sumit-panchal-qa-portfolio.onrender.com";
+
 const AdminProfile = () => {
   const [profile, setProfile] = useState({
     name: "",
-    email: "sumitpanchal2552@gmail.com",
+    email: "",
     phone: "",
   });
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // 🔥 Fetch profile from backend
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("adminProfile"));
-    if (saved) setProfile(saved);
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/profile`, {
+          method: "GET",
+          credentials: "include", // ✅ VERY IMPORTANT
+        });
+
+        if (!res.ok) {
+          throw new Error("Unauthorized");
+        }
+
+        const data = await res.json();
+        setProfile(data);
+      } catch (err) {
+        setError("Session expired. Please login again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    localStorage.setItem("adminProfile", JSON.stringify(profile));
-    alert("Profile Updated");
+  const handleSave = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // ✅ VERY IMPORTANT
+        body: JSON.stringify({
+          name: profile.name,
+          phone: profile.phone,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Update failed");
+
+      alert("Profile updated successfully");
+    } catch (err) {
+      alert("Error updating profile");
+    }
   };
 
-  const handleDelete = () => {
-    localStorage.removeItem("adminProfile");
-    alert("Profile Deleted");
-  };
+  if (loading) return <p>Loading profile...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>
@@ -36,12 +78,13 @@ const AdminProfile = () => {
         onChange={handleChange}
         placeholder="Name"
       />
+
       <input
         name="email"
         value={profile.email}
-        onChange={handleChange}
-        placeholder="Email"
+        disabled
       />
+
       <input
         name="phone"
         value={profile.phone}
@@ -50,7 +93,6 @@ const AdminProfile = () => {
       />
 
       <button onClick={handleSave}>Save</button>
-      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 };
