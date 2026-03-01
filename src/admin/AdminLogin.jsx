@@ -41,10 +41,24 @@ const AdminLogin = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      // ✅ Safely parse response
+      let data = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || "Invalid email or password");
+        throw new Error(
+          data.message ||
+          "Authentication failed. Please try again."
+        );
+      }
+
+      // ✅ Ensure token exists
+      if (!data.token) {
+        throw new Error("Authentication token not received from server.");
       }
 
       localStorage.setItem("admin-token", data.token);
@@ -56,7 +70,10 @@ const AdminLogin = () => {
       }, 800);
 
     } catch (err) {
-      showToast(err.message || "Login failed. Please try again.", "error");
+      showToast(
+        err.message || "Login failed. Please try again.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -95,10 +112,6 @@ const AdminLogin = () => {
           <p className="welcome-subtitle">
             Log in to manage your portfolio
           </p>
-
-          {/* ❌ Removed card error/success display */}
-          {/* {error && <div className="error-alert">{error}</div>} */}
-          {/* {successMsg && <div className="success-alert">{successMsg}</div>} */}
 
           <form onSubmit={handleLogin} noValidate className="login-form">
             <div className="form-group">
