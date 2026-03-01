@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const adminSchema = new mongoose.Schema(
   {
@@ -26,45 +27,85 @@ const adminSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters long"],
-      // Note: We never select password by default - see toJSON below
+      select: false, // Hidden by default in queries
     },
 
     phone: {
       type: String,
       trim: true,
-      // Optional: you can add regex for Indian phone numbers if needed
-      // match: [/^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/, "Invalid phone number"],
     },
 
     isVerified: {
       type: Boolean,
-      default: true, // You can change to false if you want email verification later
+      default: true,
     },
 
-    // Optional but recommended for future-proofing
     role: {
       type: String,
       enum: ["admin", "superadmin"],
       default: "admin",
+      required: true,
     },
 
-    // You can add reset token fields later if needed
-    // resetPasswordToken: String,
-    // resetPasswordExpires: Date,
+    lastLogin: {
+      type: Date,
+    },
+
+    loginAttempts: {
+      type: Number,
+      default: 0,
+    },
+
+    lockUntil: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Automatically remove password from JSON responses
-adminSchema.methods.toJSON = function () {
-  const obj = this.toObject();
-  delete obj.password;
-  return obj;
+/* ─────────────────────────────
+   HASH PASSWORD BEFORE SAVE
+───────────────────────────── */
+adminSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(12); // stronger hashing
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ─────────────────────────────
+   COMPARE PASSWORD
+───────────────────────────── */
+adminSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Optional: virtual for full name or other computed fields (if needed later)
-// adminSchema.virtual('fullName').get(function () { ... });
+/* ─────────────────────────────
+   ACCOUNT LOCK CHECK
+───────────────────────────── */
+adminSchema.methods.isLocked = function () {
+  return !!(this.lockUntil && this.lockUntil > Date.now());
+};
+
+/* ─────────────────────────────
+   REMOVE SENSITIVE FIELDS
+───────────────────────────── */
+adminSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+
+  delete obj.password;
+  delete obj.loginAttempts;
+  delete obj.lockUntil;
+  delete obj.__v;
+
+  return obj;
+};
 
 export default mongoose.model("Admin", adminSchema);

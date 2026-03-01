@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <title>Redirecting...</title>
-    <script type="text/javascript">
-      // GitHub Pages SPA redirect for clean URLs
+    <script>
+      // GitHub Pages clean URL fallback
       var path = window.location.pathname;
-      var hash = window.location.hash || '#/';
       var repoName = '/Sumit-Panchal-QA-Portfolio';
-      var newPath = repoName + (path === repoName + '/' ? '' : path) + hash;
-      window.location.replace(newPath);
+      window.location.replace(
+        repoName + (path === '/' ? '' : path) + window.location.search + window.location.hash
+      );
     </script>
   </head>
   <body></body>

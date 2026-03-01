@@ -30,10 +30,10 @@ export default function AdminBlogHeader() {
       {/* TOP BAR */}
       <div className="top-bar">
         <div className="owner-name logo-link logo-slide">
-          <img 
-            src="/Sumit-Panchal-QA-Portfolio/image/logo.svg" 
-            className="site-logo" 
-            alt="Logo" 
+          <img
+            src={`${import.meta.env.BASE_URL}image/logo.svg`}
+            className="site-logo"
+            alt="Sumit Panchal - QA Portfolio Logo"
           />
         </div>
       </div>
@@ -54,8 +54,8 @@ export default function AdminBlogHeader() {
       {/* PROFILE BADGE */}
       <div className="profile-badge profile-slide">
         <img
-          src="/Sumit-Panchal-QA-Portfolio/image/profile.jpg"
-          alt="Profile"
+          src={`${import.meta.env.BASE_URL}image/profile.jpg`}
+          alt="Sumit Panchal Profile"
         />
         <span className="profile-name">
           <b>Sumit Panchal</b>

@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 import Header from "./components/Header";
@@ -20,7 +20,7 @@ import BlogDetail from "./pages/BlogDetail";
 import AdminLogin from "./admin/AdminLogin";
 import ProtectedRoute from "./admin/ProtectedRoute";
 import AdminLayout from "./admin/AdminLayout";
-import AdminDashboard from "./admin/AdminDashboard"; // ← NEW import
+import AdminDashboard from "./admin/AdminDashboard";
 import BlogList from "./admin/BlogList";
 import BlogForm from "./admin/BlogForm";
 import BlogView from "./admin/BlogView";
@@ -54,52 +54,57 @@ function Layout() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route element={<Layout />}>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
 
-        {/* ================= PUBLIC ROUTES ================= */}
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/sitemap" element={<Sitemap />} />
-        <Route path="/blogs" element={<Blogs />} />
-        <Route path="/blogs/:id" element={<BlogDetail />} />
+          {/* ================= PUBLIC ROUTES ================= */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/sitemap" element={<Sitemap />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/:id" element={<BlogDetail />} />
 
-        {/* ================= ADMIN LOGIN (public) ================= */}
-        <Route path="/admin-login" element={<AdminLogin />} />
+          {/* ================= ADMIN LOGIN (public) ================= */}
+          <Route path="/admin/login" element={<AdminLogin />} />
 
-        {/* ================= PROTECTED ADMIN SECTION ================= */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          {/* Dashboard – this is the new landing page after login */}
-          <Route index element={<AdminDashboard />} />           {/* /admin → dashboard */}
-          <Route path="dashboard" element={<AdminDashboard />} /> {/* /admin/dashboard */}
+          {/* ================= PROTECTED ADMIN SECTION ================= */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            {/* Dashboard – landing page after login */}
+            <Route index element={<AdminDashboard />} />           {/* /admin → dashboard */}
+            <Route path="dashboard" element={<AdminDashboard />} /> {/* /admin/dashboard */}
 
-          {/* Blog Management */}
-          <Route path="blogs" element={<BlogList />} />
-          <Route path="blogs/add" element={<BlogForm />} />
-          <Route path="blogs/edit/:id" element={<BlogForm />} />
-          <Route path="blogs/view/:id" element={<BlogView />} />
+            {/* Blog Management */}
+            <Route path="blogs" element={<BlogList />} />
+            <Route path="blogs/add" element={<BlogForm />} />
+            <Route path="blogs/edit/:id" element={<BlogForm />} />
+            <Route path="blogs/view/:id" element={<BlogView />} />
 
-          {/* Profile & Settings */}
-          <Route path="profile" element={<AdminProfile />} />
-          <Route path="settings" element={<AdminSettings />} />
+            {/* Profile & Settings */}
+            <Route path="profile" element={<AdminProfile />} />
+            <Route path="settings" element={<AdminSettings />} />
 
-          {/* Optional: 404 for unknown admin sub-routes */}
-          <Route path="*" element={<div>404 - Admin page not found</div>} />
+            {/* Catch-all for invalid admin sub-routes */}
+            <Route path="*" element={<div>404 - Admin page not found</div>} />
+          </Route>
+
+          {/* Optional: global 404 for non-existing routes */}
+          <Route path="*" element={<div>404 - Page not found</div>} />
+
         </Route>
-
-      </Route>
-    </Routes>
+      </Routes>
+    </BrowserRouter>
   );
 }

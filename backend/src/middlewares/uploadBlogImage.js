@@ -1,69 +1,91 @@
 import multer from "multer";
 import cloudinary from "../config/cloudinary.js";
 
-let upload;
-export let isCloudinaryAvailable = false;
+// Constants for easy configuration
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_FORMATS = ["jpg", "jpeg", "png", "webp"];
 
-try {
-  // Dynamically import the package and handle multiple export shapes so the
-  // server doesn't crash if the package exports differ between environments.
-  import("multer-storage-cloudinary")
-    .then((pkg) => {
-      try {
-        // Handle possible module shapes:
-        // - pkg.CloudinaryStorage (ESM named export)
-        // - pkg.default.CloudinaryStorage (CommonJS wrapped)
-        // - pkg.default (module.exports = CloudinaryStorage)
-        let CloudinaryStorage = undefined;
+// Check if Cloudinary config is complete
+export const isCloudinaryAvailable =
+  !!process.env.CLOUDINARY_CLOUD_NAME &&
+  !!process.env.CLOUDINARY_API_KEY &&
+  !!process.env.CLOUDINARY_API_SECRET;
 
-        if (pkg && pkg.CloudinaryStorage) {
-          CloudinaryStorage = pkg.CloudinaryStorage;
-        } else if (pkg && pkg.default && pkg.default.CloudinaryStorage) {
-          CloudinaryStorage = pkg.default.CloudinaryStorage;
-        } else if (pkg && pkg.default && typeof pkg.default === "function") {
-          CloudinaryStorage = pkg.default;
-        }
+// ────────────────────────────────────────────────
+//  Cloudinary Storage (preferred when configured)
+// ────────────────────────────────────────────────
+let storage;
 
-        if (typeof CloudinaryStorage !== "function") {
-          throw new Error("CloudinaryStorage export not found or not a constructor");
-        }
+if (isCloudinaryAvailable) {
+  try {
+    const { CloudinaryStorage } = await import("multer-storage-cloudinary");
 
-        const storage = new CloudinaryStorage({
-          cloudinary,
-          params: {
-            folder: "blogs",
-            allowed_formats: ["jpg", "jpeg", "png", "webp"],
-          },
-        });
-
-        upload = multer({ storage });
-        isCloudinaryAvailable = true;
-      } catch (error) {
-        console.warn(
-          "⚠️ Failed to initialize Cloudinary storage, falling back to memory storage",
-          error && error.message ? error.message : String(error)
-        );
-        upload = multer({ storage: multer.memoryStorage() });
-      }
-    })
-    .catch((error) => {
-      console.warn(
-        "⚠️ multer-storage-cloudinary not available, using memory storage",
-        error && error.message ? error.message : String(error)
-      );
-      upload = multer({ storage: multer.memoryStorage() });
+    storage = new CloudinaryStorage({
+      cloudinary,
+      params: {
+        folder: "blogs",
+        allowed_formats: ALLOWED_FORMATS,
+        // Optional: you can add transformation, public_id, etc.
+        // transformation: [{ width: 1200, height: 800, crop: "limit" }],
+      },
     });
-} catch (error) {
+
+    console.log("Cloudinary storage initialized successfully");
+  } catch (err) {
+    console.error("Failed to initialize Cloudinary storage:", err.message);
+    // Fallback to memory
+    storage = multer.memoryStorage();
+  }
+} else {
   console.warn(
-    "⚠️ Error loading Cloudinary storage module, using memory storage",
-    error.message
+    "Cloudinary not configured → falling back to memory storage. " +
+    "Set CLOUDINARY_CLOUD_NAME, API_KEY, API_SECRET in .env"
   );
-  upload = multer({ storage: multer.memoryStorage() });
+  storage = multer.memoryStorage();
 }
 
-// Fallback in case async initialization hasn't completed
-if (!upload) {
-  upload = multer({ storage: multer.memoryStorage() });
-}
+// ────────────────────────────────────────────────
+//  Multer instance with validation
+// ────────────────────────────────────────────────
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
+  fileFilter: (req, file, cb) => {
+    const isImage = file.mimetype.startsWith("image/");
+    const isAllowedFormat = ALLOWED_FORMATS.some((fmt) =>
+      file.mimetype.includes(fmt)
+    );
+
+    if (!isImage || !isAllowedFormat) {
+      const error = new Error(
+        `Only ${ALLOWED_FORMATS.join(", ").toUpperCase()} images allowed`
+      );
+      error.code = "INVALID_FILE_TYPE";
+      return cb(error, false);
+    }
+
+    cb(null, true);
+  },
+});
+
+// Optional: Better error response helper (use in routes if needed)
+upload.onError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({
+        success: false,
+        message: `File too large. Max size: ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+      });
+    }
+  } else if (err) {
+    return res.status(400).json({
+      success: false,
+      message: err.message || "Invalid file upload",
+    });
+  }
+  next(err);
+};
 
 export default upload;

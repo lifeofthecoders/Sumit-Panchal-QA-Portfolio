@@ -6,31 +6,19 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
-  const isHome = location.pathname === "/";
-  const isAbout = location.pathname === "/about";
-  const isServices = location.pathname === "/services";
-  const isProjects = location.pathname === "/projects";
-  const isPortfolio = location.pathname === "/portfolio";
-  const isGallery = location.pathname === "/gallery";
+  // Check if user is logged in (based on your login logic)
+  const isLoggedIn = !!localStorage.getItem("admin-just-logged-in");
 
-  /* ✅ FIX — Covers /blogs AND /blogs/:id */
-  const isBlogs =
-    location.pathname === "/blogs" ||
-    location.pathname.startsWith("/blogs/");
+  // Helper to check active route
+  const isActive = (path) => {
+    if (path === "/") return location.pathname === "/";
+    if (path === "/blogs") return location.pathname.startsWith("/blogs");
+    return location.pathname === path;
+  };
 
-  const isContact = location.pathname === "/contact";
-  const isSitemap = location.pathname === "/sitemap";
-
-
-  /* =========================================
-     RESET & REPLAY HEADER ANIMATIONS (SAFE)
-     ========================================= */
+  // Reset & replay header animations on route change
   useEffect(() => {
-    const animatedSelectors = [
-      ".hero-animate",
-      ".profile-slide",
-      ".logo-slide"
-    ];
+    const animatedSelectors = [".hero-animate", ".profile-slide", ".logo-slide"];
 
     animatedSelectors.forEach((selector) => {
       const el = document.querySelector(selector);
@@ -42,28 +30,33 @@ export default function Header() {
     });
   }, [location.pathname]);
 
+  // Navigation items (ADMIN conditionally shown only when NOT logged in)
+  const navItems = [
+    { label: "HOME", path: "/" },
+    { label: "ABOUT", path: "/about" },
+    { label: "SERVICES", path: "/services" },
+    { label: "PROJECTS", path: "/projects" },
+    { label: "PORTFOLIO", path: "/portfolio" },
+    { label: "GALLERY", path: "/gallery" },
+    { label: "BLOGS", path: "/blogs" },
+    { label: "CONTACT", path: "/contact" },
+    { label: "SITEMAP", path: "/sitemap" },
+    // Show "ADMIN" only if NOT logged in
+    ...( !isLoggedIn ? [{ label: "ADMIN", path: "/admin/login" }] : []),
+  ];
+
+  // Optional: If you want to show "Dashboard" AFTER login instead of hiding ADMIN
+  // Uncomment this block and comment out the line above
+  /*
+  ...( isLoggedIn 
+    ? [{ label: "DASHBOARD", path: "/admin" }] 
+    : [{ label: "ADMIN", path: "/admin/login" }]
+  ),
+  */
+
   return (
     <header
-      className={`hero-header ${isHome
-        ? "home-header"
-        : isAbout
-          ? "about-header"
-          : isServices
-            ? "services-header"
-            : isProjects
-              ? "projects-header"
-              : isPortfolio
-                ? "portfolio-header"
-                : isGallery
-                  ? "gallery-header"
-                  : isBlogs
-                    ? "blogs-header"
-                    : isContact
-                      ? "contact-header"
-                      : isSitemap
-                        ? "sitemap-header"
-                        : ""
-        }`}
+      className={`hero-header ${location.pathname === "/" ? "home-header" : ""}`}
     >
       {/* TOP BAR */}
       <div className="top-bar">
@@ -72,7 +65,11 @@ export default function Header() {
           className="owner-name logo-link logo-slide"
           onClick={() => setOpen(false)}
         >
-          <img src="/Sumit-Panchal-QA-Portfolio/image/logo.svg" className="site-logo" alt="Logo" />
+          <img
+            src={`${import.meta.env.BASE_URL}image/logo.svg`}
+            className="site-logo"
+            alt="Sumit Panchal - QA Portfolio Logo"
+          />
         </NavLink>
 
         <input
@@ -84,35 +81,25 @@ export default function Header() {
         <label htmlFor="menu-toggle" className="hamburger" />
 
         <nav className="nav-links nav">
-          {[
-            "HOME",
-            "ABOUT",
-            "SERVICES",
-            "PROJECTS",
-            "PORTFOLIO",
-            "GALLERY",
-            "BLOGS",
-            "CONTACT",
-            "SITEMAP",
-          ].map((item) => (
+          {navItems.map((item) => (
             <NavLink
-              key={item}
-              to={item === "HOME" ? "/" : `/${item.toLowerCase()}`}
+              key={item.label}
+              to={item.path}
               className={({ isActive }) => (isActive ? "active" : "")}
               onClick={() => setOpen(false)}
             >
-              {item}
+              {item.label}
             </NavLink>
           ))}
         </nav>
       </div>
 
-      {/* CENTER TITLE */}
+      {/* CENTER TITLE – conditional based on route */}
       <div
         key={`title-${location.pathname}`}
         className="hero-title hero-animate"
       >
-        {isAbout ? (
+        {location.pathname === "/about" ? (
           <>
             <h1>
               <b>About</b>
@@ -124,7 +111,7 @@ export default function Header() {
               </b>
             </h2>
           </>
-        ) : isServices ? (
+        ) : location.pathname === "/services" ? (
           <>
             <h1>
               <b>Services</b>
@@ -137,7 +124,7 @@ export default function Header() {
             </h2>
             <div className="title-underline"></div>
           </>
-        ) : isProjects ? (
+        ) : location.pathname === "/projects" ? (
           <>
             <h1>
               <b>Projects</b>
@@ -150,7 +137,7 @@ export default function Header() {
             </h2>
             <div className="title-underline"></div>
           </>
-        ) : isPortfolio ? (
+        ) : location.pathname === "/portfolio" ? (
           <>
             <h1>
               <b>Portfolio</b>
@@ -163,7 +150,7 @@ export default function Header() {
             </h2>
             <div className="title-underline"></div>
           </>
-        ) : isGallery ? (
+        ) : location.pathname.startsWith("/gallery") ? (
           <>
             <h1>
               <b>Gallery</b>
@@ -175,7 +162,7 @@ export default function Header() {
             </h2>
             <div className="title-underline"></div>
           </>
-        ) : isBlogs ? (
+        ) : location.pathname.startsWith("/blogs") ? (
           <>
             <h1>
               <b>Blogs</b>
@@ -187,7 +174,7 @@ export default function Header() {
             </h2>
             <div className="title-underline"></div>
           </>
-        ) : isContact ? (
+        ) : location.pathname === "/contact" ? (
           <>
             <h1>
               <b>Contact</b>
@@ -197,7 +184,7 @@ export default function Header() {
             </h2>
             <div className="title-underline"></div>
           </>
-        ) : isSitemap ? (
+        ) : location.pathname === "/sitemap" ? (
           <>
             <h1>
               <b>Sitemap</b>

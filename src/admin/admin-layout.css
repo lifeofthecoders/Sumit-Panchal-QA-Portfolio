@@ -250,3 +250,50 @@
 .modal-btn.logout:hover {
     background: #e53e3e;
 }
+
+/* Admin Info Section */
+.admin-info {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: rgba(139, 92, 246, 0.08);
+  border-radius: 8px;
+}
+
+.admin-avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--purple-accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+.admin-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.admin-email {
+  font-size: 13px;
+  color: #64748b;
+  opacity: 0.9;
+}
+
+/* Active link style (if not already present) */
+.nav-link.active {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--purple-accent);
+  font-weight: 600;
+}

@@ -224,7 +224,7 @@ const start = async () => {
 
     app.listen(PORT, () => {
       console.log("=======================================");
-      console.log(`🚀 🎉Server established successfully🎉 🚀`);
+      console.log(`🚀 Server established successfully 🚀`);
       console.log(`🌍 Running on: http://localhost:${PORT}`);
       console.log("=======================================");
     });

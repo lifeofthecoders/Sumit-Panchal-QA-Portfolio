@@ -5,15 +5,24 @@ import API_BASE_URL from "../config/api";
 const ProtectedRoute = ({ children }) => {
   const [isAuth, setIsAuth] = useState(null);
   const [isChecking, setIsChecking] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const MAX_RETRIES = 3;
 
   useEffect(() => {
     let isMounted = true;
 
     const checkAuth = async () => {
-      // Give the browser ~300–600 ms to actually store the cookie
-      await new Promise(resolve => setTimeout(resolve, 600));
-
-      if (!isMounted) return;
+      // Quick check: if user just logged in, trust for first few seconds
+      const justLoggedIn = sessionStorage.getItem("admin-just-logged-in");
+      if (justLoggedIn && Date.now() - Number(justLoggedIn) < 5000) {
+        sessionStorage.removeItem("admin-just-logged-in");
+        if (isMounted) {
+          setIsAuth(true);
+          setIsChecking(false);
+        }
+        return;
+      }
 
       try {
         const res = await fetch(`${API_BASE_URL}/api/admin/profile`, {
@@ -28,16 +37,36 @@ const ProtectedRoute = ({ children }) => {
 
         if (res.ok) {
           const data = await res.json();
-          console.log("Profile check success:", data);
+          if (process.env.NODE_ENV === "development") {
+            console.log("Profile check success:", data);
+          }
           setIsAuth(true);
         } else {
           const errorText = await res.text();
-          console.log("Profile check failed:", res.status, errorText);
+          if (process.env.NODE_ENV === "development") {
+            console.log("Profile check failed:", res.status, errorText);
+          }
+
+          // Retry logic for temporary failures (e.g. cookie not yet sent)
+          if (retryCount < MAX_RETRIES && (res.status === 401 || res.status === 0)) {
+            setRetryCount(prev => prev + 1);
+            setTimeout(checkAuth, 800 * (retryCount + 1)); // exponential backoff
+            return;
+          }
+
           setIsAuth(false);
         }
       } catch (err) {
         if (isMounted) {
-          console.error("Profile fetch error:", err);
+          if (process.env.NODE_ENV === "development") {
+            console.error("Profile fetch error:", err);
+          }
+          // Retry on network errors
+          if (retryCount < MAX_RETRIES) {
+            setRetryCount(prev => prev + 1);
+            setTimeout(checkAuth, 800 * (retryCount + 1));
+            return;
+          }
           setIsAuth(false);
         }
       } finally {
@@ -52,27 +81,21 @@ const ProtectedRoute = ({ children }) => {
     return () => {
       isMounted = false;
     };
-  }, []);
-
-  // ────────────────────────────────────────────────
-  // Rendering logic
-  // ────────────────────────────────────────────────
+  }, [retryCount]);
 
   if (isChecking) {
     return (
-      <div style={{
-        padding: "80px 20px",
-        textAlign: "center",
-        fontSize: "1.2rem",
-        color: "#666"
-      }}>
-        Authenticating... please wait
+      <div className="auth-loading">
+        <div className="spinner"></div>
+        <p>Authenticating... Please wait</p>
       </div>
     );
   }
 
   if (isAuth === false) {
-    console.log("Redirecting to login — not authenticated");
+    if (process.env.NODE_ENV === "development") {
+      console.log("Redirecting to login — not authenticated");
+    }
     return <Navigate to="/admin/login" replace />;
   }
 
