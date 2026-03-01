@@ -26,13 +26,13 @@
 
 .login-card {
   width: 100%;
-  max-width: 860px;
+  max-width: 760px;
   display: flex;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   background: white;
-  min-height: 400px;
+  min-height: 350px;
   opacity: 0;
   transform: scale(0.97);
   animation: cardAppear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -90,9 +90,18 @@
   font-weight: 700;
   margin: 0 0 16px 0;
   letter-spacing: 1px;
+  color: var(--accent-gold);             /* Solid fallback color */
   background: linear-gradient(90deg, var(--accent-gold), #e0c68a);
+  background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: transparent;                    /* Only apply transparency if clipping works */
+}
+
+/* Optional: hide fallback if clipping is supported */
+@supports (background-clip: text) {
+  .portal-heading {
+    color: transparent;
+  }
 }
 
 .brand-name-stack {
@@ -156,9 +165,17 @@
   font-weight: 400;
   margin-top: 10px;
   letter-spacing: 0.8px;
+  color: var(--accent-gold);             /* Solid fallback color – always visible */
   background: linear-gradient(90deg, var(--accent-gold), #e0c68a);
+  background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+}
+
+/* Apply transparency + clipping only when supported */
+@supports (background-clip: text) {
+  .brand-line.motto {
+    color: transparent;
+  }
 }
 
 /* ── Login Form ── */
