@@ -25,12 +25,21 @@ export const loginAdmin = async (req, res) => {
       });
     }
 
-    const admin = await Admin.findOne({ email: email.trim() });
+    // ✅ FIX: explicitly select password
+    const admin = await Admin.findOne({ email: email.trim() }).select("+password");
 
     if (!admin) {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
+      });
+    }
+
+    // Extra safety check (prevents bcrypt crash)
+    if (!admin.password) {
+      return res.status(500).json({
+        success: false,
+        message: "Admin password not found in database",
       });
     }
 
@@ -53,7 +62,7 @@ export const loginAdmin = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      token, // ← frontend stores this
+      token,
     });
 
   } catch (error) {
@@ -68,11 +77,6 @@ export const loginAdmin = async (req, res) => {
 /* =========================
    GET ADMIN PROFILE
 ========================= */
-/**
- * Returns authenticated admin profile
- * @route GET /api/admin/profile
- * @access Private (Admin)
- */
 export const getProfile = async (req, res) => {
   try {
     if (!req.admin?.id) {
@@ -108,11 +112,6 @@ export const getProfile = async (req, res) => {
 /* =========================
    UPDATE PROFILE
 ========================= */
-/**
- * Updates admin profile
- * @route PUT /api/admin/profile
- * @access Private (Admin)
- */
 export const updateProfile = async (req, res) => {
   try {
     if (!req.admin?.id) {
@@ -165,11 +164,6 @@ export const updateProfile = async (req, res) => {
 /* =========================
    CHANGE PASSWORD
 ========================= */
-/**
- * Changes admin password
- * @route PUT /api/admin/change-password
- * @access Private (Admin)
- */
 export const changePassword = async (req, res) => {
   try {
     if (!req.admin?.id) {
