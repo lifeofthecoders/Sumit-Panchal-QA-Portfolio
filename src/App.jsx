@@ -20,6 +20,7 @@ import BlogDetail from "./pages/BlogDetail";
 import AdminLogin from "./admin/AdminLogin";
 import ProtectedRoute from "./admin/ProtectedRoute";
 import AdminLayout from "./admin/AdminLayout";
+import AdminDashboard from "./admin/AdminDashboard"; // ← NEW import
 import BlogList from "./admin/BlogList";
 import BlogForm from "./admin/BlogForm";
 import BlogView from "./admin/BlogView";
@@ -30,10 +31,9 @@ function Layout() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
-  // ✅ Warm up API (Render Free sleep fix)
+  // Warm up Render free tier backend (prevents cold start delay)
   useEffect(() => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
     if (!baseUrl) return;
 
     fetch(`${baseUrl}/api/health`)
@@ -47,7 +47,7 @@ function Layout() {
       <ScrollToHash />
       {!isAdminRoute && <Header />}
       <Outlet />
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </>
   );
 }
@@ -69,10 +69,10 @@ export default function App() {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
 
-        {/* ================= ADMIN LOGIN ================= */}
+        {/* ================= ADMIN LOGIN (public) ================= */}
         <Route path="/admin-login" element={<AdminLogin />} />
 
-        {/* ================= PROTECTED ADMIN ROUTES ================= */}
+        {/* ================= PROTECTED ADMIN SECTION ================= */}
         <Route
           path="/admin"
           element={
@@ -81,17 +81,22 @@ export default function App() {
             </ProtectedRoute>
           }
         >
+          {/* Dashboard – this is the new landing page after login */}
+          <Route index element={<AdminDashboard />} />           {/* /admin → dashboard */}
+          <Route path="dashboard" element={<AdminDashboard />} /> {/* /admin/dashboard */}
+
           {/* Blog Management */}
           <Route path="blogs" element={<BlogList />} />
           <Route path="blogs/add" element={<BlogForm />} />
           <Route path="blogs/edit/:id" element={<BlogForm />} />
           <Route path="blogs/view/:id" element={<BlogView />} />
 
-          {/* NEW: Admin Profile */}
+          {/* Profile & Settings */}
           <Route path="profile" element={<AdminProfile />} />
-
-          {/* NEW: Admin Settings */}
           <Route path="settings" element={<AdminSettings />} />
+
+          {/* Optional: 404 for unknown admin sub-routes */}
+          <Route path="*" element={<div>404 - Admin page not found</div>} />
         </Route>
 
       </Route>

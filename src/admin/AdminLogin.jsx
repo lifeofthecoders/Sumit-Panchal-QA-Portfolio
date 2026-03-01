@@ -1,31 +1,41 @@
 import React, { useState } from "react";
-import "./admin-login.css";
 import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "../config/api";
+
+// React Icons
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+
+// Logo import
+import logoSrc from "/image/logo.svg";
+
+import "./admin-login.css";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
 
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter both email and password");
+      return;
+    }
+
+    setError("");
+    setSuccessMsg("");
+    setLoading(true);
+
     try {
-      setError("");
-      setLoading(true);
-
-      console.log("🔥 USING API BASE URL:", API_BASE_URL);
-
       const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
@@ -33,74 +43,122 @@ const AdminLogin = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Invalid Email or Password");
+        throw new Error(data.message || "Invalid email or password");
       }
 
-      navigate("/admin/blogs");
+      setSuccessMsg("Login successful! Redirecting...");
+      localStorage.setItem("admin-just-logged-in", Date.now().toString());
+
+      setTimeout(() => {
+        navigate("/admin", { replace: true });
+      }, 800);
 
     } catch (err) {
-      console.error("Login Error:", err);
-      setError(err.message || "Something went wrong");
+      setError(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-card" onSubmit={handleLogin}>
-        <div className="left-panel">
-          <div className="brand">L</div>
+    <div className="login-page">
+      <div className="login-card">
+        {/* Left - Branding Section */}
+        <div className="branding-panel">
+          <img
+            src={logoSrc}
+            alt="Sumit Panchal - QA Portfolio Logo"
+            className="portal-logo"
+          />
+
+          <div className="brand-name-stack">
+            <div className="brand-line elite">Elite Concierge</div>
+            <div className="brand-line name">Sumit Panchal</div>
+            <div className="brand-line role">QUALITY ASSURANCE</div>
+            <div className="brand-line access">Access granted to the discerning.</div>
+            <div className="brand-line motto">
+              Precision. Permanence. Privilege.
+            </div>
+          </div>
         </div>
 
-        <div className="right-panel">
-          <h2 className="title">
-            We are <span className="highlight">Login</span>
+        {/* Right - Login Form */}
+        <div className="login-panel">
+          <h2 className="welcome-title">
+            Welcome to <span className="highlight">Admin Panel</span>
           </h2>
-          <p className="welcome-text">
-            Welcome back! Log in to your account.
+          <p className="welcome-subtitle">
+            Log in to manage your portfolio
           </p>
 
-          <div className="form-field">
-            <span className="input-icon">📧</span>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+          {error && <div className="error-alert">{error}</div>}
+          {successMsg && <div className="success-alert">{successMsg}</div>}
 
-          <div className="form-field">
-            <span className="input-icon">🔒</span>
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <form onSubmit={handleLogin} noValidate className="login-form">
+            <div className="form-group fade-item" style={{ animationDelay: "0.4s" }}>
+              <label htmlFor="email">Email</label>
+              <div className="input-wrapper">
+                <FaEnvelope className="field-icon" />
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value.trim())}
+                  required
+                  autoComplete="email"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="form-group fade-item" style={{ animationDelay: "0.55s" }}>
+              <label htmlFor="password">Password</label>
+              <div className="input-wrapper">
+                <FaLock className="field-icon" />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
 
             <button
-              type="button"
-              className="toggle-eye"
-              onClick={() => setShowPassword((s) => !s)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              type="submit"
+              className="submit-button fade-item"
+              disabled={loading}
+              style={{ animationDelay: "0.7s" }}
             >
-              {showPassword ? "🙈" : "👁️"}
+              {loading ? (
+                <div className="loading-content">
+                  <div className="spinner"></div>
+                  Signing in...
+                </div>
+              ) : (
+                "Sign In"
+              )}
             </button>
-          </div>
+          </form>
 
-          {error && <p className="error-text">{error}</p>}
-
-          <div className="form-action">
-            <button className="pill-btn" type="submit" disabled={loading}>
-              {loading ? "Please wait..." : "Log in"}
-            </button>
-          </div>
+          <p className="access-note">
+            Admin access only. Contact support if you need help.
+          </p>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

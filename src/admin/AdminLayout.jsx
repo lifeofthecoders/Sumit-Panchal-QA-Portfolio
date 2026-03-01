@@ -1,92 +1,90 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useState } from "react";
+import "./admin-layout.css";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // ← New state
 
-  // Extra safety: redirect if not logged in
-  useEffect(() => {
-    const isAuth = localStorage.getItem("adminAuth");
-    if (!isAuth) {
-      navigate("/admin-login");
-    }
-  }, [navigate]);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminAuth");
-    navigate("/admin-login");
+  const openLogoutModal = () => setShowLogoutModal(true);
+  const closeLogoutModal = () => setShowLogoutModal(false);
+
+  const confirmLogout = () => {
+    // Clear cookie
+    document.cookie = "adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    closeLogoutModal();
+    navigate("/admin-login", { replace: true });
   };
 
-  const linkStyle = ({ isActive }) => ({
-    display: "block",
-    padding: "12px 16px",
-    marginBottom: "8px",
-    textDecoration: "none",
-    borderRadius: "6px",
-    fontWeight: 500,
-    background: isActive ? "#b08bf8" : "transparent",
-    color: isActive ? "#fff" : "#333",
-  });
-
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#f5f6fa" }}>
-      
+    <div className="admin-layout">
       {/* Sidebar */}
-      <aside
-        style={{
-          width: "240px",
-          background: "#ffffff",
-          padding: "20px",
-          boxShadow: "2px 0 10px rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2 style={{ marginBottom: "30px" }}>Admin Panel</h2>
+      <aside className={`admin-sidebar ${isSidebarOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <div className="brand-container">
+            <div className="brand-logo">A</div>
+            <h2 className="brand-title">Admin Panel</h2>
+          </div>
+          <button className="close-btn" onClick={closeSidebar}>×</button>
+        </div>
 
-        <nav>
-          <NavLink to="/admin/blogs" style={linkStyle}>
-            📚 Blogs
+        <nav className="sidebar-nav">
+          <NavLink to="/admin" className="nav-link" end onClick={closeSidebar}>
+            <span className="nav-icon">🏠</span> Dashboard
           </NavLink>
-
-          <NavLink to="/admin/blogs/add" style={linkStyle}>
-            ➕ Add Blog
+          <NavLink to="/admin/blogs" className="nav-link" onClick={closeSidebar}>
+            <span className="nav-icon">📚</span> Blogs
           </NavLink>
-
-          <NavLink to="/admin/profile" style={linkStyle}>
-            👤 Profile
+          <NavLink to="/admin/blogs/add" className="nav-link" onClick={closeSidebar}>
+            <span className="nav-icon">➕</span> Add New Blog
           </NavLink>
-
-          <NavLink to="/admin/settings" style={linkStyle}>
-            ⚙ Settings
+          <NavLink to="/admin/profile" className="nav-link" onClick={closeSidebar}>
+            <span className="nav-icon">👤</span> Profile
+          </NavLink>
+          <NavLink to="/admin/settings" className="nav-link" onClick={closeSidebar}>
+            <span className="nav-icon">⚙️</span> Settings
           </NavLink>
         </nav>
 
-        <hr style={{ margin: "20px 0" }} />
+        <hr className="sidebar-divider" />
 
-        <button
-          onClick={handleLogout}
-          style={{
-            width: "100%",
-            padding: "10px",
-            borderRadius: "6px",
-            border: "none",
-            background: "#e74c3c",
-            color: "#fff",
-            cursor: "pointer",
-          }}
-        >
-          🚪 Logout
+        <button className="logout-btn" onClick={openLogoutModal}>
+          🚪 Sign Out
         </button>
       </aside>
 
+      {/* Mobile backdrop */}
+      {isSidebarOpen && <div className="sidebar-backdrop" onClick={closeSidebar} />}
+
       {/* Main Content */}
-      <main
-        style={{
-          flex: 1,
-          padding: "30px",
-        }}
-      >
-        <Outlet />
+      <main className="admin-main">
+        <button className="hamburger-btn" onClick={toggleSidebar}>☰</button>
+        <div className="main-content-wrapper">
+          <Outlet />
+        </div>
       </main>
+
+      {/* ==================== CUSTOM LOGOUT MODAL ==================== */}
+      {showLogoutModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Confirm Sign Out</h3>
+            <p>Are you sure you want to Sign Out of the Admin Panel?</p>
+            <div className="modal-buttons">
+              <button className="modal-btn cancel" onClick={closeLogoutModal}>
+                Cancel
+              </button>
+              <button className="modal-btn logout" onClick={confirmLogout}>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
