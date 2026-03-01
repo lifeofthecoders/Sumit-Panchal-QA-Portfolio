@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script type="text/javascript">
+      // GitHub Pages SPA redirect for clean URLs
+      var path = window.location.pathname;
+      var hash = window.location.hash || '#/';
+      var repoName = '/Sumit-Panchal-QA-Portfolio';
+      var newPath = repoName + (path === repoName + '/' ? '' : path) + hash;
+      window.location.replace(newPath);
+    </script>
+  </head>
+  <body></body>
+</html>
