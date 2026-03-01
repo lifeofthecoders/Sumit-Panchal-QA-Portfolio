@@ -718,3 +718,35 @@
               transform: rotate(360deg);
           }
       }
+
+      .custom-toast {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 14px 20px;
+          border-radius: 8px;
+          color: #fff;
+          font-weight: 500;
+          z-index: 9999;
+          animation: slideIn 0.3s ease forwards;
+      }
+
+      .custom-toast.success {
+          background: #21c87a;
+      }
+
+      .custom-toast.error {
+          background: #ff4d4f;
+      }
+
+      @keyframes slideIn {
+          from {
+              opacity: 0;
+              transform: translateY(-10px);
+          }
+
+          to {
+              opacity: 1;
+              transform: translateY(0);
+          }
+      }
