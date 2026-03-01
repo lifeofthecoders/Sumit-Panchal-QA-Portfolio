@@ -18,23 +18,22 @@ let storage;
 
 if (isCloudinaryAvailable) {
   try {
-    const { CloudinaryStorage } = await import("multer-storage-cloudinary");
+    // ✅ FIX: Correct ESM import
+    const pkg = await import("multer-storage-cloudinary");
+    const { CloudinaryStorage } = pkg.default || pkg;
 
     storage = new CloudinaryStorage({
       cloudinary,
-      params: {
+      params: async (req, file) => ({
         folder: "blogs",
         allowed_formats: ALLOWED_FORMATS,
-        // Optional: you can add transformation, public_id, etc.
-        // transformation: [{ width: 1200, height: 800, crop: "limit" }],
-      },
+      }),
     });
 
     console.log("Cloudinary storage initialized successfully");
   } catch (err) {
     console.error("Failed to initialize Cloudinary storage:", err.message);
-    // Fallback to memory
-    storage = multer.memoryStorage();
+    storage = multer.memoryStorage(); // fallback
   }
 } else {
   console.warn(
