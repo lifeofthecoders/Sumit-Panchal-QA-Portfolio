@@ -216,7 +216,7 @@ const start = async () => {
         });
         console.log("🎉 Default admin account created automatically 📯");
       } else {
-        console.log("⚠️ Default admin already exists...!");
+        console.log("⚠️ 📯Default admin already exists...!📯");
       }
     } catch (seedErr) {
       console.error("⚠️ Admin seeding failed:", seedErr.message);
