@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./admin-profile.css";
 
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ||
@@ -9,28 +10,54 @@ const AdminProfile = () => {
     name: "",
     email: "",
     phone: "",
+    joinedDate: "",
+    profilePic: "",
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [file, setFile] = useState(null);
 
-  // 🔥 Fetch profile from backend
+  // Toast state (matching AdminLogin style)
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
+
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "" }), 4000);
+  };
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(`${API_BASE}/api/admin/profile`, {
           method: "GET",
-          credentials: "include", // ✅ VERY IMPORTANT
+          credentials: "include",
+          mode: "cors",
         });
 
-        if (!res.ok) {
-          throw new Error("Unauthorized");
-        }
+        if (!res.ok) throw new Error("Unauthorized");
 
         const data = await res.json();
-        setProfile(data);
+
+        const joinDate = data.createdAt
+          ? new Date(data.createdAt).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "N/A";
+
+        setProfile({
+          name: data.name || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          joinedDate: joinDate,
+          profilePic: data.profilePic || `${API_BASE}/image/profile.jpg`, // Default or from backend
+        });
       } catch (err) {
-        setError("Session expired. Please login again.");
+        showToast("Session expired. Please login again.", "error");
       } finally {
         setLoading(false);
       }
@@ -43,56 +70,152 @@ const AdminProfile = () => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleSave = async () => {
     try {
+      const formData = new FormData();
+      formData.append("name", profile.name);
+      formData.append("phone", profile.phone);
+      if (file) formData.append("profilePic", file);
+
       const res = await fetch(`${API_BASE}/api/admin/profile`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // ✅ VERY IMPORTANT
-        body: JSON.stringify({
-          name: profile.name,
-          phone: profile.phone,
-        }),
+        credentials: "include",
+        mode: "cors",
+        body: formData,
       });
 
       if (!res.ok) throw new Error("Update failed");
 
-      alert("Profile updated successfully");
+      const data = await res.json();
+      setProfile({ ...profile, profilePic: data.profilePic || profile.profilePic });
+      showToast("Profile updated successfully", "success");
+      setIsEditing(false);
+      setFile(null);
     } catch (err) {
-      alert("Error updating profile");
+      showToast("Error updating profile", "error");
     }
   };
 
-  if (loading) return <p>Loading profile...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <div className="admin-loading">Loading profile...</div>;
+
+  const [firstName, lastName] = profile.name.split(" ") || ["Admin", "User"];
 
   return (
-    <div>
-      <h2>Admin Profile</h2>
+    <div className="admin-profile-page fade-in">
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className={`admin-toast ${toast.type}`}>
+          {toast.message}
+        </div>
+      )}
 
-      <input
-        name="name"
-        value={profile.name}
-        onChange={handleChange}
-        placeholder="Name"
-      />
+      <div className="admin-profile-header">
+        <div className="admin-profile-avatar-wrapper">
+          <img
+            src={profile.profilePic}
+            alt="Admin Avatar"
+            className="admin-profile-avatar"
+          />
+          {isEditing && (
+            <button className="admin-avatar-edit-btn" onClick={() => document.getElementById("file-input").click()}>
+              📷
+            </button>
+          )}
+          <input
+            id="file-input"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+          />
+        </div>
 
-      <input
-        name="email"
-        value={profile.email}
-        disabled
-      />
+        <div className="admin-profile-info">
+          <h1 className="admin-profile-fullname">
+            {firstName} {lastName}
+          </h1>
+          <p className="admin-profile-email">📧 {profile.email}</p>
+          <p className="admin-profile-joined">
+            Joined {profile.joinedDate}
+          </p>
+        </div>
 
-      <input
-        name="phone"
-        value={profile.phone}
-        onChange={handleChange}
-        placeholder="Phone"
-      />
+        <button
+          className="admin-edit-btn bounce-hover"
+          onClick={() => setIsEditing(!isEditing)}
+        >
+          {isEditing ? "Cancel" : "Edit Profile"}
+        </button>
+      </div>
 
-      <button onClick={handleSave}>Save</button>
+      <div className="admin-profile-card slide-up">
+        <h2 className="admin-section-title">Account Settings</h2>
+
+        <div className="admin-form-grid">
+          <div className="admin-form-group">
+            <label>First Name</label>
+            <input
+              value={firstName}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  name: `${e.target.value} ${lastName}`,
+                })
+              }
+              disabled={!isEditing}
+              placeholder="First Name"
+              className="admin-form-input"
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label>Last Name</label>
+            <input
+              value={lastName}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  name: `${firstName} ${e.target.value}`,
+                })
+              }
+              disabled={!isEditing}
+              placeholder="Last Name"
+              className="admin-form-input"
+            />
+          </div>
+        </div>
+
+        <div className="admin-form-group full-width">
+          <label>Email Address</label>
+          <input
+            value={profile.email}
+            disabled
+            className="admin-form-input disabled"
+          />
+        </div>
+
+        <div className="admin-form-group full-width">
+          <label>Phone Number</label>
+          <input
+            name="phone"
+            value={profile.phone}
+            onChange={handleChange}
+            disabled={!isEditing}
+            placeholder="Enter phone number"
+            className="admin-form-input"
+          />
+        </div>
+
+        {isEditing && (
+          <button onClick={handleSave} className="admin-save-btn bounce-hover">
+            Save Changes
+          </button>
+        )}
+      </div>
     </div>
   );
 };

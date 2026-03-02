@@ -1,0 +1,235 @@
+.admin-profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s ease-out;
+}
+
+.admin-profile-header {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 800px;
+  gap: 25px;
+}
+
+.admin-profile-avatar-wrapper {
+  position: relative;
+}
+
+.admin-profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #3b82f6;
+  box-shadow: 0 5px 15px rgba(59,130,246,0.25);
+  transition: transform 0.3s ease;
+}
+
+.admin-profile-avatar-wrapper:hover .admin-profile-avatar {
+  transform: scale(1.05);
+}
+
+.admin-avatar-edit-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.admin-avatar-edit-btn:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+.admin-profile-info {
+  flex: 1;
+}
+
+.admin-profile-fullname {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 6px 0;
+}
+
+.admin-profile-email,
+.admin-profile-joined {
+  font-size: 15px;
+  color: #64748b;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-edit-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.admin-edit-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+}
+
+.admin-profile-card {
+  background: white;
+  border-radius: 16px;
+  padding: 35px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 800px;
+  animation: slideUp 0.9s ease-out;
+}
+
+.admin-section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 30px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.admin-form-group {
+  margin-bottom: 0;
+}
+
+.admin-form-group.full-width {
+  grid-column: span 2;
+}
+
+.admin-form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.admin-form-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.admin-form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+  outline: none;
+}
+
+.admin-form-input:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.admin-save-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 25px;
+}
+
+.admin-save-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(59,130,246,0.25);
+}
+
+.admin-loading {
+  text-align: center;
+  font-size: 18px;
+  color: #3b82f6;
+  padding: 80px 20px;
+  animation: pulse 1.5s infinite;
+}
+
+/* Toast (matching AdminLogin) */
+.admin-toast {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  animation: toastIn 0.4s ease-out, toastOut 0.4s 3.6s forwards;
+  z-index: 1000;
+}
+
+.admin-toast.success {
+  background: #10b981;
+  color: white;
+}
+
+.admin-toast.error {
+  background: #ef4444;
+  color: white;
+}
+
+@keyframes toastIn {
+  from { transform: translate(-50%, -30px); opacity: 0; }
+  to { transform: translateX(-50%); opacity: 1; }
+}
+
+@keyframes toastOut {
+  to { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}

@@ -6,9 +6,6 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
-  // Check if user is logged in (based on your login logic)
-  const isLoggedIn = !!localStorage.getItem("admin-just-logged-in");
-
   // Helper to check active route
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
@@ -30,7 +27,7 @@ export default function Header() {
     });
   }, [location.pathname]);
 
-  // Navigation items (ADMIN conditionally shown only when NOT logged in)
+  // Navigation items – NO "ADMIN" link anymore
   const navItems = [
     { label: "HOME", path: "/" },
     { label: "ABOUT", path: "/about" },
@@ -41,18 +38,7 @@ export default function Header() {
     { label: "BLOGS", path: "/blogs" },
     { label: "CONTACT", path: "/contact" },
     { label: "SITEMAP", path: "/sitemap" },
-    // Show "ADMIN" only if NOT logged in
-    ...( !isLoggedIn ? [{ label: "ADMIN", path: "/admin/login" }] : []),
   ];
-
-  // Optional: If you want to show "Dashboard" AFTER login instead of hiding ADMIN
-  // Uncomment this block and comment out the line above
-  /*
-  ...( isLoggedIn 
-    ? [{ label: "DASHBOARD", path: "/admin" }] 
-    : [{ label: "ADMIN", path: "/admin/login" }]
-  ),
-  */
 
   return (
     <header
