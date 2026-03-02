@@ -196,7 +196,7 @@ const start = async () => {
       tls: true,
       serverSelectionTimeoutMS: 30000,
     });
-    console.log("✅ 🎉MongoDB connected successfully...!🎉");
+    console.log("✅ 📯🎉MongoDB connected successfully...!🎉📯");
 
     // ---------- default admin seeding ----------
     try {
@@ -214,7 +214,7 @@ const start = async () => {
           phone: "",
           isVerified: true,
         });
-        console.log("🎉 Default admin account created automatically");
+        console.log("🎉 Default admin account created automatically 📯");
       } else {
         console.log("⚠️ Default admin already exists...!");
       }
