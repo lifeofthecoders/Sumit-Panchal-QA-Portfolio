@@ -39,7 +39,7 @@
 .brand-logo {
     width: 40px;
     height: 40px;
-    background: #b08bf8;
+    background: #19A25E;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -264,7 +264,7 @@
 .admin-avatar {
   width: 40px;
   height: 40px;
-  background: var(--purple-accent);
+  background: #19A25E;
   color: white;
   border-radius: 50%;
   display: flex;

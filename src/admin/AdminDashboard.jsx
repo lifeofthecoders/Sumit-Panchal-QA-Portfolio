@@ -1,4 +1,53 @@
 // src/admin/AdminDashboard.jsx
+// import React from "react";
+// import { useNavigate } from "react-router-dom";
+
+// const AdminDashboard = () => {
+//   const navigate = useNavigate();
+
+//   return (
+//     <div style={{ padding: "2rem" }}>
+//       <h1>Welcome to Admin Dashboard</h1>
+//       <p>Hello, Sumit! Here's a quick overview:</p>
+
+//       <div
+//         style={{
+//           marginTop: "2rem",
+//           display: "grid",
+//           gap: "1.5rem",
+//         }}
+//       >
+//         <div
+//           style={{
+//             border: "1px solid #ddd",
+//             padding: "1.5rem",
+//             borderRadius: "8px",
+//           }}
+//         >
+//           <h3>Quick Actions</h3>
+
+//           <button
+//             onClick={() => navigate("/admin/blogs")}
+//             style={{
+//               padding: "0.6rem 1.2rem",
+//               cursor: "pointer",
+//             }}
+//           >
+//             → Manage Blog Posts
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AdminDashboard;
+
+
+
+
+
+// src/admin/AdminDashboard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
