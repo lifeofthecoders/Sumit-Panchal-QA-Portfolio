@@ -189,7 +189,7 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    // ✅ Get admin with password
+    // ✅ Get admin WITH password
     const admin = await Admin.findById(req.admin.id).select("+password");
 
     if (!admin) {
@@ -199,7 +199,7 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    // ✅ Compare old password with DB password
+    // ✅ Compare old password
     const isMatch = await bcrypt.compare(oldPassword, admin.password);
 
     if (!isMatch) {
@@ -210,19 +210,18 @@ export const changePassword = async (req, res) => {
     }
 
     // ✅ Prevent same password reuse
-    const isSamePassword = await bcrypt.compare(newPassword, admin.password);
-
-    if (isSamePassword) {
+    const isSame = await bcrypt.compare(newPassword, admin.password);
+    if (isSame) {
       return res.status(400).json({
         success: false,
         message: "New password must be different from old password",
       });
     }
 
-    // ✅ Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // ✅ IMPORTANT: Assign plain password
+    admin.password = newPassword;
 
-    admin.password = hashedPassword;
+    // This triggers pre-save hook and hashes automatically
     await admin.save();
 
     try {
