@@ -37,14 +37,29 @@ const AdminSettings = () => {
       return;
     }
 
+    // ✅ NEW: Prevent same old and new password
+    if (oldPassword === newPassword) {
+      showToast("New password must be different from old password", "error");
+      return;
+    }
+
+    // ✅ NEW: Prevent all three being same
+    if (
+      oldPassword === newPassword &&
+      newPassword === confirmPassword
+    ) {
+      showToast("All passwords cannot be the same", "error");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // ✅ FIX: Use correct key name
       const token = localStorage.getItem("admin-token");
 
       if (!token) {
         showToast("Session expired. Please login again.", "error");
+        setLoading(false);
         return;
       }
 
@@ -52,7 +67,7 @@ const AdminSettings = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ Correct token sent
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ oldPassword, newPassword }),
       });
