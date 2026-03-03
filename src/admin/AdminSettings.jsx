@@ -13,11 +13,7 @@ const AdminSettings = () => {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Toast state (same style as AdminLogin)
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const showToast = (message, type = "success") => {
@@ -26,9 +22,6 @@ const AdminSettings = () => {
   };
 
   const handleReset = async () => {
-    setError("");
-    setSuccess("");
-
     if (!oldPassword || !newPassword || !confirmPassword) {
       showToast("All fields are required", "error");
       return;
@@ -47,21 +40,35 @@ const AdminSettings = () => {
     setLoading(true);
 
     try {
+      // ✅ FIX: Use correct key name
+      const token = localStorage.getItem("admin-token");
+
+      if (!token) {
+        showToast("Session expired. Please login again.", "error");
+        return;
+      }
+
       const res = await fetch(`${API_BASE}/api/admin/change-password`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Correct token sent
+        },
         body: JSON.stringify({ oldPassword, newPassword }),
       });
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || "Password change failed");
+      if (!res.ok) {
+        throw new Error(data.message || "Password change failed");
+      }
 
       showToast("Password updated successfully!", "success");
+
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
+
     } catch (err) {
       showToast(err.message || "Error updating password", "error");
     } finally {
@@ -71,7 +78,6 @@ const AdminSettings = () => {
 
   return (
     <div className="admin-settings-page fade-in">
-      {/* Toast Notification */}
       {toast.show && (
         <div className={`admin-toast ${toast.type}`}>
           {toast.message}
@@ -89,7 +95,6 @@ const AdminSettings = () => {
           <div className="admin-password-wrapper">
             <input
               type={showOld ? "text" : "password"}
-              placeholder="Enter your old password"
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               className="admin-password-input"
@@ -109,7 +114,6 @@ const AdminSettings = () => {
           <div className="admin-password-wrapper">
             <input
               type={showNew ? "text" : "password"}
-              placeholder="Enter your new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className="admin-password-input"
@@ -129,7 +133,6 @@ const AdminSettings = () => {
           <div className="admin-password-wrapper">
             <input
               type={showConfirm ? "text" : "password"}
-              placeholder="Confirm your new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="admin-password-input"

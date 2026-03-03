@@ -12,7 +12,7 @@
 /* ── Sidebar ── */
 .admin-sidebar {
     width: 260px;
-    background: #ffffff;
+    background: #F6FBE2;
     border-right: 1px solid #e2e8f0;
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
     position: sticky;
@@ -37,22 +37,23 @@
 }
 
 .brand-logo {
-    width: 40px;
-    height: 40px;
-    background: #19A25E;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    margin-right: 12px;
+  width: 40px;
+  height: 40px;
+  background: rgb(76, 175, 80);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 12px;
+  font-size: 16px;
 }
 
 .brand-title {
     margin: 0;
     font-size: 1.4rem;
-    color: #2d3748;
+    color: #1B5E20;
 }
 
 .close-btn {
@@ -79,12 +80,12 @@
     border-radius: 8px;
     font-size: 15px;
     font-weight: 500;
-    color: #34495e;
+    color: #1B5E20;
     transition: all 0.2s ease;
 }
 
 .nav-link:hover {
-    background: #f1f5f9;
+    background: #D4EDDA;
 }
 
 .nav-link.active {
@@ -109,7 +110,7 @@
     padding: 12px;
     border-radius: 8px;
     border: none;
-    background: #f56565;
+    background: #e53e3e;
     color: white;
     font-weight: 500;
     cursor: pointer;
@@ -117,13 +118,13 @@
 }
 
 .logout-btn:hover {
-    background: #e53e3e;
+    background: #f56565;
 }
 
 /* ── Main Content ── */
 .admin-main {
     flex: 1;
-    background: #f8f9fc;
+    background: #F6FBF1;
     padding: 24px;
     overflow-y: auto;
     position: relative;
@@ -257,14 +258,14 @@
   align-items: center;
   padding: 12px 16px;
   margin-bottom: 16px;
-  background: rgba(139, 92, 246, 0.08);
+  background: #B7E4C7 ;
   border-radius: 8px;
 }
 
 .admin-avatar {
   width: 40px;
   height: 40px;
-  background: #19A25E;
+  background: rgb(76, 175, 80);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -282,6 +283,7 @@
 
 .admin-name {
   font-weight: 600;
+  color: #1B5E20;
   font-size: 15px;
 }
 
@@ -293,7 +295,7 @@
 
 /* Active link style (if not already present) */
 .nav-link.active {
-  background: rgba(139, 92, 246, 0.15);
-  color: var(--purple-accent);
+  background: #A5D6A7;
+  color: #2E7D32;
   font-weight: 600;
 }
