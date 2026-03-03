@@ -1,10 +1,13 @@
+import dns from 'node:dns/promises';
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
-import cookieParser from "cookie-parser"; // ✅ NEW
+import cookieParser from "cookie-parser";
 
 /* =========================
    Load Environment Variables
@@ -18,8 +21,6 @@ dotenv.config({ path: path.join(__dirname, ".env") });
    ========================= */
 const { default: blogsRouter } = await import("./src/routes/blogs.js");
 const { default: cloudinary } = await import("./src/config/cloudinary.js");
-
-// ✅ NEW: Admin Auth Routes
 const { default: adminAuthRoutes } = await import(
   "./src/routes/adminAuth.route.js"
 );
@@ -28,6 +29,28 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
+
+/* =========================================================
+   ✅ PERMANENT PREFLIGHT FIX (DO NOT REMOVE)
+   ========================================================= */
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.header("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 /* =========================
    Parse Allowed CORS Origins
@@ -38,8 +61,12 @@ const allowedOrigins = rawCors
   .map((s) => s.trim().replace(/\/$/, ""))
   .filter(Boolean);
 
-// Always allow your frontend explicitly
-allowedOrigins.push("https://lifeofthecoders.github.io");
+/* ✅ FIXED HERE — ADDED LOCALHOST */
+allowedOrigins.push(
+  "https://lifeofthecoders.github.io",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173"
+);
 
 /* =========================
    Timeout Middleware
@@ -57,9 +84,9 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 /* =========================
-   Cookie Parser (Required for JWT)
+   Cookie Parser
    ========================= */
-app.use(cookieParser()); // ✅ NEW
+app.use(cookieParser());
 
 /* =========================
    CORS Configuration
@@ -139,11 +166,7 @@ app.get("/api/cloudinary-health", async (req, res) => {
 /* =========================
    Routes
    ========================= */
-
-// ✅ Existing Blog Routes (UNCHANGED)
 app.use("/api/blogs", blogsRouter);
-
-// ✅ NEW: Admin Auth Routes
 app.use("/api/admin", adminAuthRoutes);
 
 /* =========================
@@ -191,14 +214,12 @@ const start = async () => {
   }
 
   try {
-    // console.log("MONGODB_URI =", MONGODB_URI);
     await mongoose.connect(MONGODB_URI, {
       tls: true,
       serverSelectionTimeoutMS: 30000,
     });
     console.log("✅ 📯🎉MongoDB connected successfully...!🎉📯");
 
-    // ---------- default admin seeding ----------
     try {
       const Admin = (await import("./src/models/Admin.js")).default;
       const bcrypt = await import("bcryptjs");

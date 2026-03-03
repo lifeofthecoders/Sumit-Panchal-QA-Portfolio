@@ -35,20 +35,20 @@ const AdminLayout = () => {
       <aside className={`admin-sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <div className="brand-container">
-            <div className="brand-logo">A</div>
+            <div className="brand-logo">SP</div>
             <h2 className="brand-title">Admin Panel</h2>
           </div>
           <button className="close-btn" onClick={closeSidebar}>×</button>
         </div>
 
         {/* Admin Info (optional) */}
-        <div className="admin-info">
+        {/* <div className="admin-info">
           <div className="admin-avatar">SP</div>
           <div className="admin-details">
             <span className="admin-name">{adminName}</span>
             {adminEmail && <span className="admin-email">{adminEmail}</span>}
           </div>
-        </div>
+        </div> */}
 
         <nav className="sidebar-nav">
           <NavLink 

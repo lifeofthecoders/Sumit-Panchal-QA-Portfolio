@@ -65,8 +65,10 @@ const AdminDashboard = () => {
         <div className="dashboard-grid">
           <div className="action-card">
             <h3>📊 Blog Management</h3>
-            <p>Create, edit, and manage your blog posts easily.</p>
-
+            <p className="dashboard-subtitle">
+              Create, edit, and manage your blog posts easily.
+            </p>
+            
             <button
               className="action-btn"
               onClick={() => navigate("/admin/blogs")}
@@ -84,19 +86,19 @@ const AdminDashboard = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #7f5af0, #2cb67d);
+          background: #F6FBF1;
           padding: 2rem;
           animation: fadeIn 0.8s ease-in-out;
         }
 
         .dashboard-card {
-          background: rgba(255, 255, 255, 0.1);
+          background: #A5D6A7;
           backdrop-filter: blur(12px);
           padding: 3rem;
           border-radius: 16px;
           width: 100%;
           max-width: 800px;
-          color: white;
+          color: black;
           box-shadow: 0 20px 40px rgba(0,0,0,0.2);
           transform: translateY(20px);
           animation: slideUp 0.6s ease forwards;
@@ -104,12 +106,14 @@ const AdminDashboard = () => {
 
         .dashboard-title {
           font-size: 2rem;
-          margin-bottom: 0.5rem;
+          margin:10px;
         }
 
         .dashboard-subtitle {
           opacity: 0.9;
-          margin-bottom: 2rem;
+          padding: 10px;
+          margin-bottom: 15px;
+          font-weight: 700;
         }
 
         .dashboard-grid {
@@ -118,8 +122,8 @@ const AdminDashboard = () => {
         }
 
         .action-card {
-          background: rgba(255, 255, 255, 0.15);
-          padding: 2rem;
+          background: #A5D6A7;
+          padding: 20px;
           border-radius: 12px;
           transition: all 0.3s ease;
         }
@@ -131,14 +135,13 @@ const AdminDashboard = () => {
         }
 
         .action-btn {
-          margin-top: 1rem;
           padding: 0.8rem 1.5rem;
           border: none;
           border-radius: 50px;
           font-size: 1rem;
           font-weight: bold;
           cursor: pointer;
-          background: linear-gradient(135deg, #ff8906, #f25f4c);
+          background: rgb(76, 175, 80);
           color: white;
           transition: all 0.3s ease;
         }

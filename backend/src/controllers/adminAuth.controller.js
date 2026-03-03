@@ -173,20 +173,56 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    const { newPassword } = req.body;
+    const { oldPassword, newPassword } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Old password and new password are required",
+      });
+    }
+
+    if (newPassword.length < 6) {
       return res.status(400).json({
         success: false,
         message: "New password must be at least 6 characters",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // ✅ Get admin WITH password
+    const admin = await Admin.findById(req.admin.id).select("+password");
 
-    await Admin.findByIdAndUpdate(req.admin.id, {
-      password: hashedPassword,
-    });
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+
+    // ✅ Compare old password
+    const isMatch = await bcrypt.compare(oldPassword, admin.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Old password is incorrect",
+      });
+    }
+
+    // ✅ Prevent same password reuse
+    const isSame = await bcrypt.compare(newPassword, admin.password);
+    if (isSame) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from old password",
+      });
+    }
+
+    // ✅ IMPORTANT: Assign plain password
+    admin.password = newPassword;
+
+    // This triggers pre-save hook and hashes automatically
+    await admin.save();
 
     try {
       await sendPasswordChangeMail();
