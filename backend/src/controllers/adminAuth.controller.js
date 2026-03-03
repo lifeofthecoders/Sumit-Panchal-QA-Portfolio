@@ -173,20 +173,57 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    const { newPassword } = req.body;
+    const { oldPassword, newPassword } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Old password and new password are required",
+      });
+    }
+
+    if (newPassword.length < 6) {
       return res.status(400).json({
         success: false,
         message: "New password must be at least 6 characters",
       });
     }
 
+    // ✅ Get admin with password
+    const admin = await Admin.findById(req.admin.id).select("+password");
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+
+    // ✅ Compare old password with DB password
+    const isMatch = await bcrypt.compare(oldPassword, admin.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Old password is incorrect",
+      });
+    }
+
+    // ✅ Prevent same password reuse
+    const isSamePassword = await bcrypt.compare(newPassword, admin.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from old password",
+      });
+    }
+
+    // ✅ Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await Admin.findByIdAndUpdate(req.admin.id, {
-      password: hashedPassword,
-    });
+    admin.password = hashedPassword;
+    await admin.save();
 
     try {
       await sendPasswordChangeMail();
