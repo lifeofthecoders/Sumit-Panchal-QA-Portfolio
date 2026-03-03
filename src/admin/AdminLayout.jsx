@@ -57,7 +57,7 @@ const AdminLayout = () => {
             end 
             onClick={closeSidebar}
           >
-            <span className="nav-icon">🏠</span> Dashboard
+            <span className="nav-icon">📊</span> Dashboard
           </NavLink>
 
           <NavLink 
@@ -73,7 +73,7 @@ const AdminLayout = () => {
             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} 
             onClick={closeSidebar}
           >
-            <span className="nav-icon">➕</span> Add New Blog
+            <span className="nav-icon">✚</span> Add New Blog
           </NavLink>
 
           <NavLink 
@@ -96,7 +96,7 @@ const AdminLayout = () => {
         <hr className="sidebar-divider" />
 
         <button className="logout-btn" onClick={openLogoutModal}>
-          <span className="nav-icon">🚪</span> Logout
+          <span className="nav-icon">↪</span> Logout
         </button>
       </aside>
 

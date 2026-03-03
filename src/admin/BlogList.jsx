@@ -253,7 +253,7 @@ export default function BlogList() {
               transition: "all 0.3s ease",
             }}
           >
-            ➕ 📚 Add New Blog
+            ✚ 📚 Add New Blog
           </button>
         </div>
 

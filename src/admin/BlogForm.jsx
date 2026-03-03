@@ -369,6 +369,7 @@ export default function BlogForm() {
           onMouseLeave={() => setBackHover(false)}
           disabled={isPublishing}
           style={{
+            marginTop: "25px",
             padding: "16px 24px",
             backgroundColor: backHover ? "#21C87A" : "#4CAF50",
             opacity: isPublishing ? 0.7 : 1,
@@ -387,7 +388,7 @@ export default function BlogForm() {
         </button>
 
         <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
-          <b>{id ? "✏️📚 Edit Blog" : "➕📚 Add New Blog"}</b>
+          <b>{id ? "✏️📚 Edit Blog" : "✚ 📚 Add New Blog"}</b>
         </h2>
 
         <form onSubmit={handleSubmit}>
