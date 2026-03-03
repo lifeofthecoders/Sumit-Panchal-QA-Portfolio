@@ -32,7 +32,6 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 /* =========================================================
    ✅ PERMANENT PREFLIGHT FIX (DO NOT REMOVE)
-   This solves Render + localhost CORS preflight issue
    ========================================================= */
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
@@ -62,7 +61,12 @@ const allowedOrigins = rawCors
   .map((s) => s.trim().replace(/\/$/, ""))
   .filter(Boolean);
 
-allowedOrigins.push("https://lifeofthecoders.github.io");
+/* ✅ FIXED HERE — ADDED LOCALHOST */
+allowedOrigins.push(
+  "https://lifeofthecoders.github.io",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173"
+);
 
 /* =========================
    Timeout Middleware
