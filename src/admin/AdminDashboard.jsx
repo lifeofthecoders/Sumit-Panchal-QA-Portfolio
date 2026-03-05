@@ -73,7 +73,7 @@ const AdminDashboard = () => {
               className="action-btn"
               onClick={() => navigate("/admin/blogs")}
             >
-              📯 Manage Blog Posts
+              📯 Manage Blog Posts 📚
             </button>
           </div>
         </div>

@@ -73,7 +73,7 @@ const AdminLayout = () => {
             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} 
             onClick={closeSidebar}
           >
-            <span className="nav-icon">✚</span> Add New Blog
+            <span className="nav-icon">✚ 📚</span>Add New Blog
           </NavLink>
 
           <NavLink 
