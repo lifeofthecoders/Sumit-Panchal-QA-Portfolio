@@ -227,11 +227,10 @@ const start = async () => {
         email: "sumitpanchal2552@gmail.com",
       });
       if (!existing) {
-        const hashed = await bcrypt.hash("Sumit@2552", 10);
         await Admin.create({
           name: "Sumit Panchal",
           email: "sumitpanchal2552@gmail.com",
-          password: hashed,
+          password: "Sumit@2552", // ❗ plain password
           phone: "",
           isVerified: true,
         });

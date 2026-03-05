@@ -1,30 +1,20 @@
 import jwt from "jsonwebtoken";
+import Admin from "../models/Admin.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Security check: ensure strong secret in production
+/* Security Check */
 if (!JWT_SECRET || JWT_SECRET.length < 32) {
   if (process.env.NODE_ENV === "production") {
-    console.error(
-      "CRITICAL: JWT_SECRET is missing or too weak. Set a strong secret in environment variables."
-    );
+    console.error("CRITICAL: JWT_SECRET missing or weak.");
     process.exit(1);
   } else {
-    console.warn(
-      "Warning: Using weak or missing JWT_SECRET. Set a strong secret in production."
-    );
+    console.warn("Warning: Weak JWT_SECRET in development.");
   }
 }
 
-/**
- * Middleware: Verify admin JWT token from Authorization header
- * - Expects: Authorization: Bearer <token>
- * - Verifies signature & expiry
- * - Attaches decoded admin info to req.admin
- */
-export const verifyAdmin = (req, res, next) => {
+export const verifyAdmin = async (req, res, next) => {
   try {
-    // 1️⃣ Extract token from Authorization header
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -36,7 +26,6 @@ export const verifyAdmin = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    // 2️⃣ Verify JWT
     let decoded;
     try {
       decoded = jwt.verify(token, JWT_SECRET);
@@ -48,35 +37,40 @@ export const verifyAdmin = (req, res, next) => {
         });
       }
 
-      if (jwtError.name === "JsonWebTokenError") {
-        return res.status(401).json({
-          success: false,
-          message: "Invalid authentication token",
-        });
-      }
-
-      throw jwtError;
+      return res.status(401).json({
+        success: false,
+        message: "Invalid authentication token",
+      });
     }
 
-    // 3️⃣ Attach decoded admin info to request
+    const admin = await Admin.findById(decoded.id).select("+tokenVersion");
+
+    if (!admin) {
+      return res.status(401).json({
+        success: false,
+        message: "Admin account no longer exists",
+      });
+    }
+
+    if (
+      typeof decoded.tokenVersion !== "undefined" &&
+      decoded.tokenVersion !== admin.tokenVersion
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Session invalidated. Please log in again.",
+      });
+    }
+
     req.admin = {
-      id: decoded.id,
-      role: decoded.role,
+      id: admin._id,
+      role: admin.role,
     };
 
-    // Optional logging in development
-    if (process.env.NODE_ENV === "development") {
-      console.log(`Admin verified: ID ${req.admin.id}`);
-    }
-
-    // 4️⃣ Continue
     next();
 
   } catch (error) {
-    console.error("Admin verification failed:", {
-      message: error.message,
-      stack: error.stack?.substring(0, 200),
-    });
+    console.error("Admin verification failed:", error.message);
 
     return res.status(401).json({
       success: false,

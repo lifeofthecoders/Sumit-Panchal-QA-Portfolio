@@ -9,23 +9,17 @@ const JWT_EXPIRY = "7d";
 /* =========================
    LOGIN ADMIN
 ========================= */
-/**
- * Authenticates admin and returns JWT token
- * @route POST /api/admin/login
- * @access Public
- */
 export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email?.trim() || !password?.trim()) {
+    if (!email?.trim() || !password) {
       return res.status(400).json({
         success: false,
         message: "Email and password are required",
       });
     }
 
-    // ✅ FIX: explicitly select password
     const admin = await Admin.findOne({ email: email.trim() }).select("+password");
 
     if (!admin) {
@@ -35,26 +29,41 @@ export const loginAdmin = async (req, res) => {
       });
     }
 
-    // Extra safety check (prevents bcrypt crash)
-    if (!admin.password) {
-      return res.status(500).json({
+    /* 🔐 Account Lock Protection */
+    if (admin.isLocked && admin.isLocked()) {
+      return res.status(423).json({
         success: false,
-        message: "Admin password not found in database",
+        message:
+          "Account locked due to multiple failed login attempts. Try again later.",
       });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
 
     if (!isMatch) {
+      if (admin.incrementLoginAttempts) {
+        await admin.incrementLoginAttempts();
+      }
+
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
       });
     }
 
-    // 🔐 Generate JWT token
+    /* ✅ Reset login attempts on success */
+    admin.loginAttempts = 0;
+    admin.lockUntil = undefined;
+    admin.lastLogin = new Date();
+    await admin.save();
+
+    /* 🔐 Include tokenVersion for invalidation */
     const token = jwt.sign(
-      { id: admin._id, role: admin.role || "admin" },
+      {
+        id: admin._id,
+        role: admin.role || "admin",
+        tokenVersion: admin.tokenVersion || 0,
+      },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRY }
     );
@@ -189,7 +198,6 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    // ✅ Get admin WITH password
     const admin = await Admin.findById(req.admin.id).select("+password");
 
     if (!admin) {
@@ -199,7 +207,6 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    // ✅ Compare old password
     const isMatch = await bcrypt.compare(oldPassword, admin.password);
 
     if (!isMatch) {
@@ -209,7 +216,6 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    // ✅ Prevent same password reuse
     const isSame = await bcrypt.compare(newPassword, admin.password);
     if (isSame) {
       return res.status(400).json({
@@ -218,10 +224,8 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    // ✅ IMPORTANT: Assign plain password
+    /* Assign plain password (pre-save hook hashes it) */
     admin.password = newPassword;
-
-    // This triggers pre-save hook and hashes automatically
     await admin.save();
 
     try {

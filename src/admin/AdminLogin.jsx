@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "../config/api";
 import { useToast } from "../components/ToastProvider";
 
+// React Icons
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+
+// Logo import
 import logoSrc from "/image/logo.svg";
 
 import "./admin-login.css";
@@ -14,6 +17,8 @@ const AdminLogin = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -21,25 +26,21 @@ const AdminLogin = () => {
     e.preventDefault();
 
     const trimmedEmail = email.trim();
-    const trimmedPassword = password; // do NOT trim password
 
-    if (!trimmedEmail || !trimmedPassword) {
+    if (!trimmedEmail || !password) {
       showToast("Please enter both email and password", "error");
       return;
     }
 
+    setError("");
+    setSuccessMsg("");
     setLoading(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: trimmedEmail,
-          password: trimmedPassword,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmedEmail, password }),
       });
 
       let data = {};
@@ -50,7 +51,7 @@ const AdminLogin = () => {
       }
 
       if (!response.ok) {
-        setPassword(""); // clear password on failure
+        setPassword(""); // Clear password on failed attempt
         throw new Error(
           data.message || "Authentication failed. Please try again."
         );
@@ -60,7 +61,7 @@ const AdminLogin = () => {
         throw new Error("Authentication token not received from server.");
       }
 
-      // Always overwrite previous token
+      // Always overwrite previous token safely
       localStorage.removeItem("admin-token");
       localStorage.setItem("admin-token", data.token);
 
@@ -84,6 +85,7 @@ const AdminLogin = () => {
     <div className="login-page">
       <div className="login-card">
 
+        {/* Left - Branding Section */}
         <div className="branding-panel">
           <img
             src={logoSrc}
@@ -104,6 +106,7 @@ const AdminLogin = () => {
           </div>
         </div>
 
+        {/* Right - Login Form */}
         <div className="login-panel">
           <h2 className="welcome-title">
             Welcome to <span className="highlight">Admin Panel</span>

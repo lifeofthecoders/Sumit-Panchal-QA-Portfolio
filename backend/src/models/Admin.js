@@ -1,111 +1,118 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 const adminSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Admin name is required"],
+      required: true,
       trim: true,
-      minlength: [2, "Name must be at least 2 characters long"],
-      maxlength: [100, "Name cannot exceed 100 characters"],
     },
 
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
       lowercase: true,
       trim: true,
-      match: [
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        "Please enter a valid email address",
-      ],
     },
 
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters long"],
-      select: false, // Hidden by default in queries
-    },
-
-    phone: {
-      type: String,
-      trim: true,
-    },
-
-    isVerified: {
-      type: Boolean,
-      default: true,
+      required: true,
+      select: false,
     },
 
     role: {
       type: String,
       enum: ["admin", "superadmin"],
       default: "admin",
-      required: true,
     },
 
-    lastLogin: {
-      type: Date,
-    },
+    /* 🔐 Banking-Level Security Fields */
 
-    loginAttempts: {
-      type: Number,
-      default: 0,
-    },
+    passwordChangedAt: Date,
+    tokenVersion: { type: Number, default: 0 },
 
-    lockUntil: {
-      type: Date,
-    },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil: Date,
+
+    sessions: [
+      {
+        sessionId: String,
+        refreshTokenHash: String,
+        ip: String,
+        userAgent: String,
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-/* ─────────────────────────────
-   HASH PASSWORD BEFORE SAVE
-───────────────────────────── */
+/* HASH PASSWORD */
 adminSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  try {
-    const salt = await bcrypt.genSalt(12); // stronger hashing
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (err) {
-    next(err);
+  const salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password, salt);
+
+  if (!this.isNew) {
+    this.passwordChangedAt = Date.now() - 1000;
+    this.tokenVersion += 1; // Invalidate all tokens
   }
+
+  next();
 });
 
-/* ─────────────────────────────
-   COMPARE PASSWORD
-───────────────────────────── */
-adminSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+/* COMPARE PASSWORD */
+adminSchema.methods.comparePassword = function (candidate) {
+  return bcrypt.compare(candidate, this.password);
 };
 
-/* ─────────────────────────────
-   ACCOUNT LOCK CHECK
-───────────────────────────── */
+/* LOCK CHECK */
 adminSchema.methods.isLocked = function () {
   return !!(this.lockUntil && this.lockUntil > Date.now());
 };
 
-/* ─────────────────────────────
-   REMOVE SENSITIVE FIELDS
-───────────────────────────── */
-adminSchema.methods.toJSON = function () {
-  const obj = this.toObject();
+/* INCREMENT LOGIN ATTEMPTS */
+adminSchema.methods.incrementLoginAttempts = async function () {
+  const MAX_ATTEMPTS = 5;
 
-  delete obj.password;
-  delete obj.loginAttempts;
-  delete obj.lockUntil;
-  delete obj.__v;
+  if (this.lockUntil && this.lockUntil < Date.now()) {
+    return this.updateOne({
+      $set: { loginAttempts: 1 },
+      $unset: { lockUntil: 1 },
+    });
+  }
 
-  return obj;
+  const updates = { $inc: { loginAttempts: 1 } };
+
+  if (this.loginAttempts + 1 >= MAX_ATTEMPTS) {
+    updates.$set = {
+      lockUntil: Date.now() + 30 * 60 * 1000,
+    };
+  }
+
+  return this.updateOne(updates);
+};
+
+/* PASSWORD RESET TOKEN */
+adminSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 export default mongoose.model("Admin", adminSchema);
