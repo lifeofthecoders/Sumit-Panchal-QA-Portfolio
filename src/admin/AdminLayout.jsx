@@ -7,9 +7,11 @@ const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // Optional: Get admin info from localStorage or context (adjust as per your auth)
-  const adminName = localStorage.getItem("adminName") || "Admin"; // fallback
+  // Optional: Get admin info from localStorage or context
+  const adminName = localStorage.getItem("adminName") || "Admin";
   const adminEmail = localStorage.getItem("adminEmail") || "";
+  const adminAvatar =
+    localStorage.getItem("adminAvatar") || "/image/profile.jpg";
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -18,19 +20,21 @@ const AdminLayout = () => {
   const closeLogoutModal = () => setShowLogoutModal(false);
 
   const confirmLogout = () => {
-    // Clear cookie
-    document.cookie = "adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    // Clear any localStorage items related to auth
+    document.cookie =
+      "adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
     localStorage.removeItem("admin-just-logged-in");
     localStorage.removeItem("adminName");
     localStorage.removeItem("adminEmail");
-    
+    localStorage.removeItem("adminAvatar");
+
     closeLogoutModal();
     navigate("/admin/login", { replace: true });
   };
 
   return (
     <div className="admin-layout">
+
       {/* Sidebar */}
       <aside className={`admin-sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
@@ -107,13 +111,29 @@ const AdminLayout = () => {
 
       {/* Main Content */}
       <main className="admin-main">
+
         <button className="hamburger-btn" onClick={toggleSidebar}>
           ☰
         </button>
 
+        {/* ================= HEADER (NEW) ================= */}
+        <div className="admin-header-bar">
+          <div className="admin-header-right">
+            <span className="admin-header-name">{adminName}</span>
+
+            <img
+              src={adminAvatar}
+              alt="Admin Avatar"
+              className="admin-header-avatar"
+            />
+          </div>
+        </div>
+        {/* ================================================= */}
+
         <div className="main-content-wrapper">
           <Outlet />
         </div>
+
       </main>
 
       {/* Logout Confirmation Modal */}
@@ -133,6 +153,7 @@ const AdminLayout = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

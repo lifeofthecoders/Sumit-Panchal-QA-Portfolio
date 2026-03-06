@@ -1,0 +1,28 @@
+.admin-header{
+display:flex;
+justify-content:flex-end;
+align-items:center;
+padding:10px 20px;
+background:white;
+border-bottom:1px solid #eee;
+margin-bottom:20px;
+}
+
+.admin-header-right{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.admin-header-avatar{
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid #4CAF50;
+}
+
+.admin-header-name{
+font-weight:600;
+color:#1B5E20;
+}

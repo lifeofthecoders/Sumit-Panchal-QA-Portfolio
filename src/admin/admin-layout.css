@@ -9,6 +9,34 @@
     font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Admin Header (Top Right Profile) */
+
+.admin-header-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-header-name {
+    font-weight: 600;
+    color: #1B5E20;
+}
+
+.admin-header-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4CAF50;
+}
+
 /* ── Sidebar ── */
 .admin-sidebar {
     width: 260px;
@@ -37,17 +65,17 @@
 }
 
 .brand-logo {
-  width: 40px;
-  height: 40px;
-  background: rgb(76, 175, 80);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-right: 12px;
-  font-size: 16px;
+    width: 40px;
+    height: 40px;
+    background: rgb(76, 175, 80);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 12px;
+    font-size: 16px;
 }
 
 .brand-title {
@@ -246,6 +274,7 @@
 .modal-btn.logout {
     background: #f56565;
     color: white;
+    text-align: center;
 }
 
 .modal-btn.logout:hover {
@@ -254,48 +283,48 @@
 
 /* Admin Info Section */
 .admin-info {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  background: #B7E4C7 ;
-  border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: #B7E4C7;
+    border-radius: 8px;
 }
 
 .admin-avatar {
-  width: 40px;
-  height: 40px;
-  background: rgb(76, 175, 80);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-right: 12px;
-  font-size: 16px;
+    width: 40px;
+    height: 40px;
+    background: rgb(76, 175, 80);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 12px;
+    font-size: 16px;
 }
 
 .admin-details {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .admin-name {
-  font-weight: 600;
-  color: #1B5E20;
-  font-size: 15px;
+    font-weight: 600;
+    color: #1B5E20;
+    font-size: 15px;
 }
 
 .admin-email {
-  font-size: 13px;
-  color: #64748b;
-  opacity: 0.9;
+    font-size: 13px;
+    color: #64748b;
+    opacity: 0.9;
 }
 
 /* Active link style (if not already present) */
 .nav-link.active {
-  background: #A5D6A7;
-  color: #2E7D32;
-  font-weight: 600;
+    background: #A5D6A7;
+    color: #2E7D32;
+    font-weight: 600;
 }
