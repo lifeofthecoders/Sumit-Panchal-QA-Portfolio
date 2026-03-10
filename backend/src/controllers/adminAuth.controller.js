@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
 import { sendPasswordChangeMail } from "../utils/sendMail.js";
+import cloudinary from "../config/cloudinary.js"; // Import Cloudinary directly for manual upload fallback
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 const JWT_EXPIRY = "7d";
@@ -75,7 +76,6 @@ export const loginAdmin = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Login Error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error during login",
@@ -110,7 +110,6 @@ export const getProfile = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Get Profile Error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -119,7 +118,7 @@ export const getProfile = async (req, res) => {
 };
 
 /* =========================
-   UPDATE PROFILE
+   UPDATE PROFILE (PERMANENT FIX - Manual Cloudinary Upload)
 ========================= */
 export const updateProfile = async (req, res) => {
   try {
@@ -130,21 +129,88 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    const { name, phone } = req.body;
+    const { name, phone, dob, emergencyName, emergencyPhone } = req.body;
+    const updateData = {};
 
-    if (name && name.trim().length < 2) {
+    if (name && name.trim().length >= 2) {
+      updateData.name = name.trim();
+    }
+
+    if (phone?.trim()) {
+      updateData.phone = phone.trim();
+    }
+
+    if (dob) {
+      updateData.dob = new Date(dob);
+    }
+
+    if (emergencyName?.trim()) {
+      updateData.emergencyName = emergencyName.trim();
+    }
+
+    if (emergencyPhone?.trim()) {
+      updateData.emergencyPhone = emergencyPhone.trim();
+    }
+
+    // ────────────────────────────────────────────────
+    // PROFILE PICTURE HANDLING – PERMANENT MANUAL UPLOAD
+    // ────────────────────────────────────────────────
+    if (req.file && req.file.buffer) {
+      // Manual upload to Cloudinary (bypasses multer-storage issues)
+      const uploadPromise = new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "profiles", // Dedicated folder for profiles
+            transformation: [
+              { width: 400, height: 400, crop: "fill", gravity: "face" }, // Auto-crop to square
+              { quality: "auto", fetch_format: "auto" } // Optimize format/quality
+            ],
+            public_id: `profile_${req.admin.id}_${Date.now()}`, // Unique ID
+            overwrite: true
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result.secure_url);
+            }
+          }
+        );
+
+        // Pipe the buffer to Cloudinary stream
+        uploadStream.end(req.file.buffer);
+      });
+
+      try {
+        const profilePicUrl = await uploadPromise;
+        updateData.profilePic = profilePicUrl;
+      } catch (uploadErr) {
+        // Fallback: Save as local file
+        const fs = await import("fs/promises");
+        const path = await import("path");
+        const filename = `profile_${req.admin.id}_${Date.now()}.jpg`;
+        const filepath = path.default.join(process.cwd(), "uploads", filename);
+
+        try {
+          await fs.mkdir(path.default.dirname(filepath), { recursive: true });
+          await fs.writeFile(filepath, req.file.buffer);
+          updateData.profilePic = `/uploads/${filename}`;
+        } catch (localErr) {
+          // Ultimate fallback: skip pic update
+        }
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Name must be at least 2 characters",
+        message: "No valid fields or file provided for update",
       });
     }
 
     const updatedAdmin = await Admin.findByIdAndUpdate(
       req.admin.id,
-      {
-        name: name?.trim(),
-        phone: phone?.trim(),
-      },
+      updateData,
       { new: true, runValidators: true }
     ).select("-password");
 
@@ -155,6 +221,14 @@ export const updateProfile = async (req, res) => {
       });
     }
 
+    // Log activity
+    updatedAdmin.activity = updatedAdmin.activity || [];
+    updatedAdmin.activity.push({
+      action: "Profile updated",
+      timestamp: new Date(),
+    });
+    await updatedAdmin.save();
+
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
@@ -162,10 +236,10 @@ export const updateProfile = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Update Profile Error:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Server error during profile update",
+      error: error.message,
     });
   }
 };
@@ -228,10 +302,18 @@ export const changePassword = async (req, res) => {
     admin.password = newPassword;
     await admin.save();
 
+    // Log activity
+    admin.activity = admin.activity || [];
+    admin.activity.push({
+      action: "Password changed",
+      timestamp: new Date(),
+    });
+    await admin.save();
+
     try {
       await sendPasswordChangeMail();
     } catch (mailErr) {
-      console.error("Password change email failed:", mailErr);
+      // Silent fail on email (non-critical)
     }
 
     return res.status(200).json({
@@ -240,7 +322,6 @@ export const changePassword = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Change Password Error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",

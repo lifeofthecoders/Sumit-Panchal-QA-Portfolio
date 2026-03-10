@@ -89,6 +89,13 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 /* =========================
+   Serve static files for uploads & default images
+   (Critical for profile pic fallback & default avatar)
+   ========================= */
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/image", express.static(path.join(__dirname, "public/image"))); // if profile.jpg is in public/image
+
+/* =========================
    CORS Configuration
    ========================= */
 const corsOptions = {
@@ -244,8 +251,9 @@ const start = async () => {
 
     app.listen(PORT, () => {
       console.log("=======================================");
-      console.log(`🚀 Server established successfully 🚀`);
-      console.log(`🌍 Running on: http://localhost:${PORT}`);
+      console.log(`🚀 Server established successfully on port ${PORT} 🚀`);
+      console.log(`🌍 Local: http://localhost:${PORT}`);
+      console.log(`🌍 Render (if deployed): https://sumit-panchal-qa-portfolio.onrender.com`);
       console.log("=======================================");
     });
   } catch (err) {

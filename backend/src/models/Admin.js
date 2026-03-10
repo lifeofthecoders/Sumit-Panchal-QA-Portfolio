@@ -24,6 +24,30 @@ const adminSchema = new mongoose.Schema(
       select: false,
     },
 
+    phone: {
+      type: String,
+      trim: true,
+    },
+
+    dob: {
+      type: Date,
+    },
+
+    emergencyName: {
+      type: String,
+      trim: true,
+    },
+
+    emergencyPhone: {
+      type: String,
+      trim: true,
+    },
+
+    profilePic: {
+      type: String,
+      default: "/image/profile.jpg",
+    },
+
     role: {
       type: String,
       enum: ["admin", "superadmin"],
@@ -48,6 +72,14 @@ const adminSchema = new mongoose.Schema(
         ip: String,
         userAgent: String,
         createdAt: { type: Date, default: Date.now },
+      },
+    ],
+
+    /* Activity Log for Admin Changes */
+    activity: [
+      {
+        action: String,
+        timestamp: { type: Date, default: Date.now },
       },
     ],
   },

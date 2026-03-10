@@ -6,6 +6,7 @@ import {
   changePassword,
 } from "../controllers/adminAuth.controller.js";
 import { verifyAdmin } from "../middlewares/adminAuth.js";
+import upload from "../middlewares/uploadBlogImage.js"; // ← Added for profile picture upload
 
 const router = express.Router();
 
@@ -33,10 +34,10 @@ router.get("/profile", verifyAdmin, getProfile);
 
 /**
  * @route   PUT /api/admin/profile
- * @desc    Update admin profile fields (name, phone, etc.)
+ * @desc    Update admin profile fields (name, phone, dob, emergency, profile pic upload)
  * @access  Private (Admin)
  */
-router.put("/profile", verifyAdmin, updateProfile);
+router.put("/profile", verifyAdmin, upload.single("profilePic"), updateProfile);
 
 /**
  * @route   PUT /api/admin/change-password
