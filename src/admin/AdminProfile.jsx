@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./admin-profile.css";
+import "../assets/css/admin-profile.css";
 import { authFetch } from "../utils/authFetch";
 
 const API_BASE =

@@ -141,8 +141,7 @@ export default function BlogForm() {
   const [cancelHover, setCancelHover] = useState(false);
 
   /* ✅ NEW Back button hover */
-  const [backHover, setBackHover] = useState(false);
-
+  const [isHovering, setIsHovering] = useState(false);
   // ✅ Loader state
   const [isPublishing, setIsPublishing] = useState(false);
 
@@ -363,32 +362,41 @@ export default function BlogForm() {
         }}
       >
         {/* ✅ Back Button */}
-        <button
-          onClick={() => navigate("/admin/blogs")}
-          onMouseEnter={() => setBackHover(true)}
-          onMouseLeave={() => setBackHover(false)}
-          disabled={isPublishing}
-          style={{
-            marginTop: "25px",
-            padding: "16px 24px",
-            backgroundColor: backHover ? "#21C87A" : "#4CAF50",
-            opacity: isPublishing ? 0.7 : 1,
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: isPublishing ? "not-allowed" : "pointer",
-            fontSize: "16px",
-            fontWeight: "600",
-            transition: "all 0.3s ease",
-            width: "fit-content",
-            alignSelf: "flex-start",
-          }}
+        <h3
+          id="back-button"
+          style={{ marginBottom: "10px", color: "#ffffff" }}
         >
-          ← Back to Blog List
-        </button>
+          <button
+            onClick={() => navigate("/admin/blogs")}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            disabled={isPublishing}
+            style={{
+              fontFamily:
+                "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+              display: "inline-block",
+              backgroundColor: isHovering ? "#21C87A" : "#4CAF50",
+              color: "white",
+              padding: "12px 24px",
+              borderRadius: "5px",
+              fontWeight: "bold",
+              fontSize: "16px",
+              marginLeft: "-10px",
+              marginTop: "16px",
+              marginBottom: "16px",
+              border: "none",
+              outline: "none",
+              cursor: isPublishing ? "not-allowed" : "pointer",
+              transition: "all 0.3s ease",
+              opacity: isPublishing ? 0.7 : 1,
+            }}
+          >
+            ← Back to Blog List
+          </button>
+        </h3>
 
         <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
-          <b>{id ? "✏️📚 Edit Blog" : "✚ 📚 Add New Blog"}</b>
+          <b>{id ? "✏️ 📚 Edit Blog" : "✚ 📚 Add New Blog"}</b>
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -564,11 +572,21 @@ export default function BlogForm() {
               <option value="Automation Testing">Automation Testing</option>
               <option value="Software Testing">Software Testing</option>
               <option value="Performance Testing">Performance Testing</option>
-              <option value="Selenium">Selenium</option>
+              <option value="Load Testing">Load Testing</option>
+              <option value="Cypress">Cypress</option>
+              <option value="Playwright">Playwright</option>
+              <option value="Test Automation Frameworks">Test Automation Frameworks</option>
+              <option value="Mobile Testing">Mobile Testing</option>
+              <option value="API Testing">API Testing</option>
+              <option value="Security Testing">Security Testing</option>
+              <option value="Testing Tools">Testing Tools</option>
+              <option value="Best Practices">Best Practices</option>
+              <option value="Career Advice">Career Advice</option>
               <option value="Innovation">Innovation</option>
               <option value="Frameworks">Frameworks</option>
               <option value="Education">Education</option>
               <option value="AI">AI</option>
+              <option value="AI Testing">AI Testing</option>
               <option value="DevOps">DevOps</option>
               <option value="Others">Others</option>
             </select>

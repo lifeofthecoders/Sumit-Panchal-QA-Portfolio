@@ -9,7 +9,7 @@ import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 // Logo import
 import logoSrc from "/image/logo.svg";
 
-import "./admin-login.css";
+import "../assets/css/admin-login.css";
 
 const AdminLogin = () => {
   const navigate = useNavigate();

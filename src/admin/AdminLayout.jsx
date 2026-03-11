@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import "./admin-layout.css";
+import "../assets/css/admin-layout.css";
 
 const AdminLayout = () => {
   const navigate = useNavigate();

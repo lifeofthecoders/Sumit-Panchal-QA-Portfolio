@@ -343,7 +343,7 @@ export default function BlogDetail() {
                   {/* Back Button */}
                   <h3
                     id="back-button"
-                    style={{ marginBottom: "20px", color: "#ffffff" }}
+                    style={{ marginBottom: "10px", color: "#ffffff" }}
                   >
                     <button
                       onClick={() => navigate("/blogs")}

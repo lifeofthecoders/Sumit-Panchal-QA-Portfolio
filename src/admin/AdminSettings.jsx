@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import "./admin-settings.css";
+import "../assets/css/admin-settings.css";
 
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ||

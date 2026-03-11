@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./admin-header.css";
+import "../assets/css/admin-header.css";
 
 const AdminHeader = () => {
   const [avatar, setAvatar] = useState(

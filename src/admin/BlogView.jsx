@@ -317,7 +317,7 @@ export default function BlogDetail() {
                         transition: "all 0.25s ease",
                       }}
                     >
-                      ← Back to Blogs
+                      ← Back to Blog List
                     </button>
                   </div>
                 </div>
@@ -342,10 +342,10 @@ export default function BlogDetail() {
                     width: "100%",
                   }}
                 >
-                  {/* Back Button */}
+                  {/* ✅ Back Button */}
                   <h3
                     id="back-button"
-                    style={{ marginBottom: "20px", color: "#ffffff" }}
+                    style={{ marginBottom: "10px", color: "#ffffff" }}
                   >
                     <button
                       onClick={() => navigate("/admin/blogs")}
@@ -355,7 +355,7 @@ export default function BlogDetail() {
                         fontFamily:
                           "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
                         display: "inline-block",
-                        background: isHovering ? "#21C87A" : "#19A25E",
+                        backgroundColor: isHovering ? "#21C87A" : "#4CAF50",
                         color: "white",
                         padding: "12px 24px",
                         borderRadius: "5px",
@@ -370,7 +370,7 @@ export default function BlogDetail() {
                         transition: "all 0.3s ease",
                       }}
                     >
-                      ← Back to Blogs
+                      ← Back to Blog List
                     </button>
                   </h3>
 
@@ -381,7 +381,7 @@ export default function BlogDetail() {
                       fontSize: "18.72px",
                     }}
                   >
-                    <b>👁️📚 View Blog</b>
+                    <b>👁️ 📚 View Blog</b>
                   </h2>
 
                   {/* ✅ Blog Image (Cloudinary Safe + Never Break) */}
