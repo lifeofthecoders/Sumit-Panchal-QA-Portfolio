@@ -65,7 +65,32 @@ const AdminLogin = () => {
       localStorage.removeItem("admin-token");
       localStorage.setItem("admin-token", data.token);
 
+      // ✅ ADD THIS BLOCK (DO NOT REMOVE ANYTHING ELSE)
+      if (data?.admin) {
+        localStorage.setItem("adminName", data.admin.name || "Admin");
+        localStorage.setItem("adminEmail", data.admin.email || "");
+
+        let avatar = data.admin.profilePic;
+
+        if (avatar && !avatar.startsWith("http")) {
+          avatar = `${API_BASE_URL}${avatar}`;
+        }
+
+        localStorage.setItem(
+          "adminAvatar",
+          avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        );
+
+        // ✅ ADD THIS LINE ONLY
+        window.dispatchEvent(new Event("admin-data-updated"));
+      }
+
       showToast("Login successful! Redirecting...", "success");
+
+      // localStorage.setItem(
+      //   "adminAvatar",
+      //   "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+      // );
 
       setTimeout(() => {
         navigate("/admin/dashboard", { replace: true });

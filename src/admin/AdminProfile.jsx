@@ -46,10 +46,10 @@ const AdminProfile = () => {
 
       const joinDate = data.createdAt
         ? new Date(data.createdAt).toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
         : "N/A";
 
       let avatar = data.profilePic;
@@ -78,6 +78,8 @@ const AdminProfile = () => {
       localStorage.setItem("adminName", data.name || "");
       localStorage.setItem("adminEmail", data.email || "");
       localStorage.setItem("adminAvatar", avatar);
+      window.dispatchEvent(new Event("storage"));
+
     } catch (err) {
       console.error("Fetch profile error:", err);
       showToast("Session expired. Please login again.", "error");
@@ -187,7 +189,12 @@ const AdminProfile = () => {
       setOriginalProfile(updatedProfile);
 
       localStorage.setItem("adminName", profile.name);
-      localStorage.setItem("adminAvatar", avatar);
+      localStorage.setItem(
+        "adminAvatar",
+        avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+      );
+
+      window.dispatchEvent(new Event("storage"));
 
       showToast("Profile updated successfully", "success");
       setIsEditing(false);

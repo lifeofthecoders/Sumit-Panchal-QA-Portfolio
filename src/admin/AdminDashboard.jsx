@@ -48,11 +48,44 @@
 
 
 // src/admin/AdminDashboard.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { authFetch } from "../utils/authFetch";   // ← Added
+
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://sumit-panchal-qa-portfolio.onrender.com";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const initializeAdminAvatar = async () => {
+      // If avatar is already in localStorage, no need to fetch again
+      if (localStorage.getItem("adminAvatar")) return;
+
+      try {
+        const res = await authFetch("/api/admin/profile");
+        if (!res.ok) return;
+
+        const result = await res.json();
+        const data = result.data || result;
+
+        let avatar = data.profilePic;
+        if (avatar && !avatar.startsWith("http")) {
+          avatar = `${API_BASE}${avatar}`;
+        }
+        if (!avatar) avatar = `${API_BASE}/image/profile.jpg`;
+
+        localStorage.setItem("adminAvatar", avatar);
+        localStorage.setItem("adminName", data.name || "");
+      } catch (err) {
+        console.error("Failed to load initial admin avatar");
+      }
+    };
+
+    initializeAdminAvatar();
+  }, []);
 
   return (
     <div className="dashboard-wrapper">
@@ -68,7 +101,7 @@ const AdminDashboard = () => {
             <p className="dashboard-subtitle">
               Create, edit, and manage your blog posts easily.
             </p>
-            
+
             <button
               className="action-btn"
               onClick={() => navigate("/admin/blogs")}

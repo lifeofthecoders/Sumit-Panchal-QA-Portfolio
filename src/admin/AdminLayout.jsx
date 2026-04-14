@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../assets/css/admin-layout.css";
 
 const AdminLayout = () => {
@@ -8,10 +8,35 @@ const AdminLayout = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Optional: Get admin info from localStorage or context
-  const adminName = localStorage.getItem("adminName") || "Admin";
-  const adminEmail = localStorage.getItem("adminEmail") || "";
-  const adminAvatar =
-    localStorage.getItem("adminAvatar") || "/image/profile.jpg";
+  const DEFAULT_AVATAR =
+    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+  const [adminData, setAdminData] = useState({
+    name: localStorage.getItem("adminName") || "Admin",
+    email: localStorage.getItem("adminEmail") || "",
+    avatar:
+      localStorage.getItem("adminAvatar") || DEFAULT_AVATAR,
+  });
+
+  useEffect(() => {
+    const syncAdminData = () => {
+      setAdminData({
+        name: localStorage.getItem("adminName") || "Admin",
+        email: localStorage.getItem("adminEmail") || "",
+        avatar:
+          localStorage.getItem("adminAvatar") ||
+          DEFAULT_AVATAR,
+      });
+    };
+
+    // ✅ INITIAL LOAD FIX (THIS WAS MISSING)
+    syncAdminData();
+
+    // ✅ RUN ON EVERY PAGE NAVIGATION
+    const interval = setInterval(syncAdminData, 300);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -55,42 +80,42 @@ const AdminLayout = () => {
         </div> */}
 
         <nav className="sidebar-nav">
-          <NavLink 
-            to="/admin" 
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} 
-            end 
+          <NavLink
+            to="/admin"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+            end
             onClick={closeSidebar}
           >
             <span className="nav-icon">📊</span> Dashboard
           </NavLink>
 
-          <NavLink 
-            to="/admin/blogs" 
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} 
+          <NavLink
+            to="/admin/blogs"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
             onClick={closeSidebar}
           >
             <span className="nav-icon">📚</span> Blogs
           </NavLink>
 
-          <NavLink 
-            to="/admin/blogs/add" 
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} 
+          <NavLink
+            to="/admin/blogs/add"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
             onClick={closeSidebar}
           >
             <span className="nav-icon">✚ 📚</span>Add New Blog
           </NavLink>
 
-          <NavLink 
-            to="/admin/profile" 
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} 
+          <NavLink
+            to="/admin/profile"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
             onClick={closeSidebar}
           >
             <span className="nav-icon">👤</span> Profile
           </NavLink>
 
-          <NavLink 
-            to="/admin/settings" 
-            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} 
+          <NavLink
+            to="/admin/settings"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
             onClick={closeSidebar}
           >
             <span className="nav-icon">⚙️</span> Settings
@@ -119,12 +144,16 @@ const AdminLayout = () => {
         {/* ================= HEADER (NEW) ================= */}
         <div className="admin-header-bar">
           <div className="admin-header-right">
-            <span className="admin-header-name">{adminName}</span>
+            <span className="admin-header-name">{adminData.name}</span>
 
             <img
-              src={adminAvatar}
+              src={adminData.avatar}
               alt="Admin Avatar"
               className="admin-header-avatar"
+              onError={(e) => {
+                e.target.src =
+                  "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+              }}
             />
           </div>
         </div>
