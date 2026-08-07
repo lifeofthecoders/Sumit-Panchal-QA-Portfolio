@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import Admin from "../models/Admin.js";
+import { getFallbackAdmin } from "../utils/adminFallback.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -43,7 +45,17 @@ export const verifyAdmin = async (req, res, next) => {
       });
     }
 
-    const admin = await Admin.findById(decoded.id).select("+tokenVersion");
+    let admin = null;
+    if (mongoose.connection.readyState === 1) {
+      admin = await Admin.findById(decoded.id).select("+tokenVersion");
+    }
+
+    if (!admin) {
+      const fallbackAdmin = getFallbackAdmin();
+      if (decoded.id === fallbackAdmin._id) {
+        admin = fallbackAdmin;
+      }
+    }
 
     if (!admin) {
       return res.status(401).json({

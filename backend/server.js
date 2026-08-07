@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
+import { requireDatabase, setDatabaseConnected } from "./src/middlewares/requireDatabase.js";
 
 /* =========================
    Load Environment Variables
@@ -29,6 +30,7 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
+let dbConnected = false;
 
 /* =========================================================
    ✅ PERMANENT PREFLIGHT FIX (DO NOT REMOVE)
@@ -173,7 +175,7 @@ app.get("/api/cloudinary-health", async (req, res) => {
 /* =========================
    Routes
    ========================= */
-app.use("/api/blogs", blogsRouter);
+app.use("/api/blogs", requireDatabase, blogsRouter);
 app.use("/api/admin", adminAuthRoutes);
 
 /* =========================
@@ -215,21 +217,24 @@ app.use((err, req, res, next) => {
    Server Startup
    ========================= */
 const start = async () => {
-  if (!MONGODB_URI) {
-    console.error("❌ MONGODB_URI is missing in environment variables");
-    process.exit(1);
-  }
-
-  try {
-    await mongoose.connect(MONGODB_URI, {
-      tls: true,
+  const connectToDatabase = async (uri) => {
+    await mongoose.connect(uri, {
+      tls: Boolean(MONGODB_URI),
       serverSelectionTimeoutMS: 30000,
     });
+    dbConnected = true;
     console.log("✅ 📯🎉MongoDB connected successfully...!🎉📯");
+  };
+
+  try {
+    if (!MONGODB_URI) {
+      throw new Error("MONGODB_URI not configured");
+    }
+    await connectToDatabase(MONGODB_URI);
+    setDatabaseConnected(true);
 
     try {
       const Admin = (await import("./src/models/Admin.js")).default;
-      const bcrypt = await import("bcryptjs");
       const existing = await Admin.findOne({
         email: "sumitpanchal2552@gmail.com",
       });
@@ -257,8 +262,17 @@ const start = async () => {
       console.log("=======================================");
     });
   } catch (err) {
-    console.error("❌ Failed to start server:", err.message);
-    process.exit(1);
+    dbConnected = false;
+    setDatabaseConnected(false);
+    console.error("❌ MongoDB connection unavailable:", err.message);
+    console.log("⚠️ Starting server in degraded mode. Admin login fallback is enabled.");
+    app.listen(PORT, () => {
+      console.log("=======================================");
+      console.log(`🚀 Server started on port ${PORT} in degraded mode`);
+      console.log(`🌍 Local: http://localhost:${PORT}`);
+      console.log(`🌍 Render (if deployed): https://sumit-panchal-qa-portfolio.onrender.com`);
+      console.log("=======================================");
+    });
   }
 };
 

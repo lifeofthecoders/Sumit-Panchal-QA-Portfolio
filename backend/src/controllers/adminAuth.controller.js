@@ -1,6 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import Admin from "../models/Admin.js";
+import {
+  validateFallbackAdminLogin,
+  getFallbackAdmin,
+} from "../utils/adminFallback.js";
 import { sendPasswordChangeMail } from "../utils/sendMail.js";
 import cloudinary from "../config/cloudinary.js"; // Import Cloudinary directly for manual upload fallback
 
@@ -21,7 +26,21 @@ export const loginAdmin = async (req, res) => {
       });
     }
 
-    const admin = await Admin.findOne({ email: email.trim() }).select("+password");
+    const normalizedEmail = email.trim().toLowerCase();
+    let admin = null;
+    let usingFallback = false;
+
+    if (mongoose.connection.readyState === 1) {
+      admin = await Admin.findOne({ email: normalizedEmail }).select("+password");
+    }
+
+    if (!admin) {
+      const fallbackAdmin = await validateFallbackAdminLogin(normalizedEmail, password);
+      if (fallbackAdmin) {
+        usingFallback = true;
+        admin = fallbackAdmin;
+      }
+    }
 
     if (!admin) {
       return res.status(401).json({
@@ -30,35 +49,33 @@ export const loginAdmin = async (req, res) => {
       });
     }
 
-    /* 🔐 Account Lock Protection */
-    if (admin.isLocked && admin.isLocked()) {
-      return res.status(423).json({
-        success: false,
-        message:
-          "Account locked due to multiple failed login attempts. Try again later.",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, admin.password);
-
-    if (!isMatch) {
-      if (admin.incrementLoginAttempts) {
-        await admin.incrementLoginAttempts();
+    if (!usingFallback) {
+      if (admin.isLocked && admin.isLocked()) {
+        return res.status(423).json({
+          success: false,
+          message:
+            "Account locked due to multiple failed login attempts. Try again later.",
+        });
       }
 
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
+      const isMatch = await bcrypt.compare(password, admin.password);
+      if (!isMatch) {
+        if (admin.incrementLoginAttempts) {
+          await admin.incrementLoginAttempts();
+        }
+
+        return res.status(401).json({
+          success: false,
+          message: "Invalid credentials",
+        });
+      }
+
+      admin.loginAttempts = 0;
+      admin.lockUntil = undefined;
+      admin.lastLogin = new Date();
+      await admin.save();
     }
 
-    /* ✅ Reset login attempts on success */
-    admin.loginAttempts = 0;
-    admin.lockUntil = undefined;
-    admin.lastLogin = new Date();
-    await admin.save();
-
-    /* 🔐 Include tokenVersion for invalidation */
     const token = jwt.sign(
       {
         id: admin._id,
@@ -74,8 +91,8 @@ export const loginAdmin = async (req, res) => {
       message: "Login successful",
       token,
     });
-
   } catch (error) {
+    console.error("Login error:", error.message);
     return res.status(500).json({
       success: false,
       message: "Server error during login",
@@ -95,7 +112,17 @@ export const getProfile = async (req, res) => {
       });
     }
 
-    const admin = await Admin.findById(req.admin.id).select("-password");
+    let admin = null;
+    if (mongoose.connection.readyState === 1) {
+      admin = await Admin.findById(req.admin.id).select("-password");
+    }
+
+    if (!admin) {
+      const fallbackAdmin = getFallbackAdmin();
+      if (req.admin.id === fallbackAdmin._id) {
+        admin = fallbackAdmin;
+      }
+    }
 
     if (!admin) {
       return res.status(404).json({
