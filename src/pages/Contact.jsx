@@ -200,7 +200,7 @@ export default function Contact() {
                 </p>
 
                 <a
-                  href="/Sumit-Panchal-QA-Portfolio/resume/Sumit_Panchal_QA_Resume.pdf"
+                  href={`${import.meta.env.BASE_URL}resume/Sumit_Panchal_QA_Resume.pdf`}
                   download
                   className="btn-primary"
                 >
