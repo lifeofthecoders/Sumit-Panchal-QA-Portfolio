@@ -36,11 +36,15 @@ const AdminLogin = () => {
     setSuccessMsg("");
     setLoading(true);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: trimmedEmail, password }),
+        signal: controller.signal,
       });
 
       let data = {};
@@ -53,7 +57,7 @@ const AdminLogin = () => {
       if (!response.ok) {
         setPassword(""); // Clear password on failed attempt
         throw new Error(
-          data.message || "Authentication failed. Please try again."
+          data.message || "Invalid email or password. Please try again."
         );
       }
 
@@ -65,13 +69,11 @@ const AdminLogin = () => {
       localStorage.removeItem("admin-token");
       localStorage.setItem("admin-token", data.token);
 
-      // ✅ ADD THIS BLOCK (DO NOT REMOVE ANYTHING ELSE)
       if (data?.admin) {
         localStorage.setItem("adminName", data.admin.name || "Admin");
         localStorage.setItem("adminEmail", data.admin.email || "");
 
         let avatar = data.admin.profilePic;
-
         if (avatar && !avatar.startsWith("http")) {
           avatar = `${API_BASE_URL}${avatar}`;
         }
@@ -81,27 +83,21 @@ const AdminLogin = () => {
           avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
         );
 
-        // ✅ ADD THIS LINE ONLY
         window.dispatchEvent(new Event("admin-data-updated"));
       }
 
       showToast("Login successful! Redirecting...", "success");
-
-      // localStorage.setItem(
-      //   "adminAvatar",
-      //   "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-      // );
-
-      setTimeout(() => {
-        navigate("/admin/dashboard", { replace: true });
-      }, 800);
+      navigate("/admin/dashboard", { replace: true });
 
     } catch (err) {
-      showToast(
-        err.message || "Login failed. Please try again.",
-        "error"
-      );
+      const message =
+        err.name === "AbortError"
+          ? "Server is taking too long to respond. Please try again later."
+          : err.message || "Login failed. Please try again.";
+
+      showToast(message, "error");
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
