@@ -28,7 +28,9 @@ const AdminLogin = () => {
     const trimmedEmail = email.trim();
 
     if (!trimmedEmail || !password) {
-      showToast("Please enter both email and password", "error");
+      const msg = "Please enter both email and password";
+      setError(msg);
+      showToast(msg, "error");
       return;
     }
 
@@ -86,15 +88,25 @@ const AdminLogin = () => {
         window.dispatchEvent(new Event("admin-data-updated"));
       }
 
-      showToast("Login successful! Redirecting...", "success");
+      const successMessage = "Login successful! Redirecting...";
+      setSuccessMsg(successMessage);
+      showToast(successMessage, "success");
       navigate("/admin/dashboard", { replace: true });
 
     } catch (err) {
+      const networkMessage =
+        err.message &&
+        (err.message.includes("Failed to fetch") ||
+          err.message.includes("NetworkError"));
+
       const message =
         err.name === "AbortError"
           ? "Server is taking too long to respond. Please try again later."
+          : networkMessage
+          ? "Cannot reach backend server. Please check the server status or your network."
           : err.message || "Login failed. Please try again.";
 
+      setError(message);
       showToast(message, "error");
     } finally {
       clearTimeout(timeoutId);
@@ -137,6 +149,9 @@ const AdminLogin = () => {
           </p>
 
           <form onSubmit={handleLogin} noValidate className="login-form">
+            {error && <div className="error-alert">{error}</div>}
+            {successMsg && <div className="success-alert">{successMsg}</div>}
+
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <div className="input-wrapper">
