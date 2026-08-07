@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "../config/api";
 import { useToast } from "../components/ToastProvider";
@@ -21,6 +21,9 @@ const AdminLogin = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [backendHealthy, setBackendHealthy] = useState(true);
+  const [backendCheckLoading, setBackendCheckLoading] = useState(true);
+  const [backendStatusMessage, setBackendStatusMessage] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,6 +32,14 @@ const AdminLogin = () => {
 
     if (!trimmedEmail || !password) {
       const msg = "Please enter both email and password";
+      setError(msg);
+      showToast(msg, "error");
+      return;
+    }
+
+    if (!backendHealthy && !backendCheckLoading) {
+      const msg =
+        "Backend server is unavailable. Please wait and try again later.";
       setError(msg);
       showToast(msg, "error");
       return;
@@ -114,6 +125,43 @@ const AdminLogin = () => {
     }
   };
 
+  const checkBackendHealth = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/health`, {
+        method: "GET",
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error("Health check failed");
+      }
+
+      const data = await response.json();
+      if (!data?.ok) {
+        throw new Error(data.message || "Health endpoint returned an error");
+      }
+
+      setBackendHealthy(true);
+      setBackendStatusMessage("Backend server is available.");
+    } catch (err) {
+      setBackendHealthy(false);
+      setBackendStatusMessage(
+        "Backend server is unavailable. Please try again later."
+      );
+    } finally {
+      clearTimeout(timeoutId);
+      setBackendCheckLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkBackendHealth();
+  }, []);
+
+
   return (
     <div className="login-page">
       <div className="login-card">
@@ -149,6 +197,14 @@ const AdminLogin = () => {
           </p>
 
           <form onSubmit={handleLogin} noValidate className="login-form">
+            {backendCheckLoading && (
+              <div className="success-alert">
+                Checking backend availability...
+              </div>
+            )}
+            {!backendCheckLoading && !backendHealthy && backendStatusMessage && (
+              <div className="error-alert">{backendStatusMessage}</div>
+            )}
             {error && <div className="error-alert">{error}</div>}
             {successMsg && <div className="success-alert">{successMsg}</div>}
 
@@ -197,7 +253,7 @@ const AdminLogin = () => {
             <button
               type="submit"
               className="submit-button"
-              disabled={loading}
+              disabled={loading || (!backendHealthy && !backendCheckLoading)}
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
