@@ -30,6 +30,7 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
+const LOCAL_MONGODB_URI = process.env.LOCAL_MONGODB_URI || "mongodb://127.0.0.1:27017/qa_portfolio";
 let dbConnected = false;
 
 /* =========================================================
@@ -268,19 +269,40 @@ const start = async () => {
     });
   };
 
+  const tryDatabaseConnection = async (uri, label) => {
+    try {
+      console.log(`🔎 Trying MongoDB connection: ${label}`);
+      await connectToDatabase(uri);
+      console.log(`✅ Connected to MongoDB via ${label}`);
+      return true;
+    } catch (connectErr) {
+      console.warn(`⚠️ MongoDB connection failed for ${label}:`, connectErr.message);
+      return false;
+    }
+  };
+
   try {
-    if (!MONGODB_URI) {
-      throw new Error("MONGODB_URI not configured");
+    const primaryConnected = await tryDatabaseConnection(MONGODB_URI, "Atlas");
+
+    if (!primaryConnected) {
+      const localConnected = await tryDatabaseConnection(LOCAL_MONGODB_URI, "Local");
+
+      if (!localConnected) {
+        dbConnected = false;
+        setDatabaseConnected(false);
+        console.error("❌ Both Atlas and local MongoDB connections failed. Backend will start in degraded mode.");
+        console.log("⚠️ Admin login fallback is enabled. /api/blogs will remain unavailable until MongoDB is restored.");
+        startServer();
+        return;
+      }
     }
 
-    await connectToDatabase(MONGODB_URI);
     await seedDefaultAdmin();
     startServer();
   } catch (err) {
     dbConnected = false;
     setDatabaseConnected(false);
-    console.error("❌ MongoDB connection unavailable:", err.message);
-    console.log("⚠️ Starting server in degraded mode. Admin login fallback is enabled.");
+    console.error("❌ Unexpected startup error:", err.message || err);
     startServer();
   }
 };
