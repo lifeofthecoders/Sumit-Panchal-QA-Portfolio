@@ -30,13 +30,6 @@ const AdminProfile = () => {
   const [file, setFile] = useState(null);
   const [previewPic, setPreviewPic] = useState(null);
 
-  const [toast, setToast] = useState({ show: false, message: "", type: "" });
-
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "" }), 4000);
-  };
-
   // Fetch profile
   const fetchProfile = async () => {
     try {
