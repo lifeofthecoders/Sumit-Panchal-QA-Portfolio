@@ -53,26 +53,31 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       return res.status(400).json({ message: "No image uploaded" });
     }
 
-     if (!isCloudinaryAvailable) {
-      return res.status(503).json({
-        message:
-          "Cloudinary upload is not available. Please configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET.",
-      });
-    }
-
     if (!req.file.buffer) {
       return res.status(500).json({
         message: "Upload failed: no file buffer received",
       });
     }
 
+    const isCloudinaryConfigured = Boolean(
+      process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_SECRET
+    );
+
+    if (!isCloudinaryConfigured) {
+      return res.status(503).json({
+        message:
+          "Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.",
+      });
+    }
 
     // ✅ Convert buffer to base64 data URI
     const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
       "base64"
     )}`;
 
-        // ✅ Upload using signed preset
+    // ✅ Upload using Cloudinary directly, even if multer-storage-cloudinary is unavailable
     const result = await cloudinary.uploader.upload(base64Image, {
       upload_preset: "qa_portfolio_preset",
     });

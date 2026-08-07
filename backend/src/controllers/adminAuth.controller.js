@@ -235,6 +235,14 @@ export const updateProfile = async (req, res) => {
       });
     }
 
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message:
+          "Database unavailable. Profile updates are disabled until the backend reconnects.",
+      });
+    }
+
     const updatedAdmin = await Admin.findByIdAndUpdate(
       req.admin.id,
       updateData,
@@ -296,6 +304,14 @@ export const changePassword = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "New password must be at least 6 characters",
+      });
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message:
+          "Database unavailable. Password changes are disabled until the backend reconnects.",
       });
     }
 
