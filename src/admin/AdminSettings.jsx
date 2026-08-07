@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../assets/css/admin-settings.css";
-
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://sumit-panchal-qa-portfolio.onrender.com";
+import { useToast } from "../components/ToastProvider";
+import { authFetch } from "../utils/authFetch";
 
 const AdminSettings = () => {
   const [oldPassword, setOldPassword] = useState("");
@@ -14,12 +12,8 @@ const AdminSettings = () => {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "" }), 4000);
-  };
+  const { showToast } = useToast();
 
   const handleReset = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
@@ -55,20 +49,8 @@ const AdminSettings = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("admin-token");
-
-      if (!token) {
-        showToast("Session expired. Please login again.", "error");
-        setLoading(false);
-        return;
-      }
-
-      const res = await fetch(`${API_BASE}/api/admin/change-password`, {
+      const res = await authFetch("/api/admin/change-password", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({ oldPassword, newPassword }),
       });
 
@@ -93,11 +75,6 @@ const AdminSettings = () => {
 
   return (
     <div className="admin-settings-page fade-in">
-      {toast.show && (
-        <div className={`admin-toast ${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
 
       <div className="admin-settings-card">
         <h2 className="admin-settings-title">Reset Password</h2>

@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { useToast } from "../components/ToastProvider";
 import { getBlogById, saveBlog, uploadBlogImage } from "../services/blogService";
 import { compressImage, validateImageFile, formatFileSize } from "../services/imageUtils";
 import ReactQuill from "react-quill";
@@ -9,6 +10,8 @@ import usePageAnimations from "../hooks/usePageAnimations";
 
 export default function BlogForm() {
   usePageAnimations();
+
+  const { showToast } = useToast();
 
   // Keep track of preview URL so we can revoke it (prevents memory leak)
   const previewUrlRef = useRef(null);
@@ -208,7 +211,7 @@ export default function BlogForm() {
       const wordCount = plainText.split(/\s+/).filter(Boolean).length;
 
       if (wordCount > 10000) {
-        alert("Description exceeds 10,000 words limit!");
+        showToast("Description exceeds 10,000 words limit!", "error");
         setIsPublishing(false);
         return;
       }
@@ -300,7 +303,7 @@ export default function BlogForm() {
           "⚠️ Cloudinary image service error.\n\nPlease verify CLOUDINARY credentials.";
       }
 
-      alert(errorMsg);
+      showToast(errorMsg, "error");
     } finally {
       setIsPublishing(false);
     }

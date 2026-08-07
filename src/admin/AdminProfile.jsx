@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../assets/css/admin-profile.css";
 import { authFetch } from "../utils/authFetch";
+import { useToast } from "../components/ToastProvider";
 
 const API_BASE =
   import.meta.env.VITE_API_BASE_URL ||
   "https://sumit-panchal-qa-portfolio.onrender.com";
 
 const AdminProfile = () => {
+  const { showToast } = useToast();
+
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -162,7 +165,14 @@ const AdminProfile = () => {
       });
 
       if (!res.ok) {
-        const errorText = await res.text();
+        let errorText = "Failed to update profile";
+        try {
+          const body = await res.json();
+          errorText = body?.message || body?.error || JSON.stringify(body);
+        } catch (parseErr) {
+          const text = await res.text();
+          if (text) errorText = text;
+        }
         console.error("Save error:", errorText);
         throw new Error(`Update failed: ${errorText}`);
       }
@@ -221,12 +231,6 @@ const AdminProfile = () => {
 
   return (
     <div className="admin-profile-page">
-      {/* Toast */}
-      {toast.show && (
-        <div className={`admin-toast admin-toast-${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
 
       {/* Profile Header */}
       <div className="admin-profile-header slide-down">
