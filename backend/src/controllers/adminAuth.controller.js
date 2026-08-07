@@ -38,7 +38,23 @@ export const loginAdmin = async (req, res) => {
       const fallbackAdmin = await validateFallbackAdminLogin(normalizedEmail, password);
       if (fallbackAdmin) {
         usingFallback = true;
-        admin = fallbackAdmin;
+
+        if (mongoose.connection.readyState === 1) {
+          try {
+            const createdAdmin = await Admin.create({
+              name: fallbackAdmin.name,
+              email: fallbackAdmin.email,
+              password,
+              phone: "",
+              isVerified: true,
+            });
+            admin = await Admin.findById(createdAdmin._id).select("+password");
+          } catch (creationErr) {
+            admin = await Admin.findOne({ email: normalizedEmail }).select("+password");
+          }
+        } else {
+          admin = fallbackAdmin;
+        }
       }
     }
 

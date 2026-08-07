@@ -46,15 +46,39 @@ export const verifyAdmin = async (req, res, next) => {
     }
 
     let admin = null;
+    const fallbackAdmin = getFallbackAdmin();
+
     if (mongoose.connection.readyState === 1) {
       admin = await Admin.findById(decoded.id).select("+tokenVersion");
-    }
 
-    if (!admin) {
-      const fallbackAdmin = getFallbackAdmin();
-      if (decoded.id === fallbackAdmin._id) {
-        admin = fallbackAdmin;
+      if (!admin && decoded.id === fallbackAdmin._id) {
+        admin = await Admin.findOne({ email: fallbackAdmin.email }).select(
+          "+tokenVersion"
+        );
+
+        if (admin) {
+          decoded.id = admin._id; // use real DB admin id for protected actions
+        } else {
+          // If DB is connected but fallback user isn't yet persisted, create it now
+          try {
+            const createdAdmin = await Admin.create({
+              name: fallbackAdmin.name,
+              email: fallbackAdmin.email,
+              password: "Sumit@2552",
+              phone: "",
+              isVerified: true,
+            });
+            admin = await Admin.findById(createdAdmin._id).select(
+              "+tokenVersion"
+            );
+            decoded.id = admin._id;
+          } catch (creationErr) {
+            admin = fallbackAdmin;
+          }
+        }
       }
+    } else if (decoded.id === fallbackAdmin._id) {
+      admin = fallbackAdmin;
     }
 
     if (!admin) {
