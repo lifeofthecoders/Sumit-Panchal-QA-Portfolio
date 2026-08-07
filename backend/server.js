@@ -219,20 +219,15 @@ app.use((err, req, res, next) => {
 const start = async () => {
   const connectToDatabase = async (uri) => {
     await mongoose.connect(uri, {
-      tls: Boolean(MONGODB_URI),
       serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
     });
     dbConnected = true;
+    setDatabaseConnected(true);
     console.log("✅ 📯🎉MongoDB connected successfully...!🎉📯");
   };
 
-  try {
-    if (!MONGODB_URI) {
-      throw new Error("MONGODB_URI not configured");
-    }
-    await connectToDatabase(MONGODB_URI);
-    setDatabaseConnected(true);
-
+  const seedDefaultAdmin = async () => {
     try {
       const Admin = (await import("./src/models/Admin.js")).default;
       const existing = await Admin.findOne({
@@ -253,26 +248,40 @@ const start = async () => {
     } catch (seedErr) {
       console.error("⚠️ Admin seeding failed:", seedErr.message);
     }
+  };
 
-    app.listen(PORT, () => {
+  const startServer = () => {
+    const server = app.listen(PORT, () => {
       console.log("=======================================");
-      console.log(`🚀 Server established successfully on port ${PORT} 🚀`);
+      console.log(`🚀 Server established successfully on port ${PORT}`);
       console.log(`🌍 Local: http://localhost:${PORT}`);
-      console.log(`🌍 Render (if deployed): https://sumit-panchal-qa-portfolio.onrender.com`);
       console.log("=======================================");
     });
+
+    server.on("error", (err) => {
+      if (err.code === "EADDRINUSE") {
+        console.error(`❌ Port ${PORT} is already in use. Stop the other process or set a different PORT.`);
+        process.exit(1);
+      }
+      console.error("❌ Server error:", err);
+      process.exit(1);
+    });
+  };
+
+  try {
+    if (!MONGODB_URI) {
+      throw new Error("MONGODB_URI not configured");
+    }
+
+    await connectToDatabase(MONGODB_URI);
+    await seedDefaultAdmin();
+    startServer();
   } catch (err) {
     dbConnected = false;
     setDatabaseConnected(false);
     console.error("❌ MongoDB connection unavailable:", err.message);
     console.log("⚠️ Starting server in degraded mode. Admin login fallback is enabled.");
-    app.listen(PORT, () => {
-      console.log("=======================================");
-      console.log(`🚀 Server started on port ${PORT} in degraded mode`);
-      console.log(`🌍 Local: http://localhost:${PORT}`);
-      console.log(`🌍 Render (if deployed): https://sumit-panchal-qa-portfolio.onrender.com`);
-      console.log("=======================================");
-    });
+    startServer();
   }
 };
 
