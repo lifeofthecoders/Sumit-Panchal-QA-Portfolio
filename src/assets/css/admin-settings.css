@@ -12,6 +12,7 @@
   background: white;
   border-radius: 16px;
   padding: 30px;
+  font-weight: 700;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 480px;
@@ -28,7 +29,7 @@
 
 .admin-settings-subtitle {
   text-align: center;
-  color: #10b981;
+  color: #2E7D32;
   margin-bottom: 15px;
   font-size: 15px;
 }
@@ -71,7 +72,7 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #A5D6A7;
+  color: #2E7D32;
   font-size: 18px;
   cursor: pointer;
   transition: color 0.3s;

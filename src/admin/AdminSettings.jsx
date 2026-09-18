@@ -79,7 +79,7 @@ const AdminSettings = () => {
       <div className="admin-settings-card">
         <h2 className="admin-settings-title">Reset Password</h2>
         <p className="admin-settings-subtitle">
-          Please enter your old password and choose a new password.
+          Enter your current password and set a new password to keep your account secure.
         </p>
 
         <div className="admin-form-group">

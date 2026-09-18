@@ -64,7 +64,11 @@ const AdminLayout = () => {
       <aside className={`admin-sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <div className="brand-container">
-            <div className="brand-logo">SP</div>
+            <img
+              className="brand-logo"
+              src={`${import.meta.env.BASE_URL}image/logo.svg`}
+              alt="Sumit Panchal Logo"
+            />
             <h2 className="brand-title">Admin Panel</h2>
           </div>
           <button className="close-btn" onClick={closeSidebar}>×</button>
@@ -170,7 +174,9 @@ const AdminLayout = () => {
         <div className="modal-overlay">
           <div className="modal">
             <h3>Confirm Logout</h3>
-            <p>Are you sure you want to logout from the Admin Panel?</p>
+            <p>
+              Are you sure you want to <span className="modal-logout-word">❝ Logout ❞</span> from the Admin Panel?
+            </p>
             <div className="modal-buttons">
               <button className="modal-btn cancel" onClick={closeLogoutModal}>
                 Cancel

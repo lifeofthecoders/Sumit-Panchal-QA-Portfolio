@@ -92,14 +92,14 @@ const AdminDashboard = () => {
       <div className="dashboard-card">
         <h1 className="dashboard-title">🚀 Admin Control Center</h1>
         <p className="dashboard-subtitle">
-          Welcome back, Sumit! Manage your platform efficiently.
+          Welcome back, Sumit Panchal! Stay in control and manage your platform efficiently.
         </p>
 
         <div className="dashboard-grid">
           <div className="action-card">
             <h3>📊 Blog Management</h3>
             <p className="dashboard-subtitle">
-              Create, edit, and manage your blog posts easily.
+              Create, edit, publish, delete, and manage your blog posts seamlessly from one place.
             </p>
 
             <button
