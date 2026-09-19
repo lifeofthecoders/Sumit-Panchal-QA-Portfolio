@@ -72,8 +72,9 @@
     margin-right: 12px;
     border-radius: 50%;
     background: rgba(76, 175, 80, 0.12);
-    padding: 4px; /* Remove the border around the logo */
+    /* padding: 4px; /* Remove the border around the logo */
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.18);
+
 }
 
 .brand-title {
