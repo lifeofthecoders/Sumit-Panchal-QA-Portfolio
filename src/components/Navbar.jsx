@@ -4,6 +4,18 @@ import { useState } from "react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [showCloseIcon, setShowCloseIcon] = useState(false);
+
+  const toggleMenu = () => {
+    if (!open) {
+      setOpen(true);
+      window.setTimeout(() => setShowCloseIcon(true), 120);
+      return;
+    }
+
+    setShowCloseIcon(false);
+    setOpen(false);
+  };
 
   return (
     <header className="hero-header">
@@ -12,15 +24,16 @@ export default function Navbar() {
           <img src="/image/logo.jpg" className="site-logo" />
         </NavLink>
 
-        <input
-          type="checkbox"
-          checked={open}
-          onChange={() => setOpen(!open)}
-          id="menu-toggle"
+        <button
+          type="button"
+          className={`hamburger ${open ? "is-open" : ""} ${showCloseIcon ? "show-close" : ""}`}
+          onClick={toggleMenu}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
         />
-        <label htmlFor="menu-toggle" className="hamburger" />
 
-        <nav className={`nav-links nav ${open ? "open" : ""}`}>
+        <nav id="mobile-nav" className={`nav-links nav ${open ? "open" : ""}`}>
           {navLinks.map(link => (
             <NavLink
               key={link.name}

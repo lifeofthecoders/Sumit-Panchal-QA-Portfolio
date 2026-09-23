@@ -1,20 +1,44 @@
       /* ================= HAMBURGER ================= */
-      #menu-toggle {
-          display: none;
-      }
-
       .hamburger {
           display: none;
           cursor: pointer;
+          position: relative;
+          width: 42px;
+          height: 36px;
+          border: 1px solid rgba(17, 17, 17, 0.08);
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.92);
+          padding: 0;
+          transition: transform 0.25s ease;
+      }
+
+      .hamburger::before,
+      .hamburger::after {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 19px;
+          line-height: 1;
+          transition: opacity 0.2s ease 0.15s, transform 0.2s ease;
       }
 
       .hamburger::before {
           content: "☰";
-          font-size: 19px;
       }
 
-      #menu-toggle:checked+.hamburger::before {
+      .hamburger::after {
           content: "✕";
+          opacity: 0;
+      }
+
+      .hamburger.show-close::before {
+          opacity: 0;
+      }
+
+      .hamburger.show-close::after {
+          opacity: 1;
       }
 
       /* ================= MOBILE MENU ================= */
@@ -26,7 +50,7 @@
           }
 
           .hamburger {
-              display: block;
+              display: flex;
               position: absolute;
               top: 25px;
               left: 15px;
@@ -36,40 +60,36 @@
               z-index: 10001;
           }
 
-          /* When menu is open, keep hamburger fixed */
-          @media (max-width: 768px) {
-              #menu-toggle:checked+.hamburger {
-                  position: fixed;
-                  /* ✅ fixed ONLY when open */
-                  top: 25px;
-                  left: 240px;
-              }
-          }
-
-
-          .nav-links {
-              display: none;
+          .hamburger.is-open {
+              position: fixed;
+              top: 25px;
+              left: min(240px, calc(100vw - 76px));
           }
 
           .nav {
               position: fixed;
-              top: -276px;
+              top: 0;
               left: -305px;
-              width: 300px;
-              height: 150%;
+              width: min(300px, 85vw);
+              height: 100vh;
               background: #fff;
-              padding: 80px 20px;
+              padding: 80px 20px 24px;
               box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
               transition: left 0.4s ease;
               z-index: 10000;
               display: flex;
               flex-direction: column;
+              opacity: 0;
+              pointer-events: none;
           }
 
-          #menu-toggle:checked~.nav {
+          .nav.open {
               left: 0;
+              opacity: 1;
+              pointer-events: auto;
           }
       }
+
 
       .nav a {
           font-size: 16px;

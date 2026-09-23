@@ -4,7 +4,25 @@ import { useState, useEffect } from "react";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [showCloseIcon, setShowCloseIcon] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    if (!open) {
+      setShowCloseIcon(false);
+    }
+  }, [open]);
+
+  const toggleMenu = () => {
+    if (!open) {
+      setOpen(true);
+      window.setTimeout(() => setShowCloseIcon(true), 120);
+      return;
+    }
+
+    setShowCloseIcon(false);
+    setOpen(false);
+  };
 
   // Helper to check active route
   const isActive = (path) => {
@@ -58,15 +76,16 @@ export default function Header() {
           />
         </NavLink>
 
-        <input
-          type="checkbox"
-          id="menu-toggle"
-          checked={open}
-          onChange={() => setOpen(!open)}
+        <button
+          type="button"
+          className={`hamburger ${open ? "is-open" : ""} ${showCloseIcon ? "show-close" : ""}`}
+          onClick={toggleMenu}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
         />
-        <label htmlFor="menu-toggle" className="hamburger" />
 
-        <nav className="nav-links nav">
+        <nav id="mobile-nav" className={`nav-links nav ${open ? "open" : ""}`}>
           {navItems.map((item) => (
             <NavLink
               key={item.label}
