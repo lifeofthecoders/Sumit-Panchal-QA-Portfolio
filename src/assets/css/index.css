@@ -68,7 +68,7 @@
 
           .nav {
               position: fixed;
-              top: -300px;
+              top: -350px;
               left: -305px;
               width: min(300px, 85vw);
               height: 150vh;
