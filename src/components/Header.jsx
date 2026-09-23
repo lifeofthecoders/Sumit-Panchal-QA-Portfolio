@@ -63,10 +63,25 @@ export default function Header() {
           id="menu-toggle"
           checked={open}
           onChange={() => setOpen(!open)}
+          aria-label={open ? "Close menu" : "Open menu"}
         />
-        <label htmlFor="menu-toggle" className="hamburger" />
+        <label
+          htmlFor="menu-toggle"
+          className={`hamburger ${open ? "open" : ""}`}
+          aria-label={open ? "Close menu" : "Open menu"}
+        />
 
-        <nav className="nav-links nav">
+        <nav className={`nav-links nav ${open ? "open" : ""}`}>
+          <div className="mobile-menu-header">
+            <NavLink to="/" className="mobile-logo-link" onClick={() => setOpen(false)}>
+              <img
+                src={`${import.meta.env.BASE_URL}image/logo.svg`}
+                className="site-logo mobile-logo"
+                alt="Sumit Panchal - QA Portfolio Logo"
+              />
+            </NavLink>
+          </div>
+
           {navItems.map((item) => (
             <NavLink
               key={item.label}
