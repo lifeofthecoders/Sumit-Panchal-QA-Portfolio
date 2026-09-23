@@ -68,10 +68,10 @@
 
           .nav {
               position: fixed;
-              top: -150px;
+              top: -300px;
               left: -305px;
               width: min(300px, 85vw);
-              height: 100vh;
+              height: 150vh;
               background: #fff;
               padding: 80px 20px 24px;
               box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
