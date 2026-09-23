@@ -28,7 +28,7 @@
           .hamburger {
               display: block;
               position: absolute;
-              top: 50px;
+              top: 25px;
               left: 15px;
               background: #fff;
               padding: 6px 10px;
@@ -41,8 +41,8 @@
               #menu-toggle:checked+.hamburger {
                   position: fixed;
                   /* ✅ fixed ONLY when open */
-                  top: 50px;
-                  left: 15px;
+                  top: 25px;
+                  left: 240px;
               }
           }
 
@@ -53,7 +53,7 @@
 
           .nav {
               position: fixed;
-              top: -350px;
+              top: -275px;
               left: -305px;
               width: 300px;
               height: 150%;
@@ -626,7 +626,7 @@
           }
 
           .nav-links {
-              gap: 30px;
+              gap: 15px;
           }
       }
 
