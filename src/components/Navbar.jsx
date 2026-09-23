@@ -17,21 +17,10 @@ export default function Navbar() {
           checked={open}
           onChange={() => setOpen(!open)}
           id="menu-toggle"
-          aria-label={open ? "Close menu" : "Open menu"}
         />
-        <label
-          htmlFor="menu-toggle"
-          className={`hamburger ${open ? "open" : ""}`}
-          aria-label={open ? "Close menu" : "Open menu"}
-        />
+        <label htmlFor="menu-toggle" className="hamburger" />
 
         <nav className={`nav-links nav ${open ? "open" : ""}`}>
-          <div className="mobile-menu-header">
-            <NavLink to="/" className="mobile-logo-link" onClick={() => setOpen(false)}>
-              <img src="/image/logo.svg" className="site-logo mobile-logo" alt="Logo" />
-            </NavLink>
-          </div>
-
           {navLinks.map(link => (
             <NavLink
               key={link.name}
