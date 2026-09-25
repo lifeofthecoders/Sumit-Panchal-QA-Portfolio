@@ -217,6 +217,16 @@ My approach combines structured testing with real-world user behavior, helping i
 
 ---
 
+## 📄 License
+
+This project is a personal professional portfolio created for business and professional purposes.
+
+All portfolio content, personal information, branding, project materials, images, designs, and other assets belong to the author unless otherwise stated.
+
+Unauthorized copying, redistribution, modification, or commercial use of the portfolio content and assets is not permitted.
+
+---
+
 ## 📫 Connect With Me
 
 If you'd like to connect, collaborate, or discuss QA and software testing, feel free to reach out.
