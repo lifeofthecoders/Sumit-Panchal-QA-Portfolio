@@ -1,13 +1,15 @@
-# 🧪 Sumit Panchal — QA Portfolio
+# 🧪 Sumit Panchal - QA Portfolio
 
 <p align="center">
   <strong>Quality Analyst | Manual QA | Software Testing | Quality Engineering</strong>
 </p>
 
 <p align="center">
-  <a href="https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio/">🌐 Live Portfolio</a>
+  🌐
+  <a href="https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio/">Live Portfolio</a>
   •
-  <a href="https://github.com/lifeofthecoders/Sumit-Panchal-QA-Portfolio">💻 GitHub Repository</a>
+  💻
+  <a href="https://github.com/lifeofthecoders/Sumit-Panchal-QA-Portfolio">GitHub Repository</a>
 </p>
 
 ---
@@ -158,8 +160,9 @@ Final Quality Validation
 ## 🌐 Explore My Portfolio
 
 <p align="center">
+  🚀
   <a href="https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio/">
-    <strong>🚀 Visit My Live QA Portfolio</strong>
+    <strong>Visit My Live QA Portfolio</strong>
   </a>
 </p>
 
@@ -183,15 +186,73 @@ I approach every feature with one question:
 
 ---
 
+## 🌐 Live Portfolio
+
+<p align="center">
+
+### 🧪 Explore My QA Portfolio
+
+<p align="center">
+
+👉
+<a href="https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio/">
+  <strong>OPEN LIVE PORTFOLIO</strong>
+</a>
+
+</p>
+
+</p>
+
+---
+
+## 💼 Professional Focus
+
+I'm interested in opportunities where I can contribute to building products that are:
+
+**Reliable • Usable • Consistent • Stable • Scalable • User-Friendly**
+
+I bring a QA mindset that focuses not only on whether a feature works, but also on **how the complete product behaves in the hands of a real user**.
+
+My approach combines structured testing with real-world user behavior, helping identify defects, usability issues, edge cases, and potential risks before they reach the end user.
+
+---
+
 ## 📫 Connect With Me
 
 If you'd like to connect, collaborate, or discuss QA and software testing, feel free to reach out.
 
 **Sumit Panchal**
-**Quality Analyst | Manual QA**
+**Quality Analyst | Manual QA | Software Testing**
+
+<p align="center">
+🌐 <strong>Portfolio:</strong>
+<a href="https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio/">
+https://lifeofthecoders.github.io/Sumit-Panchal-QA-Portfolio/
+</a>
+</p>
+
+<p align="center">
+💻 <strong>GitHub:</strong>
+<a href="https://github.com/lifeofthecoders/Sumit-Panchal-QA-Portfolio">
+https://github.com/lifeofthecoders/Sumit-Panchal-QA-Portfolio
+</a>
+</p>
 
 ---
 
+## ⭐ Support
+
 <p align="center">
-  ⭐ If you find this portfolio useful, consider giving the repository a star.
+If you find this portfolio useful, feel free to explore the project and give the repository a star ⭐.
 </p>
+
+<p align="center">
+<strong>QUALITY IS MY CRAFT.<br>
+RELIABILITY IS MY GOAL.</strong>
+</p>
+
+<p align="center">
+<strong>HAPPY TESTING 😀</strong>
+</p>
+
+---
