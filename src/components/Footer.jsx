@@ -1,5 +1,14 @@
 import React from "react";
-import { FaLinkedinIn, FaInstagram, FaFacebookF, FaYoutube, FaDribbble, FaBehance } from "react-icons/fa";
+import {
+  FaGithub,
+  FaLinkedinIn,
+  FaInstagram,
+  FaFacebookF,
+  FaYoutube,
+  FaDribbble,
+  FaBehance,
+  FaQuora,
+} from "react-icons/fa";
 import "../assets/css/Footer.css";
 import { FaXTwitter } from "react-icons/fa6";
 
@@ -65,42 +74,45 @@ const Footer = () => {
           <FaQuora />
         </a>
 
-        {/* Youtube */}
-        <a href="https://youtube.com"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="YouTube"
-        > 
-          <FaYoutube /> 
-        </a> 
-
-        {/* Behance */}  
-        <a href="https://www.behance.net/"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Behance"
+        {/* YouTube */}
+        <a
+          href="https://youtube.com"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="YouTube"
         >
-           <FaBehance />
+          <FaYoutube />
+        </a>
+
+        {/* Behance */}
+        <a
+          href="https://www.behance.net/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Behance"
+        >
+          <FaBehance />
         </a>
 
         {/* Dribbble */}
-        <a href="https://dribbble.com/"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Dribbble"
+        <a
+          href="https://dribbble.com/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Dribbble"
         >
-           <FaDribbble />
-        </a>
-        
-        {/* X Twitter */}
-        <a href="https://x.com/"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="XTwitter"
-        > 
-            <FaXTwitter />
+          <FaDribbble />
         </a>
 
+        {/* X Twitter */}
+        <a
+          href="https://x.com/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="X Twitter"
+        >
+          <FaXTwitter />
+        </a>
       </div>
     </footer>
   );
