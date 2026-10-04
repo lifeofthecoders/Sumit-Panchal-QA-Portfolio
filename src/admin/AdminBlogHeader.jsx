@@ -41,7 +41,7 @@ export default function AdminBlogHeader() {
       {/* CENTER TITLE */}
       <div className="hero-title hero-animate">
         <h1>
-          <b>Blogs</b>
+          <b>BLOGS</b>
         </h1>
         <h2>
           <b>
@@ -58,7 +58,7 @@ export default function AdminBlogHeader() {
           alt="Sumit Panchal Profile"
         />
         <span className="profile-name">
-          <b>Sumit Panchal</b>
+          <b>SUMIT PANCHAL</b>
         </span>
       </div>
     </header>

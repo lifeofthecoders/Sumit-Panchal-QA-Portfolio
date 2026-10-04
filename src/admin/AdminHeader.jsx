@@ -7,13 +7,13 @@ const AdminHeader = () => {
   );
 
   const [name, setName] = useState(
-    localStorage.getItem("adminName") || "Admin"
+    (localStorage.getItem("adminName") || "ADMIN").toUpperCase()
   );
 
   useEffect(() => {
     const updateHeader = () => {
       setAvatar(localStorage.getItem("adminAvatar"));
-      setName(localStorage.getItem("adminName"));
+      setName((localStorage.getItem("adminName") || "ADMIN").toUpperCase());
     };
 
     window.addEventListener("storage", updateHeader);
@@ -24,7 +24,7 @@ const AdminHeader = () => {
     <div className="admin-header">
       <div className="admin-header-right">
         <span className="admin-header-name">{name}</span>
-        <img src={avatar} className="admin-header-avatar" />
+        <img src={avatar} className="admin-header-avatar" alt="Admin avatar" />
       </div>
     </div>
   );

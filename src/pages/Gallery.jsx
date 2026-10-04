@@ -104,7 +104,7 @@ export default function Gallery() {
             <section className="gallery-card">
 
               <h3 id="certifications" className="heading-link">
-                <b>📜 Certifications</b>
+                <b>📜 CERTIFICATIONS</b>
                 <a href="/#gallery/#certifications" className="anchor-icon" data-target="gallery/#certifications">🔗</a>
               </h3>
 
@@ -128,7 +128,7 @@ export default function Gallery() {
             <section className="gallery-card">
 
               <h3 id="work-samples" className="heading-link">
-                <b>📂 Work Samples</b>
+                <b>📂 WORK SAMPLES</b>
                 <a href="/#gallery/#work-samples" className="anchor-icon" data-target="gallery/#work-samples">🔗</a>
               </h3>
 
@@ -204,7 +204,7 @@ export default function Gallery() {
             <section className="gallery-card">
 
               <h3 id="professional-highlights" className="heading-link">
-                <b>✨ Professional Highlights</b>
+                <b>✨ PROFESSIONAL HIGHLIGHTS</b>
                 <a href="/#gallery/#professional-highlights" className="anchor-icon" data-target="gallery/#professional-highlights">🔗</a>
               </h3>
 

@@ -92,6 +92,8 @@ const AdminProfile = () => {
   const nameParts = profile.name ? profile.name.trim().split(/\s+/) : [];
   const firstName = nameParts[0] || "";
   const lastName = nameParts.slice(1).join(" ") || "";
+  const displayName = (profile.name || "ADMIN").toUpperCase();
+  const displayRole = `- ${String(profile.role || "ADMIN").toUpperCase()}`;
 
   // Handle text input
   const handleChange = (e) => {
@@ -255,9 +257,9 @@ const AdminProfile = () => {
 
         <div className="admin-profile-info">
           <h1 className="admin-profile-fullname">
-            {firstName} {lastName}
+            {displayName}
           </h1>
-          <p className="admin-profile-role">Role: {profile.role}</p>
+          <p className="admin-profile-role">Role: {displayRole}</p>
           <p className="admin-profile-email">📧 {profile.email}</p>
           <p className="admin-profile-joined">
             Joined {profile.joinedDate}
@@ -284,7 +286,7 @@ const AdminProfile = () => {
 
       {/* Personal Information Card */}
       <div className={`admin-profile-card ${isEditing ? "slide-up" : ""}`}>
-        <h2 className="admin-section-title">Personal Information</h2>
+        <h2 className="admin-section-title">PERSONAL INFORMATION</h2>
 
         <div className="admin-form-grid">
           <div className="admin-form-group">
@@ -398,7 +400,7 @@ const AdminProfile = () => {
 
       {/* Admin Activity Section */}
       <div className="admin-activity-section">
-        <h3>Admin Activity</h3>
+        <h3>ADMIN ACTIVITIES</h3>
         <div className="admin-activity-list">
           {profile.activity.length > 0 ? (
             profile.activity.slice(0, 5).map((action, index) => (

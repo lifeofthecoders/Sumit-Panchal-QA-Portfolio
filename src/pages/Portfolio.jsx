@@ -103,7 +103,7 @@ export default function Portfolio() {
 
                             <div className="professional-summary animate-content">
 
-                                <h3><b>Quality Assurance Engineer</b></h3>
+                                <h3><b>🔍 QUALITY ASSURANCE ENGINEER</b></h3>
 
                                 <p className="summary-paragraph">
                                     I’m <b>Sumit Panchal</b>, a results-driven <b>Quality Assurance Engineer</b> with over <b>5+ years of hands-on
@@ -168,7 +168,7 @@ export default function Portfolio() {
                         <section className="portfolio-card">
 
                             <h3 id="responsibilities" className="heading-link">
-                                <b>🧪 My core responsibilities as a Quality Assurance Engineer</b>
+                                <b>🧪 MY CORE RESPONSIBILITIES AS A QUALITY ASSURANCE ENGINEER</b>
                                 <a href="/#portfolio/#responsibilities" className="anchor-icon" data-target="portfolio/#responsibilities">🔗</a>
                             </h3>
 
@@ -206,18 +206,18 @@ export default function Portfolio() {
                         <section className="portfolio-card">
 
                             <h3 id="achievements" className="heading-link">
-                                <b>🏆 Key Achievements</b>
+                                <b>🏆 KEY ACHIEVEMENTS</b>
                                 <a href="/#portfolio/#achievements" className="anchor-icon" data-target="portfolio/#achievements">🔗</a>
                             </h3>
 
                             <div class="skills-list-grid">
                                 <ul class="skills-list">
-                                    <li>Achieved <b>40% reduction in post-production defects</b> through improved regression strategy.</li>
+                                    <li>Achieved <b>40% reduction</b> in post-production defects through improved regression strategy.</li>
                                     <li>Ensured <b>99% release stability</b> across multiple project deployments.</li>
                                     <li>Prevented <b>50+ critical and high-severity production issues</b> through proactive testing.</li>
                                     <li>Delivered <b>100% on-time sprint commitments</b> for testing activities.</li>
-                                    <li>Recognized for <b>high accuracy in defect reporting and strong test coverage.</b></li>
-                                    <li>Played a key role in <b>client UAT support and production release sign-off.</b></li>
+                                    <li>Recognized for <b>high accuracy in defect reporting</b> and strong test coverage.</li>
+                                    <li>Played a key support for <b>client UAT</b> and production release sign-off.</li>
                                 </ul>
                             </div>
 
@@ -229,7 +229,7 @@ export default function Portfolio() {
                         <section className="portfolio-card">
 
                             <h3 id="skills" className="heading-link">
-                                <b>🧰 Technical & Functional Skills</b>
+                                <b>🛠️ TECHNICAL & FUNCTIONAL SKILLS</b>
                                 <a href="/#portfolio/#skills" className="anchor-icon" data-target="portfolio/#skills">🔗</a>
                             </h3>
                         
@@ -250,7 +250,7 @@ export default function Portfolio() {
                         {/* --- Why Hire Me --- */}
                         <section className="portfolio-card">
                             <h3 id="why-hire-me" className="heading-link">
-                                <b>💼 Why Hire Me - Manual QA Professional</b>
+                                <b>💼 WHY HIRE ME - MANUAL QA PROFESSIONAL</b>
                                 <a href="/#portfolio/#why-hire-me" className="anchor-icon" data-target="portfolio/#why-hire-me">🔗</a>
                             </h3>
 

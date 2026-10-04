@@ -181,6 +181,7 @@ const AdminDashboard = () => {
 
         .action-btn:hover {
           transform: scale(1.08);
+          background: rgb(33 200 122);
           box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 

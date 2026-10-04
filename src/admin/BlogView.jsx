@@ -381,7 +381,7 @@ export default function BlogDetail() {
                       fontSize: "18.72px",
                     }}
                   >
-                    <b>👁️ 📚 View Blog</b>
+                    <b>👁️ 📚 VIEW BLOG</b>
                   </h2>
 
                   {/* ✅ Blog Image (Cloudinary Safe + Never Break) */}

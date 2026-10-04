@@ -100,7 +100,7 @@ export default function Sitemap() {
             <div className="sitemap">
 
               <h3 id="sitemap" className="heading-link">
-                <b>🗺️ Sitemap</b>
+                <b>🗺️ SITEMAP</b>
                 <a href="/#sitemap/#sitemap" className="anchor-icon" data-target="sitemap/#sitemap">🔗</a>
               </h3>
 

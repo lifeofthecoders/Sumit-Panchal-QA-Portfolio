@@ -399,7 +399,7 @@ export default function BlogForm() {
         </h3>
 
         <h2 style={{ margin: "20px 20px 20px 0px", fontSize: "18.72px" }}>
-          <b>{id ? "✏️ 📚 Edit Blog" : "✚ 📚 Add New Blog"}</b>
+          <b>{id ? "✏️ 📚 EDIT BLOG" : "✚ 📚 ADD NEW BLOG"}</b>
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -738,7 +738,7 @@ export default function BlogForm() {
               disabled={isPublishing}
               style={{
                 padding: "14px 26px",
-                backgroundColor: cancelHover ? "#f44336" : "#e53935",
+                backgroundColor: cancelHover ? "#f56565" : "#e53e3e",
                 color: "white",
                 border: "none",
                 borderRadius: "6px",

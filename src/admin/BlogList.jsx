@@ -234,7 +234,7 @@ export default function BlogList() {
           }}
         >
           <h2 style={{ fontSize: "18.72px", fontWeight: "700" }}>
-            📚 Manage Blogs
+            📚 MANAGE BLOG
           </h2>
 
           <button

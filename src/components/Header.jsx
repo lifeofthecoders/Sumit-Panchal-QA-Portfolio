@@ -107,7 +107,7 @@ export default function Header() {
         {location.pathname === "/about" ? (
           <>
             <h1>
-              <b>About</b>
+              <b>ABOUT</b>
             </h1>
             <h2>
               <b>
@@ -119,7 +119,7 @@ export default function Header() {
         ) : location.pathname === "/services" ? (
           <>
             <h1>
-              <b>Services</b>
+              <b>SERVICES</b>
             </h1>
             <h2>
               <b>
@@ -132,7 +132,7 @@ export default function Header() {
         ) : location.pathname === "/projects" ? (
           <>
             <h1>
-              <b>Projects</b>
+              <b>PROJECTS</b>
             </h1>
             <h2>
               <b>
@@ -145,7 +145,7 @@ export default function Header() {
         ) : location.pathname === "/portfolio" ? (
           <>
             <h1>
-              <b>Portfolio</b>
+              <b>PORTFOLIO</b>
             </h1>
             <h2>
               <b>
@@ -158,7 +158,7 @@ export default function Header() {
         ) : location.pathname.startsWith("/gallery") ? (
           <>
             <h1>
-              <b>Gallery</b>
+              <b>GALLERY</b>
             </h1>
             <h2>
               <b>
@@ -170,7 +170,7 @@ export default function Header() {
         ) : location.pathname.startsWith("/blogs") ? (
           <>
             <h1>
-              <b>Blogs</b>
+              <b>BLOGS</b>
             </h1>
             <h2>
               <b>
@@ -182,7 +182,7 @@ export default function Header() {
         ) : location.pathname === "/contact" ? (
           <>
             <h1>
-              <b>Contact</b>
+              <b>CONTACT</b>
             </h1>
             <h2>
               <b>| Let's Collaborate | QA Opportunities | Get in Touch |</b>
@@ -192,7 +192,7 @@ export default function Header() {
         ) : location.pathname === "/sitemap" ? (
           <>
             <h1>
-              <b>Sitemap</b>
+              <b>SITEMAP</b>
             </h1>
             <h2>
               <b>| Complete Site Navigation | Quick Access |</b>
@@ -202,7 +202,7 @@ export default function Header() {
         ) : (
           <>
             <h1>
-              <b>Sumit Panchal</b>
+              <b>SUMIT PANCHAL</b>
             </h1>
             <h2>
               <b>| Quality Analyst Engineer |</b>
@@ -221,7 +221,7 @@ export default function Header() {
           alt="Profile"
         />
         <span className="profile-name">
-          <b>Sumit Panchal</b>
+          <b>SUMIT PANCHAL</b>
         </span>
       </div>
     </header>

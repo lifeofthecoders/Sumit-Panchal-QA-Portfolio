@@ -94,7 +94,7 @@ export default function Home() {
             <main className="index">
                 <section className="container section-lg">
                     <section className="card animate-content">
-                        <h2><b>Quality Analyst Engineer</b></h2>
+                        <h2><b>🔍 QUALITY ANALYST ENGINEER</b></h2>
 
                         <p className="summary-paragraph">
                             <b>Detail-oriented QA Engineer</b> with <b>5+ years of professional experience</b> in <b>manual and functional testing</b> of <b>web and mobile applications</b>, delivering <b>high-quality</b>, <b>stable</b>, and <b>user-friendly software products</b>. Proven expertise in <b>end-to-end testing</b>, <b>regression testing</b>, <b>UAT support</b>, and <b>defect lifecycle management</b> across multiple domains including <b>taxi booking applications</b>, <b>fintech platforms</b>, <b>real estate systems</b>, and <b>SaaS products</b>.
@@ -111,7 +111,7 @@ export default function Home() {
                     <section className="card">
 
                         <h3 id="technical-skills" className="heading-link">
-                            <b>🛠️ Technical Skills & Tools</b>
+                            <b>🛠️ TECHNICAL SKILLS & TOOLS</b>
                             <a href="#/#technical-skills" className="anchor-icon" data-target="technical-skills">🔗</a>
                         </h3>
 
@@ -125,23 +125,77 @@ export default function Home() {
                         </ul> */}
 
                         <ul className="skills-list">
-                            <li><b>Manual Testing Skills:</b> Functional Testing, Regression Testing, Smoke Testing, Sanity Testing, System Testing, Integration Testing, End-to-End Testing, Exploratory Testing, Compatibility Testing, UI/UX Testing, Ad-hoc Testing, User Acceptance Testing (UAT) </li>
 
-                            <li><b>Test Design & Documentation:</b> Test Case Design, Test Scenario Creation, Test Plan Preparation, Requirement Analysis, Traceability Matrix (RTM), Test Data Preparation, Test Execution Reporting</li>
+                            <li>
+                                <b>🧪 Manual Testing Skills:</b> Functional Testing, Regression Testing, Smoke Testing,
+                                Sanity Testing, System Testing, Integration Testing, End-to-End Testing,
+                                Exploratory Testing, Compatibility Testing, UI/UX Testing, Ad-hoc Testing,
+                                User Acceptance Testing (UAT)
+                            </li>
 
-                            <li><b>Bug Tracking & Test Management Tools:</b> JIRA, Bugzilla, TestRail, Zephyr, ClickUp</li>
+                            <li>
+                                <b>📝 Test Design & Documentation:</b> Test Case Design, Test Scenario Creation,
+                                Test Plan Preparation, Requirement Analysis, Traceability Matrix (RTM),
+                                Test Data Preparation, Test Execution Reporting, Test Documentation
+                            </li>
 
-                            <li><b>Agile & Process Knowledge:</b> Agile/Scrum Methodology, Sprint Planning, Daily Stand-ups, Sprint Review, Retrospective Participation, Defect Lifecycle Management, STLC, SDLC</li>
+                            <li>
+                                <b>🐞 Bug Tracking & Test Management Tools:</b> JIRA, Bugzilla, TestRail,
+                                Zephyr, MantisBT, Redmine, PractiTest
+                            </li>
 
-                            <li><b>Collaboration & Communication Tools:</b> Confluence, Slack, Microsoft Teams, Email Communication, Documentation Collaboration</li>
+                            <li>
+                                <b>📊 Test Documentation & Reporting Tools:</b> Microsoft Excel, Google Sheets,
+                                Google Docs, Microsoft Word, Google Drive, Microsoft OneDrive,
+                                Microsoft PowerPoint
+                            </li>
 
-                            <li><b>Operating Systems & Platforms:</b> Windows, macOS, Android, iOS</li>
+                            <li>
+                                <b>🔌 API & Backend Testing:</b> Postman, SoapUI, Swagger / OpenAPI, Insomnia,
+                                REST API Testing, Request/Response Validation, HTTP Methods,
+                                Status Code Verification, JSON Validation
+                            </li>
 
-                            <li><b>Browser & Device Testing:</b> Google Chrome, Mozilla Firefox, Microsoft Edge, Safari, Cross-browser Testing, Responsive Testing</li>  
+                            <li>
+                                <b>🌐 Web & Cross-Browser Testing:</b> Google Chrome, Mozilla Firefox,
+                                Microsoft Edge, Safari, BrowserStack, LambdaTest, Sauce Labs,
+                                Cross-Browser Testing, Responsive Testing
+                            </li>
 
-                            {/* <li><b>API & Basic Backend Testing (Manual):</b> Postman (API Validation), Request/Response Validation, Status Code Verification, Basic JSON Validation</li> */}
+                            <li>
+                                <b>⚙️ Agile & Process Knowledge:</b> Agile/Scrum Methodology, Sprint Planning,
+                                Daily Stand-ups, Sprint Review, Sprint Retrospective,
+                                Defect Lifecycle Management, STLC, SDLC, QA Process, Release Validation
+                            </li>
 
-                            <li><b>Performance & Quality Awareness:</b> Basic Performance Testing Knowledge, Usability Testing, Accessibility Awareness, Security Testing Fundamentals</li>
+                            <li>
+                                <b>🤝 Collaboration & Communication Tools:</b> Slack,
+                                Microsoft Teams, Google Meet, Zoom, Trello,
+                                Email Communication, Documentation Collaboration
+                            </li>
+
+                            <li>
+                                <b>💻 Operating Systems & Platforms:</b> Android, iOS, Windows, macOS 
+                            </li>
+
+                            <li>
+                                <b>📱 Mobile & Device Testing:</b> Android Testing, iOS Testing,
+                                Mobile UI Testing, Device Compatibility Testing, Screen Resolution Testing,
+                                Responsive Testing
+                            </li>
+
+                            <li>
+                                <b>🚀 Performance & Quality Awareness:</b> Basic Performance Testing Knowledge,
+                                Usability Testing, Accessibility Awareness, Security Testing Fundamentals,
+                                Load Testing Concepts, Performance Monitoring
+                            </li>
+
+                            <li>
+                                <b>🎯 Quality & Defect Analysis:</b> Root Cause Analysis,
+                                Defect Severity & Priority, Defect Triage, Risk-Based Testing,
+                                Quality Metrics, Test Coverage, Defect Reporting
+                            </li>
+
                         </ul>
                     </section>
 
@@ -150,7 +204,7 @@ export default function Home() {
                     <section className="card">
 
                         <h3 id="my-mission" className="heading-link">
-                            <b>🎯 My Mission</b>
+                            <b>🎯 MY MISSION</b>
                             <a href="#/#my-mission" className="anchor-icon" data-target="my-mission">🔗</a>
                         </h3>
 
@@ -168,7 +222,7 @@ export default function Home() {
                     <section className="card">
 
                         <h3 id="my-vission" className="heading-link">
-                            <b>👁️ My Vission</b>
+                            <b>👁️ MY VISION</b>
                             <a href="#/#my-vission" className="anchor-icon" data-target="my-vission">🔗</a>
                         </h3>
 
@@ -186,7 +240,7 @@ export default function Home() {
 
 
                         <h3 id="featured-portfolio" className="heading-link">
-                            <b>📂 Featured Portfolio</b>
+                            <b>📂 FEATURED PORTFOLIO</b>
                             <a href="#/#featured-portfolio" className="anchor-icon" data-target="featured-portfolio">🔗</a>
                         </h3>
 

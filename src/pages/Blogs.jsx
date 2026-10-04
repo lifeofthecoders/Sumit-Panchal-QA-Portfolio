@@ -201,7 +201,7 @@ export default function Blogs() {
                   textAlign: "left",
                 }}
               >
-                <b>📚 Latest Blog Posts</b>{" "}
+                <b>📚 LATEST BLOG POSTS</b>{" "}
                 {/* ✅ DO NOT CHANGE THIS LINK */}
                 <a
                   href="/#/blogs/#latest-blogs"

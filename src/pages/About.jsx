@@ -114,28 +114,28 @@ export default function About() {
                                 <h2><b><u>SUMIT PANCHAL</u></b></h2>
 
                                 <p className="summary-paragraph">
-                                    I am a highly motivated and result-driven <b>Quality Assurance Engineer with 5+ years of professional experience</b> in testing <b>web and 
-                                    mobile applications</b>, delivering high-quality, stable, and user-centric software products. I am passionate about continuous learning, 
-                                    adopting new technologies, and improving testing processes to enhance overall product quality and business outcomes. I perform effectively 
+                                    I am a highly motivated and result-driven <b>Quality Assurance Engineer with 5+ years of professional experience</b> in testing <b>web and
+                                        mobile applications</b>, delivering high-quality, stable, and user-centric software products. I am passionate about continuous learning,
+                                    adopting new technologies, and improving testing processes to enhance overall product quality and business outcomes. I perform effectively
                                     both independently and as part of cross-functional Agile teams.
                                 </p>
 
                                 <p className="summary-paragraph">
-                                    I am currently working as a <b>Quality Assurance Engineer at Echoinnovate IT - Mobile App Development & AI Digital 
+                                    I am currently working as a <b>Quality Assurance Engineer at Echoinnovate IT - Mobile App Development & AI Digital
                                         Transformation Company (June 2021 - Present)</b>, where I have played a key role in testing and
-                                    delivering <b>10+ web and mobile applications</b> across multiple business domains. I have successfully designed 
-                                    and executed <b>1,000+ test cases</b>, reported and tracked <b>300+ defects</b>, and contributed to achieving a 
-                                    <b>40% reduction in post-production defects</b> through early-phase testing and strong regression strategies. My efforts 
-                                    have directly supported <b>15+ successful production releases with zero critical severity issues post-deployment</b>, helping 
+                                    delivering <b>10+ web and mobile applications</b> across multiple business domains. I have successfully designed
+                                    and executed <b>1,000+ test cases</b>, reported and tracked <b>300+ defects</b>, and contributed to achieving a
+                                    <b>40% reduction in post-production defects</b> through early-phase testing and strong regression strategies. My efforts
+                                    have directly supported <b>15+ successful production releases with zero critical severity issues post-deployment</b>, helping
                                     maintain a <b>99% release stability rate.</b>
                                 </p>
 
                                 <p className="summary-paragraph">
-                                    Known for being <b>reliable, detail-oriented, and highly accountable</b>, I consistently meet tight project deadlines 
-                                    while ensuring strict adherence to quality and compliance standards. I collaborate closely with 
-                                    <b>developers, product managers, and stakeholders</b> to ensure <b>accurate defect resolution and seamless 
-                                    product delivery</b>. If you are interested in working with me or discussing professional opportunities, 
-                                    I would be pleased to <Link to="/contact" className="btn-connect"><b> connect </b></Link> to discuss potential 
+                                    Known for being <b>reliable, detail-oriented, and highly accountable</b>, I consistently meet tight project deadlines
+                                    while ensuring strict adherence to quality and compliance standards. I collaborate closely with
+                                    <b>developers, product managers, and stakeholders</b> to ensure <b>accurate defect resolution and seamless
+                                        product delivery</b>. If you are interested in working with me or discussing professional opportunities,
+                                    I would be pleased to <Link to="/contact" className="btn-connect"><b> connect </b></Link> to discuss potential
                                     professional engagements.
                                 </p>
 
@@ -155,7 +155,7 @@ export default function About() {
                         <section className="about-cards">
 
                             <h3 id="Professional-overview" className="heading-link">
-                                <b>🔍 Professional Overview</b>
+                                <b>🔍 PROFESSIONAL OVERVIEW</b>
                                 <a href="/#about/#Professional-overview" className="anchor-icon" data-target="about/#Professional-overview">🔗</a>
                             </h3>
 
@@ -197,7 +197,7 @@ export default function About() {
                         <section className="about-cards">
 
                             <h3 id="core-skills" className="heading-link">
-                                <b>🔑 Core Skills</b>
+                                <b>🔑 CORE SKILLS</b>
                                 <a href="/#about/#core-skills" className="anchor-icon" data-target="about/#core-skills">🔗</a>
                             </h3>
 
@@ -283,40 +283,124 @@ export default function About() {
 
                         <hr className="view-line" />
 
-                        {/* ACADEMIC & EXPERIENCE */}
-                        <section className="about-cards">
+                        {/* ACADEMIC & PROFESSIONAL JOURNEY */}
+                        <section className="about-cards journey-section">
+
                             <h3 id="academic-qualifications" className="heading-link">
-                                <b>Academic Qualifications</b>
-                                <a href="/#about/#academic-qualifications" className="anchor-icon" data-target="about/#academic-qualifications">🔗</a>
+                                <b>🎓 ACADEMIC QUALIFICATIONS</b>
+                                <a
+                                    href="/#about/#academic-qualifications"
+                                    className="anchor-icon"
+                                    data-target="about/#academic-qualifications"
+                                >
+                                    🔗
+                                </a>
                             </h3>
 
                             <ul>
-                                <li>BSc (Hons) Business Information Systems - University of Westminster</li>
-                                <li>GCE Advanced Level - Ananda College Colombo</li>
-                                <li>GCE Ordinary Level - Ananda College Colombo</li>
+                                <li>
+                                    <b>Bachelor of Engineering (B.E.)</b> - Electronics & Communication Engineering
+                                    <br />
+                                    Silver Oak University, Ahmedabad
+                                    <br />
+                                    <span>CGPA: 7.48 | 2018</span>
+                                </li>
+
+                                <li>
+                                    <b>Diploma of Engineering (D.E.)</b> - Electronics & Communication Engineering
+                                    <br />
+                                    Atul Polytechnic, Khadat, Mahudi
+                                    <br />
+                                    <span>CGPA: 7.74 | 2014</span>
+                                </li>
                             </ul>
+
 
                             <h3 id="work-experience" className="heading-link">
-                                <b>Work Experience</b>
-                                <a href="/#about/#work-experience" className="anchor-icon" data-target="about/#work-experience">🔗</a>
+                                <b>💼 PROFESSIONAL EXPERIENCE</b>
+                                <a
+                                    href="/#about/#work-experience"
+                                    className="anchor-icon"
+                                    data-target="about/#work-experience"
+                                >
+                                    🔗
+                                </a>
                             </h3>
 
                             <ul>
-                                <li>Quality Assurance Engineer - ZILLIONe Business Solutions</li>
-                                <li>Test Automation Engineer - CPOS Project</li>
-                                <li>Freelance Graphic Designer</li>
+                                <li>
+                                    <b>Quality Assurance Analyst</b> - Echo Innovate IT
+                                    <br />
+                                    Ahmedabad, Gujarat | June 2021 - Present
+                                </li>
+
+                                <li>
+                                    <b>QA Trainee - Industrial Training</b> - Makein Technologies
+                                    <br />
+                                    Ahmedabad, Gujarat | January 2021 - May 2021
+                                </li>
                             </ul>
 
-                            <h3 id="achievements" className="heading-link">
-                                <b>Achievements & Activities</b>
-                                <a href="/#about/#achievements" className="anchor-icon" data-target="about/#achievements">🔗</a>
+
+                            <h3 id="key-achievements" className="heading-link">
+                                <b>🏆 KEY ACHIEVEMENTS</b>
+                                <a
+                                    href="/#about/#key-achievements"
+                                    className="anchor-icon"
+                                    data-target="about/#key-achievements"
+                                >
+                                    🔗
+                                </a>
                             </h3>
 
                             <ul>
-                                <li>Assistant Band Leader - Ananda College Brass Band</li>
-                                <li>Secretary - Wild Life Association</li>
-                                <li>Western Province Chess Champion</li>
+                                <li>
+                                    <b>40% reduction</b> in post-production defects through an improved
+                                    regression testing strategy.
+                                </li>
+
+                                <li>
+                                    Maintained <b>99% release stability</b> across multiple project deployments.
+                                </li>
+
+                                <li>
+                                    Proactively prevented <b>50+ critical and high-severity production issues </b>
+                                    through comprehensive testing.
+                                </li>
+
+                                <li>
+                                    Delivered <b>100% on-time sprint commitments</b> for testing activities.
+                                </li>
+
+                                <li>
+                                    Recognized for <b>high accuracy in defect reporting</b> and strong test coverage.
+                                </li>
+
+                                <li>
+                                    Provided key support for <b>client UAT</b> and production release sign-off.
+                                </li>
                             </ul>
+
+
+                            <h3 id="professional-skills" className="heading-link">
+                                <b>🧩 PROFESSIONAL STRENGTHS</b>
+                                <a
+                                    href="/#about/#professional-skills"
+                                    className="anchor-icon"
+                                    data-target="about/#professional-skills"
+                                >
+                                    🔗
+                                </a>
+                            </h3>
+
+                            <ul>
+                                <li>🔍 Detail-oriented and analytical approach to software testing.</li>
+                                <li>🤝 Effective collaboration with developers, designers, product managers, and cross-functional teams.</li>
+                                <li>🎯 Strong focus on test coverage, defect identification, and root-cause analysis.</li>
+                                <li>⚡ Adaptable and effective in fast-paced and evolving project environments.</li>
+                                <li>📝 Strong documentation, defect reporting, and test execution practices.</li>
+                            </ul>
+
                         </section>
 
                     </section>

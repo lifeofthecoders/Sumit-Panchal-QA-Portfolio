@@ -106,7 +106,7 @@ export default function Contact() {
               <div className="lets-connect animate-content">
 
                 <h3 id="lets-connect" className="heading-link">
-                  <b>🤝 Let’s Connect</b>
+                  <b>🤝 LET'S CONNECT</b>
                   <a href="/#contact/#lets-connect" className="anchor-icon" data-target="contact/#lets-connect">🔗</a>
                 </h3>
 
@@ -190,7 +190,7 @@ export default function Contact() {
               <div className="resume-section">
 
                 <h3 id="resume" className="heading-link">
-                  <b>📑 Resume</b>
+                  <b>📑 RESUME</b>
                   <a href="/#contact/#resume" className="anchor-icon" data-target="contact/#resume">🔗</a>
                 </h3>
 
