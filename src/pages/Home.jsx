@@ -151,14 +151,14 @@ export default function Home() {
                             </li>
 
                             <li>
-                                <b>🔌 API & Backend Testing:</b> Postman, SoapUI, Swagger / OpenAPI, Insomnia,
+                                <b>🔌 API & Backend Testing:</b> Postman, Swagger / OpenAPI, Insomnia,
                                 REST API Testing, Request/Response Validation, HTTP Methods,
                                 Status Code Verification, JSON Validation
                             </li>
 
                             <li>
                                 <b>🌐 Web & Cross-Browser Testing:</b> Google Chrome, Mozilla Firefox,
-                                Microsoft Edge, Safari, BrowserStack, LambdaTest, Sauce Labs,
+                                Microsoft Edge, Safari, BrowserStack,
                                 Cross-Browser Testing, Responsive Testing
                             </li>
 

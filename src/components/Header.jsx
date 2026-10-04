@@ -112,7 +112,7 @@ export default function Header() {
             <h2>
               <b>
                 | QA Professional | SDLC & STLC | Defect Lifecycle | Agile Teams |
-                4+ Years Experience | Quality-Driven & Detail-Oriented |
+                5+ Years Experience | Quality-Driven & Detail-Oriented |
               </b>
             </h2>
           </>
@@ -150,7 +150,7 @@ export default function Header() {
             <h2>
               <b>
                 | Manual & UAT Testing | SDLC & STLC | Defect Lifecycle | Agile
-                Methodology | Web & Mobile Applications | 4+ Years Experience |
+                Methodology | Web & Mobile Applications | 5+ Years Experience |
               </b>
             </h2>
             <div className="title-underline"></div>

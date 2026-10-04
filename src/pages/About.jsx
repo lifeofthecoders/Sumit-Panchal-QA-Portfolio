@@ -125,7 +125,7 @@ export default function About() {
                                         Transformation Company (June 2021 - Present)</b>, where I have played a key role in testing and
                                     delivering <b>10+ web and mobile applications</b> across multiple business domains. I have successfully designed
                                     and executed <b>1,000+ test cases</b>, reported and tracked <b>300+ defects</b>, and contributed to achieving a
-                                    <b>40% reduction in post-production defects</b> through early-phase testing and strong regression strategies. My efforts
+                                    <b> 40% reduction in post-production defects</b> through early-phase testing and strong regression strategies. My efforts
                                     have directly supported <b>15+ successful production releases with zero critical severity issues post-deployment</b>, helping
                                     maintain a <b>99% release stability rate.</b>
                                 </p>
