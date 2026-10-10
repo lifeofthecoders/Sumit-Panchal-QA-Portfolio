@@ -15,12 +15,17 @@ import { FaXTwitter } from "react-icons/fa6";
 const Footer = () => {
   return (
     <footer className="footer">
-      {/* Left Side */}
+      {/* Left Side Part */}
       <div className="footer-left">
         © 2025 Sumit Panchal. All rights reserved.
       </div>
 
-      {/* Right Side */}
+      {/* Center Part */}
+      <div className="footer-center">
+        📡 ... ..- -- .. - / .--. .- -. -.-. .... .- .-.. 🛰️
+      </div>
+
+      {/* Right Side Part */}
       <div className="footer-right">
         <span className="footer-follow-text">Follow Us</span>
 

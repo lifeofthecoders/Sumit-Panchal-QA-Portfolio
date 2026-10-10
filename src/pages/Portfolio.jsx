@@ -147,7 +147,7 @@ export default function Portfolio() {
 
                             <p class="summary-paragraph">
                                 What sets me apart is my <b>attention to detail, analytical mindset, and strong ownership of product
-                                    quality.</b>
+                                    quality. </b>
                                 I thrive in fast-paced environments and continuously work on improving testing efficiency and effectiveness. I’m
                                 passionate about learning new tools, methodologies, and best practices in quality engineering to stay aligned
                                 with
@@ -257,38 +257,38 @@ export default function Portfolio() {
                             <div class="skills-list-grid">
                                 <ul class="skills-list">
                                     <li>
-                                        <b>Quality-First Mindset:</b>
+                                        <b>Quality-First Mindset: </b>
                                         Strong focus on delivering defect-free releases through structured, detail-oriented manual testing aligned
                                         with business and user requirements.
                                     </li>
 
                                     <li>
-                                        <b>Manual Testing Expertise:</b>
+                                        <b>Manual Testing Expertise: </b>
                                         Hands-on experience in Functional, Regression, Smoke, Sanity, Integration, and UAT testing across multiple
                                         Agile release cycles.
                                     </li>
 
                                     <li>
-                                        <b>Multi-Domain Experience:</b>
+                                        <b>Multi-Domain Experience: </b>
                                         Worked on Transportation (Taxi & Mobility), Social Networking, E-Commerce, Gaming, and Sustainability
                                         platforms with real-world user flows.
                                     </li>
 
                                     <li>
-                                        <b>Real-Time User Flow Validation:</b>
+                                        <b>Real-Time User Flow Validation: </b>
                                         Validated complex workflows including ride booking & cancellation, payments & wallets, orders, multiplayer
                                         gaming, chat systems, notifications, and admin dashboards.
                                     </li>
 
                                     <li>
-                                        <b>Test Documentation & Bug Reporting:</b>
+                                        <b>Test Documentation & Bug Reporting: </b>
                                         Create clear, traceable test cases and execution reports; log high-quality defects with reproducible
                                         steps,
                                         evidence, severity, and priority using Jira & Excel.
                                     </li>
 
                                     <li>
-                                        <b>Ownership & Reliability:</b>
+                                        <b>Ownership & Reliability: </b>
                                         Take complete ownership of assigned modules, consistently meeting timelines while maintaining quality from
                                         requirement analysis through UAT and release validation.
                                     </li>
