@@ -1,0 +1,13 @@
+.hero-header .profile-badge img {
+    border: 4px solid #0e0c0a;
+    box-shadow:
+        0 0 0 4px #d4af37,
+        0 0 18px rgba(212, 175, 55, 0.35);
+}
+
+.hero-header .profile-name {
+    border: 1px solid rgba(212, 175, 55, 0.75);
+    background: #0e0c0a;
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.18);
+    color: #f7e7c4;
+}

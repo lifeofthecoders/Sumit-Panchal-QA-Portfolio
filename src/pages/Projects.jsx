@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import "../assets/css/projects.css";
+import "../assets/css/page-overflow.css";
 import "../assets/js/projects";
 import usePageAnimations from "../hooks/usePageAnimations";
 
-export default function Projects() {
+export default function Projects({ cinematic = false }) {
+    const cinematicStackRef = useRef(null);
     usePageAnimations(); // ✅ ADD THIS
 
     // ✅ ANIMATION HOOK - SAME AS ABOUT PAGE
@@ -88,9 +90,34 @@ export default function Projects() {
         };
     }, []);
 
+    useEffect(() => {
+        if (!cinematic) return undefined;
+
+        const stack = cinematicStackRef.current;
+        if (!stack) return undefined;
+
+        const cards = Array.from(stack.querySelectorAll(".card"));
+        if (!cards.length) return undefined;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                entry.target.classList.toggle("in-view", entry.isIntersecting);
+            });
+        }, {
+            threshold: 0.06,
+            rootMargin: "-4% 0px -8% 0px",
+        });
+
+        cards.forEach((card) => observer.observe(card));
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [cinematic]);
+
     return (
         <>
-            <section className="projects-page">
+            <section className={`projects-page${cinematic ? " cinematic-projects" : ""}`}>
                 <section className="projects-section">
                     <section className="container section-lg bg-gray animate-content in-view">
 
@@ -100,7 +127,10 @@ export default function Projects() {
                                 <a href="/#projects/#my-projects" className="anchor-icon" data-target="projects/#my-projects">🔗</a>
                             </h3>
 
-                            <div className="projects-scroll">
+                            <div
+                                className={`projects-scroll${cinematic ? " cinematic-project-stack" : ""}`}
+                                ref={cinematic ? cinematicStackRef : undefined}
+                            >
                                 {/* CARD 1 */}
                                 <div className="card">
                                     <div className="card-header">

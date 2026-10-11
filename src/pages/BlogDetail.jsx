@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getBlogById } from "../services/blogService";
 import { useEffect, useState } from "react";
 import "../assets/css/blogs.css";
+import "../assets/css/page-overflow.css";
 import usePageAnimations from "../hooks/usePageAnimations";
 import Loader from "../components/Loader";
 

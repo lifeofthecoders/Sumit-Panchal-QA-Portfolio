@@ -3,6 +3,7 @@ import BlogCard from "../components/BlogCard";
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import "../assets/css/blogs.css";
+import "../assets/css/page-overflow.css";
 
 // ✅ IMPORT animation hook (required)
 import usePageAnimations from "../hooks/usePageAnimations";

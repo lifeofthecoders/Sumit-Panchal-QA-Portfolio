@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import "../assets/css/services.css"; // keep your existing import
+import "../assets/css/page-overflow.css";
+import "../assets/css/cinematic-cards.css";
 import "../assets/js/services";       // keep if already present
 import usePageAnimations from "../hooks/usePageAnimations";
 
@@ -115,8 +117,8 @@ export default function Services() {
                             </p>
                         </div>
 
-                        <div class="overlay slide-up in-view">
-                            <div className="cards-grid">
+                        <div className="overlay slide-up in-view">
+                            <div className="cards-grid cinematic-card-grid">
 
                                 {[
                                     {
@@ -201,7 +203,7 @@ export default function Services() {
                                     }
                                 ].map((card) => (
                                     <div className="overlay slide-up" key={card.title}>
-                                        <div className="cards">
+                                        <div className="cards cinematic-info-card">
                                             <div className="cards-header">
                                                 <div className="wave-bg">
                                                     <h3 className="wave-title">

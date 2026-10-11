@@ -1,4 +1,5 @@
 import "../assets/css/blogs.css";
+import "../assets/css/profile-badge.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -46,6 +47,13 @@ export default function Header() {
   }, [location.pathname]);
 
   // Navigation items – NO "ADMIN" link anymore
+  const hasPageOverflowClip = [
+    "/about",
+    "/services",
+    "/projects",
+    "/portfolio",
+  ].includes(location.pathname) || location.pathname.startsWith("/blogs");
+
   const navItems = [
     { label: "HOME", path: "/" },
     { label: "ABOUT", path: "/about" },
@@ -60,7 +68,7 @@ export default function Header() {
 
   return (
     <header
-      className={`hero-header ${location.pathname === "/" ? "home-header" : ""}`}
+      className={`hero-header ${location.pathname === "/" ? "home-header" : ""} ${hasPageOverflowClip ? "page-overflow-clip" : ""}`}
     >
       {/* TOP BAR */}
       <div className="top-bar">

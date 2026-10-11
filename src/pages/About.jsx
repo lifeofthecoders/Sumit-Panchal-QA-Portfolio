@@ -1,8 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../assets/css/about.css";
+import "../assets/css/page-overflow.css";
+import "../assets/css/cinematic-cards.css";
 import { Link } from "react-router-dom";
 
 export default function About() {
+    const aboutImageFrameRef = useRef(null);
+    const [isAboutImageHovered, setIsAboutImageHovered] = useState(false);
 
     // ✅ ADD THE useEffect RIGHT HERE
     useEffect(() => {
@@ -87,6 +91,26 @@ export default function About() {
     }, []);
     // ✅ END useEffect
 
+    const handleAboutImageMove = (event) => {
+        const frame = aboutImageFrameRef.current;
+        if (!frame) return;
+
+        const bounds = frame.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+        frame.style.setProperty("--image-rotate-x", `${y * -32}deg`);
+        frame.style.setProperty("--image-rotate-y", `${x * 32}deg`);
+        frame.style.setProperty("--spotlight-x", `${event.clientX - bounds.left}px`);
+        frame.style.setProperty("--spotlight-y", `${event.clientY - bounds.top}px`);
+    };
+
+    const handleAboutImageLeave = () => {
+        setIsAboutImageHovered(false);
+        aboutImageFrameRef.current?.style.setProperty("--image-rotate-x", "0deg");
+        aboutImageFrameRef.current?.style.setProperty("--image-rotate-y", "0deg");
+    };
+
     return (
         <>
             <section className="about-page">
@@ -97,16 +121,43 @@ export default function About() {
 
                             {/* LEFT PROFILE IMAGE */}
                             <div className="about-left profile-card">
-                                <div className="profile-circle">
-                                    <img src="./image/profile.jpg" alt="Sumit Panchal" />
+                                <div
+                                    className={`about-image-frame${isAboutImageHovered ? " is-hovered" : ""}`}
+                                    ref={aboutImageFrameRef}
+                                    onMouseMove={handleAboutImageMove}
+                                    onMouseEnter={() => setIsAboutImageHovered(true)}
+                                    onMouseLeave={handleAboutImageLeave}
+                                >
+                                    <div className="about-image-aura" aria-hidden="true" />
+                                    <div className="about-image-laser" aria-hidden="true">
+                                        <span />
+                                    </div>
+                                    <div className="about-image-corners" aria-hidden="true">
+                                        <span />
+                                        <span />
+                                        <span />
+                                        <span />
+                                    </div>
+                                    <div className="about-image-canvas">
+                                        <img
+                                            src={`${import.meta.env.BASE_URL}image/about.png`}
+                                            alt="Sumit Panchal"
+                                        />
+                                        <div className="about-image-spotlight" aria-hidden="true" />
+                                        <div className="about-image-shade" aria-hidden="true" />
+                                        <div className="about-image-signature" aria-hidden="true">
+                                            <span>Sumit Panchal</span>
+                                            <div />
+                                        </div>
+                                    </div>
+                                    {isAboutImageHovered && (
+                                        <>
+                                            <span className="about-image-spark about-image-spark-one" aria-hidden="true" />
+                                            <span className="about-image-spark about-image-spark-two" aria-hidden="true" />
+                                        </>
+                                    )}
                                 </div>
 
-                                <div className="profile-info">
-                                    <h3 className="profile-title"><b>Sumit Panchal</b></h3>
-                                    <p className="profile-designation">
-                                        <b>Quality Assurance Engineer</b>
-                                    </p>
-                                </div>
                             </div>
 
                             {/* RIGHT ABOUT CONTENT */}
@@ -164,7 +215,7 @@ export default function About() {
                                 problem-solving skills, focused on delivering reliable, high-quality software.
                             </p>
 
-                            <div className="cards-grid">
+                            <div className="cards-grid cinematic-card-grid">
 
                                 {[
                                     { title: "Primary Role", value: "Manual QA Engineer" },
@@ -173,7 +224,7 @@ export default function About() {
                                     { title: "Domains Covered", value: "Ride-Hailing, Networking, E-Com, Gaming" }
                                 ].map((item) => (
                                     <div className="overlay slide-up" key={item.title}>
-                                        <div className="cards">
+                                        <div className="cards cinematic-info-card">
                                             <div className="cards-header">
                                                 <div className="wave-bg">
                                                     <h1 className="wave-title"><b>{item.title}</b></h1>
@@ -203,10 +254,10 @@ export default function About() {
 
                             <p className="summary-paragraph">A skill set focused on uncovering critical defects and ensuring reliable releases.</p>
 
-                            <div className="cards-grid">
+                            <div className="cards-grid cinematic-card-grid">
 
                                 <div className="overlay slide-up">
-                                    <div className="cards">
+                                    <div className="cards cinematic-info-card">
                                         <div className="cards-header">
                                             <div className="wave-bg">
                                                 <h1 className="wave-title"><b>Testing Types</b></h1>
@@ -224,7 +275,7 @@ export default function About() {
                                 </div>
 
                                 <div className="overlay slide-up">
-                                    <div className="cards">
+                                    <div className="cards cinematic-info-card">
                                         <div className="cards-header">
                                             <div className="wave-bg">
                                                 <h1 className="wave-title"><b>Process & Practices</b></h1>
@@ -242,7 +293,7 @@ export default function About() {
                                 </div>
 
                                 <div className="overlay slide-up">
-                                    <div className="cards">
+                                    <div className="cards cinematic-info-card">
                                         <div className="cards-header">
                                             <div className="wave-bg">
                                                 <h1 className="wave-title"><b>Business Workflows</b></h1>
@@ -260,7 +311,7 @@ export default function About() {
                                 </div>
 
                                 <div className="overlay slide-up">
-                                    <div className="cards">
+                                    <div className="cards cinematic-info-card">
                                         <div className="cards-header">
                                             <div className="wave-bg">
                                                 <h1 className="wave-title"><b>Collaboration & Delivery</b></h1>

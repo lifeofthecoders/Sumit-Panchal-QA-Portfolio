@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Header from "../components/Header";
 import usePageAnimations from "../hooks/usePageAnimations";
 import "../assets/css/portfolio.css";
+import "../assets/css/page-overflow.css";
 import "../assets/js/portfolio";
 import { Link } from "react-router-dom";
 

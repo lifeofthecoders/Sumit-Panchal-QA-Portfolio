@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import API_BASE_URL from "./config/api";
 
@@ -61,7 +61,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects" element={<Projects cinematic />} />
+        <Route path="/project" element={<Navigate to="/projects" replace />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/contact" element={<Contact />} />

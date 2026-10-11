@@ -854,3 +854,277 @@
               transform: translateY(0);
           }
       }
+
+      /* ===== CINEMATIC PROJECT PAGE (SINGULAR ROUTE ONLY) ===== */
+      .cinematic-projects {
+          min-height: 100vh;
+          overflow-x: clip;
+          background: #f4f5f7;
+          color: #111;
+      }
+
+      .cinematic-projects .projects-section {
+          width: 100%;
+          max-width: none;
+          padding: 0 clamp(24px, 5vw, 80px);
+          background: transparent;
+      }
+
+      .cinematic-projects .container.section-lg.bg-gray.animate-content {
+          max-width: 1280px;
+          padding: 72px 0 112px;
+          background: transparent;
+          box-shadow: none;
+      }
+
+      .cinematic-projects .services-grid {
+          width: 100%;
+      }
+
+      .cinematic-project-stack {
+          display: block;
+          overflow: visible;
+          padding: 0;
+          counter-reset: cinematic-project;
+      }
+
+      .cinematic-projects .projects-scroll.cinematic-project-stack {
+          display: block;
+          overflow: visible;
+          padding: 0;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card {
+          position: relative;
+          display: grid;
+          flex: none;
+          grid-template-columns: repeat(12, minmax(0, 1fr));
+          gap: 22px;
+          width: min(100%, 1120px);
+          margin: 0 auto 32px;
+          padding: 28px;
+          overflow: hidden;
+          border: 1px solid rgba(140, 109, 79, 0.5);
+          border-radius: 16px;
+          background: #0e0c0a;
+          box-shadow: 0 25px 70px rgba(0, 0, 0, 0.98);
+          counter-increment: cinematic-project;
+          transform-origin: top center;
+          backface-visibility: hidden;
+          opacity: 0;
+          transform: perspective(1200px) translate3d(0, 76px, 0) rotateX(2deg) scale(0.97);
+          transition:
+              border-color 500ms ease,
+              opacity 850ms ease,
+              transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: transform, opacity;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card.in-view {
+          opacity: 1;
+          transform: perspective(1200px) translate3d(0, 0, 0) rotateX(0) scale(1);
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card:hover {
+          border-color: #d4af37;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card::before {
+          position: absolute;
+          right: 22px;
+          bottom: -40px;
+          color: rgba(212, 175, 55, 0.055);
+          content: counter(cinematic-project, decimal-leading-zero);
+          font: 400 clamp(150px, 24vw, 280px)/1 "Bebas Neue", sans-serif;
+          pointer-events: none;
+          user-select: none;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card::after {
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          height: 1px;
+          background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.8), transparent);
+          content: "";
+          pointer-events: none;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card > .card-header {
+          z-index: 1;
+          grid-column: 1 / -1;
+          padding: 0 0 20px;
+          border-bottom: 1px solid rgba(140, 109, 79, 0.25);
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card > .card-header::before {
+          display: block;
+          margin-bottom: 12px;
+          color: #d4af37;
+          content: counter(cinematic-project, decimal-leading-zero) " // SELECTED QA PROJECT";
+          font: 600 10px/1.5 "Montserrat", sans-serif;
+          letter-spacing: 0.25em;
+      }
+
+      .cinematic-projects .cinematic-project-stack .wave-bg {
+          height: auto;
+          justify-content: flex-start;
+          border-radius: 0;
+          background: transparent;
+      }
+
+      .cinematic-projects .cinematic-project-stack .wave-title {
+          padding: 0;
+          color: #fff;
+          font: 400 clamp(34px, 5vw, 64px)/0.95 "Bebas Neue", sans-serif;
+          letter-spacing: -0.01em;
+          text-align: left;
+          text-transform: uppercase;
+          transition: color 300ms ease;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card:hover .wave-title {
+          color: #f7e7c4;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card > .stats {
+          z-index: 1;
+          display: grid;
+          grid-column: 1 / -1;
+          grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+          align-items: start;
+          gap: 10px 14px;
+          padding: 18px 0;
+          border-top: 0;
+          border-bottom: 1px solid rgba(140, 109, 79, 0.25);
+      }
+
+      .cinematic-projects .cinematic-project-stack .stats label {
+          margin: 0;
+          padding: 0;
+          color: #a8988b;
+          font: 500 10px/1.6 "Montserrat", sans-serif;
+          letter-spacing: 0.17em;
+          text-transform: uppercase;
+      }
+
+      .cinematic-projects .cinematic-project-stack .stats strong {
+          margin: 0;
+          padding: 0;
+          color: #f7e7c4;
+          font: 400 12px/1.65 "Montserrat", sans-serif;
+          text-align: left;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card > .form {
+          z-index: 1;
+          display: grid;
+          grid-column: 1 / -1;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 22px;
+          padding: 8px 0 0;
+          border-top: 0;
+      }
+
+      .cinematic-projects .cinematic-project-stack .form-group label,
+      .cinematic-projects .cinematic-project-stack .responsibilities-group label,
+      .cinematic-projects .cinematic-project-stack .key-achievements-group label {
+          margin: 0 0 8px;
+          padding: 0;
+          color: #8c6d4f;
+          font: 500 10px/1.5 "Montserrat", sans-serif;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+      }
+
+      .cinematic-projects .cinematic-project-stack .form-group strong,
+      .cinematic-projects .cinematic-project-stack .responsibilities-group strong,
+      .cinematic-projects .cinematic-project-stack .key-achievements-group strong {
+          display: block;
+          margin: 0;
+          padding: 0;
+          color: #bdb0a4;
+          font: 300 14px/1.75 "Montserrat", sans-serif;
+          text-align: left;
+      }
+
+      .cinematic-projects .cinematic-project-stack > .card > .responsibilities,
+      .cinematic-projects .cinematic-project-stack > .card > .key-achievements {
+          z-index: 1;
+          grid-column: span 6;
+          align-self: stretch;
+          padding: 18px 0 0;
+          border-top: 1px solid rgba(140, 109, 79, 0.25);
+      }
+
+      .cinematic-projects .cinematic-project-stack .responsibilities-group ul,
+      .cinematic-projects .cinematic-project-stack .key-achievements-group ul {
+          margin: 0;
+          padding-left: 18px;
+          color: #bdb0a4;
+          font: 300 13px/1.75 "Montserrat", sans-serif;
+      }
+
+      .cinematic-projects .cinematic-project-stack .responsibilities-group li,
+      .cinematic-projects .cinematic-project-stack .key-achievements-group li {
+          margin-bottom: 5px;
+      }
+
+      .cinematic-projects .cinematic-project-stack .responsibilities-group li::marker,
+      .cinematic-projects .cinematic-project-stack .key-achievements-group li::marker {
+          color: #d4af37;
+      }
+
+      @media (max-width: 767px) {
+          .cinematic-projects .projects-section {
+              padding-right: 20px;
+              padding-left: 20px;
+          }
+
+          .cinematic-projects .container.section-lg.bg-gray.animate-content {
+              padding-top: 52px;
+              padding-bottom: 72px;
+          }
+
+          .cinematic-projects .projects-scroll.cinematic-project-stack {
+              padding: 0;
+          }
+
+          .cinematic-projects .cinematic-project-stack > .card {
+              grid-template-columns: 1fr;
+              gap: 18px;
+              min-height: 0;
+              padding: 22px 18px;
+          }
+
+          .cinematic-projects .cinematic-project-stack > .card > .card-header,
+          .cinematic-projects .cinematic-project-stack > .card > .stats,
+          .cinematic-projects .cinematic-project-stack > .card > .form,
+          .cinematic-projects .cinematic-project-stack > .card > .responsibilities,
+          .cinematic-projects .cinematic-project-stack > .card > .key-achievements {
+              grid-column: 1 / -1;
+          }
+
+          .cinematic-projects .cinematic-project-stack > .card > .stats {
+              grid-template-columns: minmax(78px, auto) minmax(0, 1fr);
+              gap: 6px 12px;
+              padding: 14px 0;
+          }
+
+          .cinematic-projects .cinematic-project-stack > .card > .form {
+              grid-template-columns: 1fr;
+              gap: 16px;
+          }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+          .cinematic-projects .cinematic-project-stack > .card {
+              transition: none;
+          }
+
+          .cinematic-projects .cinematic-project-stack > .card {
+              opacity: 1;
+              transform: none;
+          }
+      }
