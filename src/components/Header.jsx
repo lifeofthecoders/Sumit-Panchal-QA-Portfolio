@@ -1,5 +1,4 @@
 import "../assets/css/blogs.css";
-import "../assets/css/profile-badge.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 

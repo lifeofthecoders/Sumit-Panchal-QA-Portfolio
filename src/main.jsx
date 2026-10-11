@@ -4,6 +4,7 @@ import { HashRouter } from "react-router-dom";
 import { ToastProvider } from "./components/ToastProvider";
 import App from "./App";
 import "./assets/css/index.css";
+import "./assets/css/profile-badge.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
