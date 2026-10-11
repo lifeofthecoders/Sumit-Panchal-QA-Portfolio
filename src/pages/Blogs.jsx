@@ -22,7 +22,7 @@ export default function Blogs() {
 
   // Pagination
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 12;
   const [totalPages, setTotalPages] = useState(1);
 
   // Prevent multiple scroll triggers
