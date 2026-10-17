@@ -322,7 +322,7 @@ export const referenceProjects = [
     platform: "Android Mobile App",
     role: "Manual QA Engineer",
     overview:
-      "A community-sharing app where users post articles they want to give away, browse item details, send or withdraw requests, and coordinate pickup times. The documented transaction lifecycle progresses through Posted, Requested, Promised, Accepted, handover, pickup, Concluded, and Rating, with notifications and expiry handling for time-sensitive steps.",
+      "A community-sharing app where users post articles they want to give away, browse item details, send or withdraw requests, and coordinate pickup times. The documented transaction lifecycle progresses through Posted, Requested, Promised, Accepted, Handover, Pickup, Concluded, and Rating, with notifications and expiry handling for time-sensitive steps.",
     testingAreas: [
       "Post & Edit Article",
       "Image Upload and Item Details",
