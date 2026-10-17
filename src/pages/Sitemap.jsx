@@ -96,7 +96,7 @@ export default function Sitemap() {
       {/* PAGE CONTENT */}
       <section className="sitemap-page">
         <main className="sitemap">
-          <section className="container section-lg bg-gray animate-content">
+          <section className="container section-lg bg-gray animate-content in-view">
             <div className="sitemap">
 
               <h3 id="sitemap" className="heading-link">
@@ -105,7 +105,7 @@ export default function Sitemap() {
               </h3>
 
               <div className="sitemap">
-                <ul className="sitemap-list">
+                <ul className="sitemap-list qa-list">
                   <li><Link to="/">HOME</Link></li>
                   <li><Link to="/about">ABOUT</Link></li>
                   <li><Link to="/services">SERVICES</Link></li>

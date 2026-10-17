@@ -333,8 +333,9 @@ export default function BlogDetail() {
             <section className="blogs-container">
               <section className="blogs-card">
                 <div
+                  className="blog-detail-inner"
                   style={{
-                    padding: "40px 40px",
+                    padding: "40px 70px",
                     maxWidth: "1200px",
                     margin: "0 auto",
                     boxSizing: "border-box",
@@ -344,7 +345,11 @@ export default function BlogDetail() {
                   {/* Back Button */}
                   <h3
                     id="back-button"
-                    style={{ marginBottom: "10px", color: "#ffffff" }}
+                    style={{
+                      marginBottom: "10px",
+                      marginLeft: "0",
+                      color: "#ffffff",
+                    }}
                   >
                     <button
                       onClick={() => navigate("/blogs")}
@@ -360,7 +365,7 @@ export default function BlogDetail() {
                         borderRadius: "5px",
                         fontWeight: "bold",
                         fontSize: "16px",
-                        marginLeft: "-10px",
+                        marginLeft: "0",
                         marginTop: "16px",
                         marginBottom: "16px",
                         border: "none",

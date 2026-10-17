@@ -1,47 +1,359 @@
-(function () {
-    const observerOptions = { threshold: 0.3 };
+const assetRoot = `${import.meta.env.BASE_URL}image/project/`;
+const projectAsset = (filename) => `${assetRoot}${filename}`;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("in-view");
-            } else {
-                entry.target.classList.remove("in-view"); // replay on scroll
-            }
-        });
-    }, observerOptions);
-
-    document
-        .querySelectorAll(".hero-animate h1, .hero-animate h2")
-        .forEach(el => observer.observe(el));
-})();
-
-/* ==========================================
-LOGO — SCROLL UP / DOWN RE-ANIMATION
-========================================== */
-
-(() => {
-    const logo = document.querySelector(".logo-slide");
-    if (!logo) return;
-
-    let lastScrollY = window.scrollY;
-
-    function restartLogoAnimation() {
-        logo.classList.remove("animate");
-        void logo.offsetWidth; // force reflow
-        logo.classList.add("animate");
-    }
-
-    // Run once on page load
-    window.addEventListener("load", restartLogoAnimation);
-
-    // Re-trigger on scroll up or down
-    window.addEventListener("scroll", () => {
-        const currentScroll = window.scrollY;
-
-        if (Math.abs(currentScroll - lastScrollY) > 12) {
-            restartLogoAnimation();
-            lastScrollY = currentScroll;
-        }
-    });
-})();
+export const referenceProjects = [
+  {
+    id: 1,
+    image: projectAsset("project-lymuv-qa.jpg"),
+    bannerImage: projectAsset("project-lymuv-banner.jpg"),
+    detailImages: [
+      {
+        src: projectAsset("project-lymuv-detail-1.jpg"),
+        alt: "LYMÜV pickup and route selection screens",
+        caption: "Pickup/destination selection and ride options",
+      },
+      {
+        src: projectAsset("project-lymuv-detail-2.jpg"),
+        alt: "LYMÜV live trip and payment screens",
+        caption: "Live tracking, driver details and payment summary",
+      },
+      {
+        src: projectAsset("project-lymuv-qa-gallery.jpg"),
+        alt: "LYMÜV ride booking and trip-management overview",
+        caption: "Project overview: ride booking and trip-management platform",
+      },
+    ],
+    title: "LYMÜV - Taxi Booking Application",
+    subtitle:
+      "Project Management · Ride booking, driver assignment, payments & admin workflows",
+    domain: "Transportation / Ride-Hailing",
+    platform: "Android, iOS, Web Admin",
+    role: "Project Manager & Manual QA Engineer",
+    overview:
+      "A real-time taxi booking platform with live tracking, digital payments, wallet, promotions, ratings, and invoicing.",
+    testingAreas: [
+      "Ride Booking Flow",
+      "Driver Assignment",
+      "Payment & Wallet",
+      "Notifications",
+      "Reports",
+      "Admin Panel",
+    ],
+    responsibilities: [
+      "End-to-end testing of booking workflows.",
+      "Validation of driver assignment logic.",
+      "Payment gateway and wallet testing.",
+      "Notification and invoicing verification.",
+      "Admin panel functional testing.",
+    ],
+    achievements: [
+      "Supported stable multi-platform releases.",
+      "Helped prevent critical defects before release.",
+      "Supported regression testing and UAT.",
+    ],
+    borderColor: "#3B82F6",
+    gradient: "linear-gradient(145deg, #3B82F6, #000)",
+    url: "https://github.com/lifeofthecoders",
+    dad: "100",
+  },
+  {
+    id: 2,
+    image: projectAsset("project-dap-me-qa.jpg"),
+    bannerImage: projectAsset("project-dap-me-banner.jpg"),
+    detailImages: [
+      {
+        src: projectAsset("project-dap-me-detail-1.jpg"),
+        alt: "Dap Me mobile discovery and saved-filter screens",
+        caption:
+          "Mobile professional discovery, location-based search and saved filters",
+      },
+      {
+        src: projectAsset("project-dap-me-detail-2.jpg"),
+        alt: "Dap Me profiles, messages and connection-request screens",
+        caption:
+          "Mobile professional profiles, real-time messaging and connection requests",
+      },
+      {
+        src: projectAsset("project-dap-me-qa-gallery.jpg"),
+        alt: "Dap Me mobile professional networking overview",
+        caption:
+          "Project overview: mobile professional discovery and networking app",
+      },
+    ],
+    title: "Dap Me - Professional Networking Application",
+    subtitle:
+      "Project Management · Authentication, profiles, networking, chat & moderation",
+    domain: "Social Networking / Professional Networking",
+    platform: "Android, iOS, Web Admin",
+    role: "Project Manager & Manual QA Engineer",
+    overview:
+      "A React Native professional networking app for connecting with people, chatting in real time, sharing profiles, and managing professional interactions securely, with notifications and admin moderation.",
+    testingAreas: [
+      "Registration & Login",
+      "User Profiles",
+      "Connections & Networking",
+      "Chat & Messaging",
+      "Notifications",
+      "Search & Discovery",
+      "Privacy & Account Settings",
+      "Admin Panel",
+    ],
+    responsibilities: [
+      "Authentication and login validation.",
+      "Profile management and user data testing.",
+      "Chat and messaging module verification.",
+      "Subscription and payment gateway testing.",
+      "Admin moderation workflow testing.",
+    ],
+    achievements: [
+      "Delivered multiple stable releases with zero critical production defects.",
+      "Prevented major chat and notification issues before go-live.",
+      "Improved app stability through regression coverage.",
+      "Contributed to final UAT sign-off.",
+    ],
+    borderColor: "#10B981",
+    gradient: "linear-gradient(180deg, #10B981, #000)",
+    url: "https://github.com/lifeofthecoders",
+    dad: "200",
+  },
+  {
+    id: 3,
+    image: projectAsset("project-kinzwin-qa.jpg"),
+    bannerImage: projectAsset("project-kinzwin-banner.jpg"),
+    detailImages: [
+      {
+        src: projectAsset("project-kinzwin-detail-1.jpg"),
+        alt: "Kinzwin live multiplayer game room",
+        caption: "Live game board, player status and turn flow",
+      },
+      {
+        src: projectAsset("project-kinzwin-detail-2.jpg"),
+        alt: "Kinzwin tournament results and fair-play screens",
+        caption: "Tournament leaderboard, results and fair-play checks",
+      },
+      {
+        src: projectAsset("project-kinzwin-qa-gallery.jpg"),
+        alt: "Kinzwin multiplayer gaming and tournaments overview",
+        caption:
+          "Project overview: multiplayer gaming and tournaments app",
+      },
+    ],
+    title: "Kinzwin - Multiplayer Gaming Platform",
+    subtitle: "Manual QA · Gameplay, multiplayer sync, chat & leaderboards",
+    domain: "Gaming / Multiplayer / Social Platform",
+    platform: "Android, iOS, Web Admin",
+    role: "Manual QA Engineer",
+    overview:
+      "A competitive multiplayer gaming platform offering casual and skill-based games, social engagement, and real-time competition.",
+    testingAreas: [
+      "Gameplay",
+      "Scoring",
+      "Multiplayer Synchronization",
+      "Chat",
+      "Leaderboards",
+      "Fair Play",
+      "Admin Panel",
+    ],
+    responsibilities: [
+      "Gameplay and scoring validation.",
+      "Multiplayer synchronization testing.",
+      "Chat module testing.",
+      "Leaderboard verification.",
+      "Fair-play validation.",
+    ],
+    achievements: [
+      "Achieved zero critical production defects at launch.",
+      "Helped resolve multiplayer synchronization issues before release.",
+      "Contributed to improved user engagement and platform stability.",
+      "Supported final release certification.",
+    ],
+    borderColor: "#10B981",
+    gradient: "linear-gradient(180deg, #10B981, #000)",
+    url: "https://github.com/lifeofthecoders",
+    dad: "300",
+  },
+  {
+    id: 4,
+    image: projectAsset("project-bunny-books-qa.jpg"),
+    bannerImage: projectAsset("project-bunny-books-banner.jpg"),
+    detailImages: [
+      {
+        src: projectAsset("project-bunny-books-detail-1.jpg"),
+        alt: "Bunny Books photo-book studio screens",
+        caption: "Photo upload, page layouts and album preview",
+      },
+      {
+        src: projectAsset("project-bunny-books-detail-2.jpg"),
+        alt: "Bunny Books checkout and tracking screens",
+        caption: "Secure checkout and order delivery status",
+      },
+      {
+        src: projectAsset("project-bunny-books-qa-gallery.jpg"),
+        alt: "Bunny Books photo-book creation and ordering overview",
+        caption:
+          "Project overview: mobile photo-book creation and ordering app",
+      },
+    ],
+    title: "Bunny Books - Photo Book E-Commerce Application",
+    subtitle:
+      "Project Management · Photo uploads, album creation, checkout & order tracking",
+    domain: "E-Commerce / Photo Printing / Custom Gifting",
+    platform: "Android, iOS, Web Admin",
+    role: "Project Manager & Manual QA Engineer",
+    overview:
+      "A photo-book ordering platform that lets users create and order high-quality printed photo books through a simple three-step process, with secure checkout and global delivery.",
+    testingAreas: [
+      "Photo Upload",
+      "Album Creation",
+      "Design Preview",
+      "Cart & Checkout",
+      "Payment Processing",
+      "Delivery Tracking",
+      "Notifications",
+      "Admin Management",
+    ],
+    responsibilities: [
+      "Photo upload and album creation testing.",
+      "Cart and checkout flow validation.",
+      "Payment processing and order management.",
+      "Notification and delivery tracking testing.",
+      "Admin panel management testing.",
+    ],
+    achievements: [
+      "Supported stable App Store and Play Store launches.",
+      "Resolved major photo upload and payment issues.",
+      "Improved order success through regression testing.",
+      "Contributed to release certification.",
+    ],
+    borderColor: "#3B82F6",
+    gradient: "linear-gradient(145deg, #3B82F6, #000)",
+    url: "https://github.com/lifeofthecoders",
+    dad: "400",
+  },
+  {
+    id: 5,
+    image: projectAsset("project-health-e-qa.jpg"),
+    bannerImage: projectAsset("project-health-e-banner.jpg"),
+    detailImages: [
+      {
+        src: projectAsset("project-health-e-detail-1.jpg"),
+        alt: "Health-E health records and emergency screens",
+        caption: "Medical reports, health records and emergency information",
+      },
+      {
+        src: projectAsset("project-health-e-detail-2.jpg"),
+        alt: "Health-E appointments and ABHA screens",
+        caption: "Appointments, ABHA Health ID and medication reminders",
+      },
+      {
+        src: projectAsset("project-health-e-qa-gallery.jpg"),
+        alt: "Health-E digital health records and appointments overview",
+        caption:
+          "Project overview: mobile digital health records and appointments app",
+      },
+    ],
+    title: "Health-E - Digital Health & Medical Records App",
+    subtitle: "Manual QA · Health records, ABHA ID, appointments & family care",
+    domain: "Healthcare / Digital Health",
+    platform: "Mobile App, Admin Dashboard",
+    role: "Manual QA Engineer",
+    overview:
+      "An ABDM-approved digital health locker designed to help users manage medical records and health information, create an ABHA ID, schedule appointments, receive medication reminders, and access emergency information. The app also includes dedicated pregnancy and paediatric care features, alongside administrator tools for user management, analytics, and system configuration.",
+    testingAreas: [
+      "Registration & OTP Verification",
+      "Profile & Health Information",
+      "Medical Records & Reports",
+      "Search, Edit, Delete & Share Records",
+      "Appointment Scheduling",
+      "Medication Reminders",
+      "Emergency Health Records & Contacts",
+      "Health Metrics & Tools",
+      "ABHA Number Generation",
+      "Pregnancy Module",
+      "Paediatric Care & Vaccination",
+      "Admin Dashboard & User Management",
+      "Authentication & Role-Based Access",
+    ],
+    responsibilities: [
+      "Validated mobile-number registration, OTP entry, and authenticated access to the app.",
+      "Checked personal and health-profile updates, field validation, and consistency between saved and displayed data.",
+      "Tested medical-record workflows for viewing, adding, searching, editing, deleting, and sharing reports and related records.",
+      "Verified appointment booking, modification, cancellation, medication reminders, and emergency contact information.",
+      "Covered ABHA registration flows, health tools, pregnancy tracking, and paediatric features including food diaries, vaccination schedules, milestones, and child records.",
+      "Reviewed administrator workflows and security touchpoints such as JWT authentication and role-based access control.",
+    ],
+    achievements: [
+      "Structured functional test scenarios with clear action steps and expected results for core user journeys.",
+      "Covered key medical-record lifecycle actions, including search, update, deletion, and sharing.",
+      "Organized test coverage across general health, emergency, pregnancy, and paediatric modules.",
+      "Included authentication, authorization, data-handling, and integration considerations in the QA scope.",
+    ],
+    borderColor: "#38BDF8",
+    gradient: "linear-gradient(145deg, #38BDF8, #312E81, #000)",
+    url: "https://github.com/lifeofthecoders",
+    dad: "500",
+  },
+  {
+    id: 6,
+    image: projectAsset("project-regive-qa.jpg"),
+    bannerImage: projectAsset("project-regive-banner.jpg"),
+    detailImages: [
+      {
+        src: projectAsset("project-regive-detail-1.jpg"),
+        alt: "reGive article posting and request screens",
+        caption:
+          "Post item photos and details, set pickup slots, then review and request a listed article",
+      },
+      {
+        src: projectAsset("project-regive-detail-2.jpg"),
+        alt: "reGive promise, handover, pickup and rating screens",
+        caption:
+          "Track promise acceptance, prepare handover, confirm pickup, conclude the transaction and submit ratings",
+      },
+      {
+        src: projectAsset("project-regive-qa-gallery.jpg"),
+        alt: "reGive mobile community gifting and handover overview",
+        caption: "Project overview: mobile community gifting and handover app",
+      },
+    ],
+    title: "reGive - Community Sharing & Gift Transaction Application",
+    subtitle: "Manual QA · Posting, requests, promises, handover, pickup & ratings",
+    domain: "Community Sharing / Sustainability / Peer-to-Peer Gifting",
+    platform: "Android Mobile App",
+    role: "Manual QA Engineer",
+    overview:
+      "A community-sharing app where users post articles they want to give away, browse item details, send or withdraw requests, and coordinate pickup times. The documented transaction lifecycle progresses through Posted, Requested, Promised, Accepted, handover, pickup, Concluded, and Rating, with notifications and expiry handling for time-sensitive steps.",
+    testingAreas: [
+      "Post & Edit Article",
+      "Image Upload and Item Details",
+      "Article Request & Withdraw Request",
+      "Promise, Accept & Decline",
+      "Pickup Time and Address Selection",
+      "Acceptance Expiry and Reminder Timing",
+      "Prepare Handover & Pickup Gift",
+      "Transaction Status Progression",
+      "Offeror and Requester Rating Scenarios",
+      "Push-Up and In-App Notifications",
+      "My Giveaways & My Received Gifts",
+    ],
+    responsibilities: [
+      "Validate article creation and editing, including photos, title, description, condition, size, category, pickup slots, and pickup address.",
+      "Verify requester actions to send or withdraw an article request and confirm the expected transaction status and next step.",
+      "Test offeror promise selection and requester accept/decline behavior, including rejection and multiple-requester scenarios.",
+      "Check time-bound reminders, acceptance expiry, and documented buffer-time behavior around pickup slots.",
+      "Validate prepare-handover, pickup-gift, article-concluded, and role-specific status updates.",
+      "Cover the documented offeror/requester rating combinations, including expired ratings and counterpart cancellation choices.",
+      "Verify push-up and in-app notifications navigate users to the expected article details and transaction state.",
+    ],
+    achievements: [
+      "Mapped end-to-end test coverage across the full article transaction lifecycle, from posting through rating.",
+      "Covered separate Offeror and Requester journeys and their expected status transitions.",
+      "Included edge cases for withdrawn requests, expired acceptance windows, multiple requesters, and rating combinations.",
+      "Connected notification and reminder checks to the next required transaction action.",
+    ],
+    borderColor: "#3B82F6",
+    gradient: "linear-gradient(145deg, #3B82F6, #000)",
+    url: "https://github.com/lifeofthecoders",
+    dad: "600",
+  },
+];

@@ -346,6 +346,10 @@
           padding: 40px 40px;
       }
 
+      .services-grid {
+          padding: 20px;
+      }
+
       .summary-paragraph {
           text-align: justify;
           text-indent: 2em;

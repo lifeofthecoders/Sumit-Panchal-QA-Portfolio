@@ -598,6 +598,23 @@
           opacity: 0.6;
       }
 
+      .key-achievements-list {
+          list-style: none;
+      }
+
+      .key-achievements-list li {
+          position: relative;
+          padding-left: 1.5em;
+      }
+
+      .key-achievements-list li::before {
+          position: absolute;
+          left: -1.25em;
+          color: #57d89c;
+          content: "✓";
+          font-weight: 700;
+      }
+
       /* ===== FOOTER CENTER ALIGN ===== */
       footer {
           background-color: #111111;

@@ -131,7 +131,7 @@ export default function Portfolio() {
 
                                 <h3>I specialize in <b>manual testing</b> with strong expertise in:</h3>
 
-                                <ul class="skills-list">
+                                <ul class="skills-list qa-list">
                                     <li>Functional, Regression, Smoke, Sanity & UAT Testing</li>
                                     <li>UI/UX Validation & Cross-Browser Testing</li>
                                     <li>Web & Mobile Application Testing (Android & iOS)</li>
@@ -180,7 +180,7 @@ export default function Portfolio() {
                             </p>
 
                             <div class="skills-list-grid">
-                                <ul class="skills-list">
+                                <ul class="skills-list qa-list">
                                     <li>Performed <b>end-to-end manual testing</b> across <b>10+ enterprise web and mobile applications.</b></li>
                                     <li>Prepared and executed <b>1000+ test cases</b> based on business and functional requirements.</li>
                                     <li>Conducted <b>Functional, Regression, Smoke, Sanity, System, and UAT testing</b> in Agile environments.
@@ -212,7 +212,7 @@ export default function Portfolio() {
                             </h3>
 
                             <div class="skills-list-grid">
-                                <ul class="skills-list">
+                                <ul class="skills-list key-achievements-list qa-list qa-list--check">
                                     <li>Achieved <b>40% reduction</b> in post-production defects through improved regression strategy.</li>
                                     <li>Ensured <b>99% release stability</b> across multiple project deployments.</li>
                                     <li>Prevented <b>50+ critical and high-severity production issues</b> through proactive testing.</li>
@@ -235,7 +235,7 @@ export default function Portfolio() {
                             </h3>
                         
                             <div class="skills-list-grid">
-                                <ul class="skills-list">
+                                <ul class="skills-list qa-list">
                                     <li>Testing Types: <b>Manual Testing, Functional, Regression, Smoke, Sanity, System, Integration, UAT</b></li>
                                     <li>Tools: <b>Jira (Bug Tracking & Test Management), Excel (Test Documentation)</b></li>
                                     <li>Platforms: <b>Web Applications, Mobile Applications (Android & iOS)</b></li>
@@ -256,7 +256,7 @@ export default function Portfolio() {
                             </h3>
 
                             <div class="skills-list-grid">
-                                <ul class="skills-list">
+                                <ul class="skills-list qa-list">
                                     <li>
                                         <b>Quality-First Mindset: </b>
                                         Strong focus on delivering defect-free releases through structured, detail-oriented manual testing aligned

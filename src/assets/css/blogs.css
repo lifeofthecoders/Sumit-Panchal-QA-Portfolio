@@ -440,7 +440,13 @@
            display: grid;
            grid-template-columns: repeat(3, 1fr);
            gap: 24px;
-           margin: 16px;
+           margin: 0;
+       }
+
+       @media (max-width: 680px) {
+           .blog-detail-inner {
+               padding-inline: 35px !important;
+           }
        }
 
        /* Tablet */

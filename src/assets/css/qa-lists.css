@@ -1,0 +1,54 @@
+ul.qa-list {
+  list-style: none;
+  padding-left: 40px;
+}
+
+.blog-content ul {
+  list-style: none;
+}
+
+.about-page .skills-list.qa-list {
+  margin-left: 0;
+}
+
+.cinematic-card-grid .cinematic-info-card .stats-list.qa-list {
+  padding-left: 40px;
+}
+
+.qa-list > li,
+.cinematic-card-grid .cinematic-info-card .stats-list.qa-list > li {
+  position: relative;
+  padding-left: 0;
+}
+
+.qa-list > li::before,
+.blog-content ul > li::before {
+  position: absolute;
+  top: 0;
+  left: -40px;
+  display: block;
+  width: 40px;
+  color: var(--qa-list-marker-color, currentColor);
+  content: "•";
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.qa-list--gold {
+  --qa-list-marker-color: #d4af37;
+}
+
+.qa-list--check > li::before {
+  position: absolute;
+  top: 0;
+  left: -40px;
+  width: 40px;
+  color: #57d89c;
+  content: "✓";
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}

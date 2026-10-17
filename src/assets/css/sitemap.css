@@ -407,6 +407,11 @@
           /* FORCE LEFT TEXT START */
       }
 
+      .sitemap-page .container.section-lg {
+          padding-top: 60px;
+          padding-left: 50px;
+      }
+
       .sitemap-list {
           list-style: disc;
           font-weight: 700;

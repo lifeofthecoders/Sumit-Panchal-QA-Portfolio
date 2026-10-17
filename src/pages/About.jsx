@@ -231,7 +231,7 @@ export default function About() {
                                                 </div>
                                             </div>
                                             <div className="stats">
-                                                <ul className="stats-list">
+                                                <ul className="stats-list qa-list qa-list--gold">
                                                     <li><strong>{item.value}</strong></li>
                                                 </ul>
                                             </div>
@@ -264,7 +264,7 @@ export default function About() {
                                             </div>
                                         </div>
                                         <div className="stats">
-                                            <ul className="stats-list">
+                                            <ul className="stats-list qa-list qa-list--gold">
                                                 <li><strong>Manual Functional testing</strong></li>
                                                 <li><strong>Regression & Re-testing</strong></li>
                                                 <li><strong>Smoke & Sanity Testing</strong></li>
@@ -282,7 +282,7 @@ export default function About() {
                                             </div>
                                         </div>
                                         <div className="stats">
-                                            <ul className="stats-list">
+                                            <ul className="stats-list qa-list qa-list--gold">
                                                 <li><strong>SDLC & STLC</strong></li>
                                                 <li><strong>Defect Life Cycle</strong></li>
                                                 <li><strong>Test Case Design & Execution</strong></li>
@@ -300,7 +300,7 @@ export default function About() {
                                             </div>
                                         </div>
                                         <div className="stats">
-                                            <ul className="stats-list">
+                                            <ul className="stats-list qa-list qa-list--gold">
                                                 <li><strong>Booking & Real-time Tracking</strong></li>
                                                 <li><strong>Payment & Wallet Flows</strong></li>
                                                 <li><strong>Chat & Notification Systems</strong></li>
@@ -318,7 +318,7 @@ export default function About() {
                                             </div>
                                         </div>
                                         <div className="stats">
-                                            <ul className="stats-list">
+                                            <ul className="stats-list qa-list qa-list--gold">
                                                 <li><strong>Agile Sprint Participation</strong></li>
                                                 <li><strong>Bug Triage & Prioritization</strong></li>
                                                 <li><strong>UAT Support & Sign-off</strong></li>
@@ -348,7 +348,7 @@ export default function About() {
                                 </a>
                             </h3>
 
-                            <ul>
+                            <ul className="skills-list qa-list">
                                 <li>
                                     <b>Bachelor of Engineering (B.E.)</b> - Electronics & Communication Engineering
                                     <br />
@@ -366,6 +366,7 @@ export default function About() {
                                 </li>
                             </ul>
 
+                            <hr className="view-line" />
 
                             <h3 id="work-experience" className="heading-link">
                                 <b>💼 PROFESSIONAL EXPERIENCE</b>
@@ -378,7 +379,7 @@ export default function About() {
                                 </a>
                             </h3>
 
-                            <ul>
+                            <ul className="skills-list qa-list">
                                 <li>
                                     <b>Quality Assurance Analyst</b> - Echo Innovate IT
                                     <br />
@@ -392,6 +393,7 @@ export default function About() {
                                 </li>
                             </ul>
 
+                            <hr className="view-line" />
 
                             <h3 id="key-achievements" className="heading-link">
                                 <b>🏆 KEY ACHIEVEMENTS</b>
@@ -404,7 +406,7 @@ export default function About() {
                                 </a>
                             </h3>
 
-                            <ul>
+                            <ul className="skills-list key-achievements-list qa-list qa-list--check">
                                 <li>
                                     <b>40% reduction</b> in post-production defects through an improved
                                     regression testing strategy.
@@ -432,6 +434,7 @@ export default function About() {
                                 </li>
                             </ul>
 
+                            <hr className="view-line" />
 
                             <h3 id="professional-skills" className="heading-link">
                                 <b>🧩 PROFESSIONAL STRENGTHS</b>
@@ -444,7 +447,7 @@ export default function About() {
                                 </a>
                             </h3>
 
-                            <ul>
+                            <ul className="skills-list qa-list">
                                 <li>🔍 Detail-oriented and analytical approach to software testing.</li>
                                 <li>🤝 Effective collaboration with developers, designers, product managers, and cross-functional teams.</li>
                                 <li>🎯 Strong focus on test coverage, defect identification, and root-cause analysis.</li>

@@ -212,7 +212,7 @@ export default function Services() {
                                                 </div>
                                             </div>
                                             <div className="stats">
-                                                <ul className="stats-list">
+                                                <ul className="stats-list qa-list qa-list--gold">
                                                     {card.items.map((item, i) => (
                                                         <li key={i}>
                                                             <strong>{item}</strong>

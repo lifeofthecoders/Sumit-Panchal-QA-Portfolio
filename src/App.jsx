@@ -1,5 +1,5 @@
+import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import API_BASE_URL from "./config/api";
 
 import Header from "./components/Header";
@@ -10,13 +10,14 @@ import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Services from "./pages/Services";
-import Projects from "./pages/Projects";
 import Portfolio from "./pages/Portfolio";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Sitemap from "./pages/Sitemap";
 import Blogs from "./pages/Blogs";
 import BlogDetail from "./pages/BlogDetail";
+
+const Projects = lazy(() => import("./pages/Projects"));
 
 import AdminLogin from "./admin/AdminLogin";
 import ProtectedRoute from "./admin/ProtectedRoute";
@@ -61,7 +62,14 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/projects" element={<Projects cinematic />} />
+        <Route
+          path="/projects"
+          element={
+            <Suspense fallback={null}>
+              <Projects />
+            </Suspense>
+          }
+        />
         <Route path="/project" element={<Navigate to="/projects" replace />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/gallery" element={<Gallery />} />

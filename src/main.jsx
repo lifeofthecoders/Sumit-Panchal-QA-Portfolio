@@ -5,6 +5,7 @@ import { ToastProvider } from "./components/ToastProvider";
 import App from "./App";
 import "./assets/css/index.css";
 import "./assets/css/profile-badge.css";
+import "./assets/css/qa-lists.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

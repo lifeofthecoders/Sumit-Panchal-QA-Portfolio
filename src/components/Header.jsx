@@ -6,6 +6,13 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [showCloseIcon, setShowCloseIcon] = useState(false);
   const location = useLocation();
+  const projectId =
+    location.pathname === "/projects"
+      ? new URLSearchParams(location.search).get("project")
+      : null;
+  const animationRouteKey = projectId
+    ? `${location.pathname}?project=${projectId}`
+    : location.pathname;
 
   useEffect(() => {
     if (!open) {
@@ -43,7 +50,17 @@ export default function Header() {
       void el.offsetWidth; // force reflow
       el.classList.add("in-view", "animate");
     });
-  }, [location.pathname]);
+
+    if (location.pathname === "/projects") {
+      document
+        .querySelectorAll(".hero-animate h1, .hero-animate h2")
+        .forEach((line) => {
+          line.classList.remove("in-view");
+          void line.offsetWidth;
+          line.classList.add("in-view");
+        });
+    }
+  }, [animationRouteKey]);
 
   // Navigation items – NO "ADMIN" link anymore
   const hasPageOverflowClip = [

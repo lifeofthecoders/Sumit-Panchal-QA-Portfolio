@@ -124,7 +124,7 @@ export default function Home() {
                             <li>Browsers: <b>Chrome, Firefox, Safari, Edge</b></li>
                         </ul> */}
 
-                        <ul className="skills-list">
+                        <ul className="skills-list qa-list">
 
                             <li>
                                 <b>🧪 Manual Testing Skills:</b> Functional Testing, Regression Testing, Smoke Testing,
