@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig(({ command }) => ({
-  base: "/Sumit-Panchal-QA-Portfolio-New/",
+  base: '/Sumit-Panchal-QA-Portfolio/',
   plugins: [react()],
 
   server:
