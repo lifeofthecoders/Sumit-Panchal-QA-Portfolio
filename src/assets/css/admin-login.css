@@ -1,0 +1,369 @@
+/* ============================================= */
+/*       Admin Login - Classy, Clean & Catchy    */
+/* ============================================= */
+
+:root {
+  --bg-primary: #1A3C34;
+  --bg-secondary: #2E5D4A;
+  --accent-gold: #C9A96E;
+  --text-cream: #F2EFEA;
+  --neutral-dark: #0F0F0F;
+  --purple-accent: #8b5cf6;
+  --purple-dark: #7c3aed;
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.08);
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  background: white;
+  min-height: 350px;
+  opacity: 0;
+  transform: scale(0.97);
+  animation: cardAppear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.15s;
+}
+
+@keyframes cardAppear {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Branding Panel ── */
+.branding-panel {
+  width: 42%;
+  /* background: var(--bg-primary); */
+  background: linear-gradient(90deg, #e3a8fe, #f51cc2, #2d32ca);
+  color: var(--text-cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.branding-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(45deg, rgba(26,60,52,0.6), rgba(46,93,74,0.4));
+  pointer-events: none;
+}
+
+.portal-logo {
+  width: 150px;
+  height: 150px;
+  padding: 0px;
+  object-fit: contain;
+  margin-bottom: 32px;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+  animation: logoZoom 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes logoZoom {
+  from { opacity: 0; transform: scale(0.65); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.portal-heading {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  letter-spacing: 1px;
+  color: var(--accent-gold);             /* Solid fallback color */
+  background: linear-gradient(90deg, var(--accent-gold), #e0c68a);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;                    /* Only apply transparency if clipping works */
+}
+
+/* Optional: hide fallback if clipping is supported */
+@supports (background-clip: text) {
+  .portal-heading {
+    color: transparent;
+  }
+}
+
+.brand-name-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  line-height: 1.3;
+}
+
+.brand-line {
+  font-weight: 500;
+  color: var(--text-cream);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: textRise 0.9s ease-out forwards;
+}
+
+.brand-line:nth-child(1) { animation-delay: 0.6s; }
+.brand-line:nth-child(2) { animation-delay: 0.75s; }
+.brand-line:nth-child(3) { animation-delay: 0.9s; }
+.brand-line:nth-child(4) { animation-delay: 1.05s; }
+.brand-line:nth-child(5) { animation-delay: 1.2s; }
+
+@keyframes textRise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.brand-line.elite {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.brand-line.name {
+  font-size: 28px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.5);
+}
+
+.brand-line.role {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2.2px;
+  color: rgba(201, 169, 110, 0.92);
+}
+
+.brand-line.access {
+  font-size: 15.5px;
+  font-weight: 400;
+  opacity: 0.94;
+  margin-top: 12px;
+}
+
+.brand-line.motto {
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 400;
+  margin-top: 10px;
+  letter-spacing: 0.8px;
+  color: var(--accent-gold);             /* Solid fallback color – always visible */
+  background: linear-gradient(90deg, var(--accent-gold), #e0c68a);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+/* Apply transparency + clipping only when supported */
+@supports (background-clip: text) {
+  .brand-line.motto {
+    color: transparent;
+  }
+}
+
+/* ── Login Form ── */
+.login-panel {
+  width: 58%;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: white;
+}
+
+.welcome-title {
+  font-size: 28px;
+  margin: 0 0 8px 0;
+  color: #111827;
+  font-weight: 700;
+}
+
+.welcome-title span {
+  color: var(--purple-accent);
+}
+
+.welcome-subtitle {
+  color: #6b7280;
+  margin-bottom: 32px;
+  font-size: 15.5px;
+}
+
+.error-alert,
+.success-alert {
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.error-alert {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.success-alert {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+/* Form fields with hover */
+.form-group {
+  margin-bottom: 26px;
+  transition: var(--transition);
+}
+
+.form-group:hover {
+  transform: translateY(-2px);
+}
+
+.input-wrapper {
+  position: relative;
+  transition: var(--transition);
+}
+
+.input-wrapper:hover {
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.1);
+}
+
+.field-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.input-wrapper:hover .field-icon {
+  color: var(--purple-accent);
+}
+
+input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: var(--transition);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--purple-accent);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 18px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--purple-accent);
+  transform: translateY(-50%) scale(1.2);
+}
+
+/* Button with elastic bounce */
+.submit-button {
+  width: 100%;
+  padding: 15px;
+  background: var(--purple-accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-top: 12px;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: var(--purple-dark);
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 10px 24px rgba(139, 92, 246, 0.3);
+}
+
+.submit-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spinner with pulse */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite,
+             pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.7; }
+}
+
+/* Note */
+.access-note {
+  text-align: center;
+  margin-top: 28px;
+  color: #6b7280;
+  font-size: 13.5px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .login-card {
+    flex-direction: column;
+    max-width: 420px;
+  }
+
+  .branding-panel {
+    padding: 50px 30px;
+  }
+
+  .login-panel {
+    padding: 40px 24px;
+  }
+
+  .portal-logo {
+    width: 90px;
+    height: 90px;
+  }
+}

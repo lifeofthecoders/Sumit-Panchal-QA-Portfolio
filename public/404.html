@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      (function () {
+        var segmentCount = 1; // because your repo is one level deep
+        var l = window.location;
+
+        var redirect =
+          l.protocol +
+          "//" +
+          l.hostname +
+          (l.port ? ":" + l.port : "") +
+          l.pathname
+            .split("/")
+            .slice(0, 1 + segmentCount)
+            .join("/") +
+          "/?/" +
+          l.pathname
+            .slice(1)
+            .split("/")
+            .slice(segmentCount)
+            .join("/") +
+          l.search +
+          l.hash;
+
+        window.location.replace(redirect);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

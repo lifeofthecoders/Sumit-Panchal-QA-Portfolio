@@ -1,0 +1,97 @@
+/*
+ * Unified list markers (round bullets + green check marks)
+ *
+ * Both markers live in the same 40px-wide gutter to the left of the text, so
+ * they share the exact same left spacing. Each marker box is exactly as tall
+ * as the FIRST LINE of its <li> (--qa-line-h), and the marker is centred in
+ * that box, so bullets and check marks sit on the vertical middle of the first
+ * line of text instead of floating above it.
+ */
+
+/* Resolves to the <li>'s own line-height (in px), so the marker box always
+   matches the first text line no matter the font-size / line-height. */
+@property --qa-line-h {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+ul.qa-list {
+  list-style: none;
+  padding-left: 40px;
+}
+
+.blog-content ul {
+  list-style: none;
+}
+
+.about-page .skills-list.qa-list {
+  margin-left: 0;
+}
+
+.cinematic-card-grid .cinematic-info-card .stats-list.qa-list {
+  padding-left: 40px;
+}
+
+ul.qa-list > li,
+.cinematic-card-grid .cinematic-info-card .stats-list.qa-list > li {
+  --qa-line-h: 1lh;
+  position: relative;
+  padding-left: 0;
+}
+
+/* ---- Round bullet (size is controlled by --qa-bullet-size) ---- */
+ul.qa-list > li::before {
+  --qa-bullet-size: 9px;
+  position: absolute;
+  top: 0;
+  left: -40px;
+  display: block;
+  width: 40px;
+  height: var(--qa-line-h);
+  content: "";
+  color: var(--qa-list-marker-color, currentColor);
+  background: radial-gradient(
+    circle at center,
+    currentColor 0,
+    currentColor calc(var(--qa-bullet-size) / 2 - 0.5px),
+    transparent calc(var(--qa-bullet-size) / 2)
+  );
+  pointer-events: none;
+}
+
+.blog-content ul > li::before {
+  position: absolute;
+  top: 0;
+  left: -40px;
+  display: block;
+  width: 40px;
+  color: var(--qa-list-marker-color, currentColor);
+  content: "•";
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.qa-list--gold {
+  --qa-list-marker-color: #d4af37;
+}
+
+/* ---- Green check mark (size intentionally unchanged: 16px) ---- */
+ul.qa-list.qa-list--check > li::before {
+  position: absolute;
+  top: 0;
+  left: -40px;
+  display: block;
+  width: 40px;
+  height: var(--qa-line-h);
+  color: #57d89c;
+  content: "✓";
+  background: none;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: var(--qa-line-h);
+  transform: translateY(-0.5px); /* optical centring of the ✓ glyph */
+}

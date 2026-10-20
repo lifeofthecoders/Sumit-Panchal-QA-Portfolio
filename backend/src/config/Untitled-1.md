@@ -1,0 +1,1 @@
+CORS_ORIGIN=https://lifeofthecoders.github.io,http://localhost:5173

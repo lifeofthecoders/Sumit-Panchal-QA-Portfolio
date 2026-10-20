@@ -1,0 +1,265 @@
+import { useEffect } from "react";
+import usePageAnimations from "../hooks/usePageAnimations";
+import "../assets/css/index.css";
+import { Link } from "react-router-dom";
+
+
+export default function Home() {
+    usePageAnimations();
+
+    // ✅ ANIMATION HOOK - SAME AS ABOUT PAGE
+    useEffect(() => {
+        /* ============================
+           ANCHOR ICON COPY LINK
+           ============================ */
+        const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+        const handleAnchorClick = (e) => {
+            e.preventDefault();
+            const id = e.currentTarget.getAttribute("data-target");
+            if (!id) return;
+
+            const fullURL =
+                window.location.origin + window.location.pathname + "#/#" + id;
+
+            navigator.clipboard.writeText(fullURL);
+
+            e.currentTarget.innerText = "✅";
+            setTimeout(() => {
+                e.currentTarget.innerText = "🔗";
+            }, 1200);
+        };
+
+        anchorIcons.forEach((icon) =>
+            icon.addEventListener("click", handleAnchorClick)
+        );
+
+        /* ============================
+           INTERSECTION OBSERVER
+           ============================ */
+        const observerOptions = { threshold: 0.1 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                entry.target.classList.toggle("in-view", entry.isIntersecting);
+            });
+        }, observerOptions);
+
+        const animatedElements = document.querySelectorAll(
+            ".slide-up, .hero-animate h1, .hero-animate h2, .profile-slide, .animate-content"
+        );
+
+        animatedElements.forEach((el) => observer.observe(el));
+
+        /* ============================
+           LOGO RE-ANIMATION
+           ============================ */
+        const logo = document.querySelector(".logo-slide");
+        let lastScrollY = window.scrollY;
+
+        const restartLogoAnimation = () => {
+            if (!logo) return;
+            logo.classList.remove("animate");
+            void logo.offsetWidth;
+            logo.classList.add("animate");
+        };
+
+        restartLogoAnimation();
+
+        const handleScroll = () => {
+            const currentScroll = window.scrollY;
+            if (Math.abs(currentScroll - lastScrollY) > 12) {
+                restartLogoAnimation();
+                lastScrollY = currentScroll;
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        /* ============================
+           CLEANUP (CRITICAL)
+           ============================ */
+        return () => {
+            anchorIcons.forEach((icon) =>
+                icon.removeEventListener("click", handleAnchorClick)
+            );
+            animatedElements.forEach((el) => observer.unobserve(el));
+            observer.disconnect();
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
+    return (
+        <section className="index-page">
+            <main className="index">
+                <section className="container section-lg">
+                    <section className="card animate-content">
+                        <h2><b>🔍 QUALITY ANALYST ENGINEER</b></h2>
+
+                        <p className="summary-paragraph">
+                            <b>Detail-oriented QA Engineer</b> with <b>5+ years of professional experience</b> in <b>manual and functional testing</b> of <b>web and mobile applications</b>, delivering <b>high-quality</b>, <b>stable</b>, and <b>user-friendly software products</b>. Proven expertise in <b>end-to-end testing</b>, <b>regression testing</b>, <b>UAT support</b>, and <b>defect lifecycle management</b> across multiple domains including <b>taxi booking applications</b>, <b>fintech platforms</b>, <b>real estate systems</b>, and <b>SaaS products</b>.
+                        </p>
+
+                        <p className="summary-paragraph">
+                            Strong understanding of the <b>Software Testing Life Cycle (STLC)</b>, <b>Software Development Life Cycle (SDLC)</b> and <b>Bug Defect Life Cycle</b> with hands-on experience in <b>Agile / Scrum environments</b>. Highly skilled in <b>test case design</b>, <b>requirement analysis</b>, <b>test execution</b>, <b>bug reporting</b>, and <b>cross-team collaboration</b> for timely <b>defect resolution</b>. Known for <b>excellent attention to detail</b>, <b>strong analytical skills</b>, and a <b>proactive quality-driven approach</b> to identifying <b>potential risks</b> before <b>production release</b>.
+                        </p>
+
+                    </section>
+
+                    <hr className="view-line" />
+
+                    <section className="card">
+
+                        <h3 id="technical-skills" className="heading-link">
+                            <b>🛠️ TECHNICAL SKILLS & TOOLS</b>
+                            <a href="#/#technical-skills" className="anchor-icon" data-target="technical-skills">🔗</a>
+                        </h3>
+
+                        {/* <ul className="skills-list">
+                            <li>Manual Testing: <b>Functional Testing, Regression Testing, UAT, Smoke & Sanity Testing, Exploratory Testing</b></li>
+                            <li>Bug Tracking & Test Management: <b>JIRA, Bugzilla, TestRail</b></li>
+                            <li>Version Control: <b>Git, GitHub</b></li>
+                            <li>Collaboration Tools: <b>Confluence, Slack, Microsoft Teams</b></li>
+                            <li>Operating Systems: <b>Windows, macOS, Android, iOS</b></li>
+                            <li>Browsers: <b>Chrome, Firefox, Safari, Edge</b></li>
+                        </ul> */}
+
+                        <ul className="skills-list qa-list">
+
+                            <li>
+                                <b>🧪 Manual Testing Skills:</b> Functional Testing, Regression Testing, Smoke Testing,
+                                Sanity Testing, System Testing, Integration Testing, End-to-End Testing,
+                                Exploratory Testing, Compatibility Testing, UI/UX Testing, Ad-hoc Testing,
+                                User Acceptance Testing (UAT)
+                            </li>
+
+                            <li>
+                                <b>📝 Test Design & Documentation:</b> Test Case Design, Test Scenario Creation,
+                                Test Plan Preparation, Requirement Analysis, Traceability Matrix (RTM),
+                                Test Data Preparation, Test Execution Reporting, Test Documentation
+                            </li>
+
+                            <li>
+                                <b>🐞 Bug Tracking & Test Management Tools:</b> JIRA, Bugzilla, TestRail,
+                                Zephyr, MantisBT, Redmine, PractiTest
+                            </li>
+
+                            <li>
+                                <b>📊 Test Documentation & Reporting Tools:</b> Microsoft Excel, Google Sheets,
+                                Google Docs, Microsoft Word, Google Drive, Microsoft OneDrive,
+                                Microsoft PowerPoint
+                            </li>
+
+                            <li>
+                                <b>🔌 API & Backend Testing:</b> Postman, Swagger / OpenAPI, Insomnia,
+                                REST API Testing, Request/Response Validation, HTTP Methods,
+                                Status Code Verification, JSON Validation
+                            </li>
+
+                            <li>
+                                <b>🌐 Web & Cross-Browser Testing:</b> Google Chrome, Mozilla Firefox,
+                                Microsoft Edge, Safari, BrowserStack,
+                                Cross-Browser Testing, Responsive Testing
+                            </li>
+
+                            <li>
+                                <b>⚙️ Agile & Process Knowledge:</b> Agile/Scrum Methodology, Sprint Planning,
+                                Daily Stand-ups, Sprint Review, Sprint Retrospective,
+                                Defect Lifecycle Management, STLC, SDLC, QA Process, Release Validation
+                            </li>
+
+                            <li>
+                                <b>🤝 Collaboration & Communication Tools:</b> Slack,
+                                Microsoft Teams, Google Meet, Zoom, Trello,
+                                Email Communication, Documentation Collaboration
+                            </li>
+
+                            <li>
+                                <b>💻 Operating Systems & Platforms:</b> Android, iOS, Windows, macOS 
+                            </li>
+
+                            <li>
+                                <b>📱 Mobile & Device Testing:</b> Android Testing, iOS Testing,
+                                Mobile UI Testing, Device Compatibility Testing, Screen Resolution Testing,
+                                Responsive Testing
+                            </li>
+
+                            <li>
+                                <b>🚀 Performance & Quality Awareness:</b> Basic Performance Testing Knowledge,
+                                Usability Testing, Accessibility Awareness, Security Testing Fundamentals,
+                                Load Testing Concepts, Performance Monitoring
+                            </li>
+
+                            <li>
+                                <b>🎯 Quality & Defect Analysis:</b> Root Cause Analysis,
+                                Defect Severity & Priority, Defect Triage, Risk-Based Testing,
+                                Quality Metrics, Test Coverage, Defect Reporting
+                            </li>
+
+                        </ul>
+                    </section>
+
+                    <hr className="view-line" />
+
+                    <section className="card">
+
+                        <h3 id="my-mission" className="heading-link">
+                            <b>🎯 MY MISSION</b>
+                            <a href="#/#my-mission" className="anchor-icon" data-target="my-mission">🔗</a>
+                        </h3>
+
+                        <p className="summary-paragraph">
+                            My mission is to ensure that every product I test meets the highest standards of <b>functionality,
+                                reliability,
+                                performance, and user experience</b>. I aim to identify defects before users do, safeguard business
+                            workflows,
+                            and contribute to delivering flawless releases.
+                        </p>
+                    </section>
+
+                    <hr className="view-line" />
+
+                    <section className="card">
+
+                        <h3 id="my-vission" className="heading-link">
+                            <b>👁️ MY VISION</b>
+                            <a href="#/#my-vission" className="anchor-icon" data-target="my-vission">🔗</a>
+                        </h3>
+
+                        <p className="summary-paragraph">
+                            To become a trusted QA professional known for <b>precision, consistency, and technical depth</b>, while
+                            continuously
+                            evolving my skills in advanced testing practices. I aspire to contribute to impactful digital products that
+                            improve
+                            everyday user interactions across the world.
+                        </p>
+                    </section>
+                    <hr className="view-line" />
+
+                    <section className="card">
+
+
+                        <h3 id="featured-portfolio" className="heading-link">
+                            <b>📂 FEATURED PORTFOLIO</b>
+                            <a href="#/#featured-portfolio" className="anchor-icon" data-target="featured-portfolio">🔗</a>
+                        </h3>
+
+                        <div>
+                            <Link to="/portfolio" className="btn-primary">
+                                View Portfolio
+                            </Link>
+                        </div>
+
+                        <div className="index-card-grid">
+                            <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/QA15.jpg`} />
+                            <img src={`${import.meta.env.BASE_URL}image/QA16.jpg`} />
+                            {/* <img src={`${import.meta.env.BASE_URL}image/home7.jpg`} /> */}
+
+                        </div>
+                    </section>
+                </section>
+            </main>
+        </section>
+    );
+}

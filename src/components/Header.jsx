@@ -1,0 +1,253 @@
+import "../assets/css/blogs.css";
+import { NavLink, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+export default function Header() {
+  const [open, setOpen] = useState(false);
+  const [showCloseIcon, setShowCloseIcon] = useState(false);
+  const location = useLocation();
+  const projectId =
+    location.pathname === "/projects"
+      ? new URLSearchParams(location.search).get("project")
+      : null;
+  const animationRouteKey = projectId
+    ? `${location.pathname}?project=${projectId}`
+    : location.pathname;
+
+  useEffect(() => {
+    if (!open) {
+      setShowCloseIcon(false);
+    }
+  }, [open]);
+
+  const toggleMenu = () => {
+    if (!open) {
+      setOpen(true);
+      window.setTimeout(() => setShowCloseIcon(true), 120);
+      return;
+    }
+
+    setShowCloseIcon(false);
+    setOpen(false);
+  };
+
+  // Helper to check active route
+  const isActive = (path) => {
+    if (path === "/") return location.pathname === "/";
+    if (path === "/blogs") return location.pathname.startsWith("/blogs");
+    return location.pathname === path;
+  };
+
+  // Reset & replay header animations on route change
+  useEffect(() => {
+    const animatedSelectors = [".hero-animate", ".profile-slide", ".logo-slide"];
+
+    animatedSelectors.forEach((selector) => {
+      const el = document.querySelector(selector);
+      if (!el) return;
+
+      el.classList.remove("in-view", "animate");
+      void el.offsetWidth; // force reflow
+      el.classList.add("in-view", "animate");
+    });
+
+    if (location.pathname === "/projects") {
+      document
+        .querySelectorAll(".hero-animate h1, .hero-animate h2")
+        .forEach((line) => {
+          line.classList.remove("in-view");
+          void line.offsetWidth;
+          line.classList.add("in-view");
+        });
+    }
+  }, [animationRouteKey]);
+
+  // Navigation items – NO "ADMIN" link anymore
+  const hasPageOverflowClip = [
+    "/about",
+    "/services",
+    "/projects",
+    "/portfolio",
+  ].includes(location.pathname) || location.pathname.startsWith("/blogs");
+
+  const navItems = [
+    { label: "HOME", path: "/" },
+    { label: "ABOUT", path: "/about" },
+    { label: "SERVICES", path: "/services" },
+    { label: "PROJECTS", path: "/projects" },
+    { label: "PORTFOLIO", path: "/portfolio" },
+    { label: "GALLERY", path: "/gallery" },
+    { label: "BLOGS", path: "/blogs" },
+    { label: "CONTACT", path: "/contact" },
+    { label: "SITEMAP", path: "/sitemap" },
+  ];
+
+  return (
+    <header
+      className={`hero-header ${location.pathname === "/" ? "home-header" : ""} ${hasPageOverflowClip ? "page-overflow-clip" : ""}`}
+    >
+      {/* TOP BAR */}
+      <div className="top-bar">
+        <NavLink
+          to="/"
+          className="owner-name logo-link logo-slide"
+          onClick={() => setOpen(false)}
+        >
+          <img
+            src={`${import.meta.env.BASE_URL}image/logo.svg`}
+            className="site-logo"
+            alt="Sumit Panchal - QA Portfolio Logo"
+          />
+        </NavLink>
+
+        <button
+          type="button"
+          className={`hamburger ${open ? "is-open" : ""} ${showCloseIcon ? "show-close" : ""}`}
+          onClick={toggleMenu}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+        />
+
+        <nav id="mobile-nav" className={`nav-links nav ${open ? "open" : ""}`}>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.path}
+              className={({ isActive }) => (isActive ? "active" : "")}
+              onClick={() => setOpen(false)}
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+
+      {/* CENTER TITLE – conditional based on route */}
+      <div
+        key={`title-${location.pathname}`}
+        className="hero-title hero-animate"
+      >
+        {location.pathname === "/about" ? (
+          <>
+            <h1>
+              <b>ABOUT</b>
+            </h1>
+            <h2>
+              <b>
+                | QA Professional | SDLC & STLC | Defect Lifecycle | Agile Teams |
+                5+ Years Experience | Quality-Driven & Detail-Oriented |
+              </b>
+            </h2>
+          </>
+        ) : location.pathname === "/services" ? (
+          <>
+            <h1>
+              <b>SERVICES</b>
+            </h1>
+            <h2>
+              <b>
+                | Functional Testing | Regression & Re-testing | Black Box
+                Testing | Smoke & Sanity Testing |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : location.pathname === "/projects" ? (
+          <>
+            <h1>
+              <b>PROJECTS</b>
+            </h1>
+            <h2>
+              <b>
+                | Real-World QA Projects | End-to-End Testing | Functional &
+                Regression Testing | Domain-Driven Applications |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : location.pathname === "/portfolio" ? (
+          <>
+            <h1>
+              <b>PORTFOLIO</b>
+            </h1>
+            <h2>
+              <b>
+                | Manual & UAT Testing | SDLC & STLC | Defect Lifecycle | Agile
+                Methodology | Web & Mobile Applications | 5+ Years Experience |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : location.pathname.startsWith("/gallery") ? (
+          <>
+            <h1>
+              <b>GALLERY</b>
+            </h1>
+            <h2>
+              <b>
+                | Certifications | Work Samples | Professional Highlights |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : location.pathname.startsWith("/blogs") ? (
+          <>
+            <h1>
+              <b>BLOGS</b>
+            </h1>
+            <h2>
+              <b>
+                | Insights | Experience | Knowledge Sharing | Best Practices | Testing Tips | Industry Updates |
+              </b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : location.pathname === "/contact" ? (
+          <>
+            <h1>
+              <b>CONTACT</b>
+            </h1>
+            <h2>
+              <b>| Let's Collaborate | QA Opportunities | Get in Touch |</b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : location.pathname === "/sitemap" ? (
+          <>
+            <h1>
+              <b>SITEMAP</b>
+            </h1>
+            <h2>
+              <b>| Complete Site Navigation | Quick Access |</b>
+            </h2>
+            <div className="title-underline"></div>
+          </>
+        ) : (
+          <>
+            <h1>
+              <b>SUMIT PANCHAL</b>
+            </h1>
+            <h2>
+              <b>| Quality Analyst Engineer |</b>
+            </h2>
+          </>
+        )}
+      </div>
+
+      {/* PROFILE BADGE */}
+      <div
+        key={`profile-${location.pathname}`}
+        className="profile-badge profile-slide"
+      >
+        <img
+          src={`${import.meta.env.BASE_URL}image/profile.jpg`}
+          alt="Profile"
+        />
+        <span className="profile-name">
+          <b>SUMIT PANCHAL</b>
+        </span>
+      </div>
+    </header>
+  );
+}

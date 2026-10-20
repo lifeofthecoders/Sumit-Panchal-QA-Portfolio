@@ -1,0 +1,11 @@
+.hero-header.page-overflow-clip {
+    overflow-x: clip;
+}
+
+.about-page,
+.services-page,
+.projects-page,
+.portfolio-page,
+.blogs-page {
+    overflow-x: clip;
+}

@@ -1,0 +1,232 @@
+import { useEffect } from "react";
+import Header from "../components/Header";
+import usePageAnimations from "../hooks/usePageAnimations";
+import "../assets/css/gallery.css";
+import "../assets/js/gallery";
+
+// ✅ IMPORT IMAGE PROPERLY
+import home4 from "/image/home4.jpg";
+
+export default function Gallery() {
+  // Same animation hook
+  usePageAnimations();
+
+  // ✅ ANIMATION HOOK - SAME AS ABOUT PAGE
+  useEffect(() => {
+    /* ============================
+       ANCHOR ICON COPY LINK
+       ============================ */
+    const anchorIcons = document.querySelectorAll(".anchor-icon");
+
+    const handleAnchorClick = (e) => {
+      e.preventDefault();
+      const id = e.currentTarget.getAttribute("data-target");
+      if (!id) return;
+
+      const fullURL =
+        window.location.origin + window.location.pathname + "#" + id;
+
+      navigator.clipboard.writeText(fullURL);
+
+      e.currentTarget.innerText = "✅";
+      setTimeout(() => {
+        e.currentTarget.innerText = "🔗";
+      }, 1200);
+    };
+
+    anchorIcons.forEach((icon) =>
+      icon.addEventListener("click", handleAnchorClick)
+    );
+
+    /* ============================
+       INTERSECTION OBSERVER
+       ============================ */
+    const observerOptions = { threshold: 0.1 };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle("in-view", entry.isIntersecting);
+      });
+    }, observerOptions);
+
+    const animatedElements = document.querySelectorAll(
+      ".slide-up, .hero-animate h1, .hero-animate h2, .profile-slide, .animate-content"
+    );
+
+    animatedElements.forEach((el) => observer.observe(el));
+
+    /* ============================
+       LOGO RE-ANIMATION
+       ============================ */
+    const logo = document.querySelector(".logo-slide");
+    let lastScrollY = window.scrollY;
+
+    const restartLogoAnimation = () => {
+      if (!logo) return;
+      logo.classList.remove("animate");
+      void logo.offsetWidth;
+      logo.classList.add("animate");
+    };
+
+    restartLogoAnimation();
+
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+      if (Math.abs(currentScroll - lastScrollY) > 12) {
+        restartLogoAnimation();
+        lastScrollY = currentScroll;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    /* ============================
+       CLEANUP (CRITICAL)
+       ============================ */
+    return () => {
+      anchorIcons.forEach((icon) =>
+        icon.removeEventListener("click", handleAnchorClick)
+      );
+      animatedElements.forEach((el) => observer.unobserve(el));
+      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  return (
+    <>
+      {/* PAGE CONTENT */}
+      <section className="gallery-page">
+        <main className="gallery">
+          <section className="gallery-container">
+
+            {/* CERTIFICATIONS */}
+            <section className="gallery-card">
+
+              <h3 id="certifications" className="heading-link">
+                <b>📜 CERTIFICATIONS</b>
+                <a href="/#gallery/#certifications" className="anchor-icon" data-target="gallery/#certifications">🔗</a>
+              </h3>
+
+              <div className="gallery-grid">
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
+                </div>
+              </div>
+
+            </section>
+
+            {/* WORK SAMPLES */}
+            <section className="gallery-card">
+
+              <h3 id="work-samples" className="heading-link">
+                <b>📂 WORK SAMPLES</b>
+                <a href="/#gallery/#work-samples" className="anchor-icon" data-target="gallery/#work-samples">🔗</a>
+              </h3>
+
+              <div className="gallery-grid">
+                {/* <div className="gallery-item">
+                  <img src={home4} alt="Work Sample" />
+                </div> */}
+
+                <div className="gallery-item excel-card">
+                  <a
+                    href={`${import.meta.env.BASE_URL}image/LYMÜV_Test_Cases.xlsx`}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="excel-link"
+                  >
+                    <div className="excel-box">
+                      <span className="excel-title">📊 LYMÜV  Test Cases</span>
+                      <p className="excel-subtitle">Click to Download ⬇️</p>
+                    </div>
+                  </a>
+                </div>
+
+
+                {/* <div className="gallery-item">
+                  <img
+                    src={`${import.meta.env.BASE_URL}image/Appbugs.jpg`}
+                    alt="Work Sample"
+                  />
+                </div> */}
+
+                <div className="gallery-item excel-card">
+                  <a
+                    href={`${import.meta.env.BASE_URL}image/LYMÜV_Bugs_Documentations.xlsx`}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="excel-link"
+                  >
+                    <div className="excel-box">
+                      <span className="excel-title">📊 LYMÜV Bugs Documentation</span>
+                      <p className="excel-subtitle">Click to Download ⬇️</p>
+                    </div>
+                  </a>
+                </div>
+
+                {/* <div className="gallery-item">
+                  <img
+                    src={`${import.meta.env.BASE_URL}image/Admin_Panel_Bugs.jpg`}
+                    alt="Work Sample"
+                  />
+                </div> */}
+
+                <div className="gallery-item excel-card">
+                  <a
+                    href={`${import.meta.env.BASE_URL}image/DapMe.xlsx`}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="excel-link"
+                  >
+                    <div className="excel-box">
+                      <span className="excel-title">📊 DapMe Documentation</span>
+                      <p className="excel-subtitle">Click to Download ⬇️</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+            </section>
+
+            {/* PROFESSIONAL HIGHLIGHTS */}
+            <section className="gallery-card">
+
+              <h3 id="professional-highlights" className="heading-link">
+                <b>✨ PROFESSIONAL HIGHLIGHTS</b>
+                <a href="/#gallery/#professional-highlights" className="anchor-icon" data-target="gallery/#professional-highlights">🔗</a>
+              </h3>
+
+              <div className="gallery-grid">
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Highlight" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Highlight" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Highlight" />
+                </div>
+              </div>
+
+            </section>
+
+          </section>
+        </main>
+      </section>
+    </>
+  );
+}
