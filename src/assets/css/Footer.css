@@ -51,6 +51,22 @@
   transform: translateY(-2px);
 }
 
+/* Morse Code Hover Effect */
+.footer-morse-code {
+  cursor: pointer;
+  color: #0016EC;
+  text-decoration: underline;
+  text-decoration-color: #0016EC;
+  text-underline-offset: 4px;
+  transition: color 0.3s ease-in-out,
+    text-decoration-color 0.3s ease-in-out;
+}
+
+.footer-morse-code:hover {
+  color: red;
+  text-decoration-color: red;
+}
+
 /* Keep all three sections separate on compact screens. */
 @media (max-width: 1100px) {
   .footer {

@@ -110,15 +110,51 @@ export default function Gallery() {
 
               <div className="gallery-grid">
                 <div className="gallery-item">
-                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - Quality_Analyst Assessment_Certificate.png`} alt="Certification" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - Automation_Testing_Sumit_Certificate.png`} alt="Certification" />
                 </div>
 
                 <div className="gallery-item">
-                  <img src={`${import.meta.env.BASE_URL}image/QA14.jpg`} alt="Certification" />
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - API Integration Certificate of Completion.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - Component Testing Certificate.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - Frontend Debugging Certificate.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - ISTQB Generative AI Certificate.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - Certificate of Profession - ISTQB Automation Test Engineer.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - Certificate of Foundation Level Of Software Testing Profession.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - ISTQB CTFL Certificate of Profession.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - ISTQB Foundation Level Agile Tester Certificate.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - ISTQB Foundation Level Certificate.png`} alt="Certification" />
+                </div>
+
+                <div className="gallery-item">
+                  <img src={`${import.meta.env.BASE_URL}certificates/Sumit Panchal - LinkedIn Learning Certificate of Completion.png`} alt="Certification" />
                 </div>
               </div>
 

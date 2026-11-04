@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   FaGithub,
@@ -17,11 +18,11 @@ const Footer = () => {
     <footer className="footer">
       {/* Left Side Part */}
       <div className="footer-left">
-        © 2025 Sumit Panchal. All rights reserved.
+        © {new Date().getFullYear()} Sumit Panchal. All rights reserved.
       </div>
 
       {/* Center Part */}
-      <div className="footer-center">
+      <div className="footer-center footer-morse-code">
         📡 ... ..- -- .. - / .--. .- -. -.-. .... .- .-.. 🛰️
       </div>
 

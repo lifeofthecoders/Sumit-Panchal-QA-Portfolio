@@ -1,4 +1,4 @@
-const assetRoot = `${import.meta.env.BASE_URL}image/project/`;
+const assetRoot = `${import.meta.env.BASE_URL}project/`;
 const projectAsset = (filename) => `${assetRoot}${filename}`;
 
 export const referenceProjects = [
