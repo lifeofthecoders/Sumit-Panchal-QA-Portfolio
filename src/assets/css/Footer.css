@@ -51,20 +51,42 @@
   transform: translateY(-2px);
 }
 
-/* Morse Code Hover Effect */
+/* Morse Code - Clickable Home Navigation */
 .footer-morse-code {
   cursor: pointer;
   color: #0016EC;
   text-decoration: underline;
   text-decoration-color: #0016EC;
   text-underline-offset: 4px;
-  transition: color 0.3s ease-in-out,
-    text-decoration-color 0.3s ease-in-out;
+  transition:
+    color 0.3s ease-in-out,
+    text-decoration-color 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
 }
 
-.footer-morse-code:hover {
+/* Morse Code Link */
+.footer-morse-link {
+  display: inline-block;
+  color: inherit;
+  text-decoration: inherit;
+  text-decoration-color: inherit;
+  text-underline-offset: inherit;
+  cursor: pointer;
+  transition: inherit;
+}
+
+/* Hover Effect */
+.footer-morse-code:hover,
+.footer-morse-link:hover {
   color: red;
   text-decoration-color: red;
+}
+
+/* Keyboard Accessibility */
+.footer-morse-link:focus-visible {
+  outline: 2px solid #0016EC;
+  outline-offset: 5px;
+  border-radius: 3px;
 }
 
 /* Keep all three sections separate on compact screens. */
