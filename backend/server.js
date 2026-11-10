@@ -1,6 +1,3 @@
-import dns from 'node:dns/promises';
-dns.setServers(['8.8.8.8', '1.1.1.1']);
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -137,9 +134,17 @@ app.options("*", cors(corsOptions));
    Health Endpoints
    ========================= */
 app.get("/api/health", (req, res) => {
-  return res.status(200).json({
-    ok: true,
-    message: "Backend is running",
+  const databaseReady = mongoose.connection.readyState === 1 && dbConnected;
+  return res.status(databaseReady ? 200 : 503).json({
+    ok: databaseReady,
+    service: "qa-portfolio-backend",
+    message: databaseReady
+      ? "Backend and database are ready"
+      : "Backend is running, but the database is not connected",
+    database: {
+      connected: databaseReady,
+      state: mongoose.connection.readyState,
+    },
   });
 });
 
