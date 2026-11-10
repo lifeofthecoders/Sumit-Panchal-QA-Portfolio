@@ -50,11 +50,8 @@
 // src/admin/AdminDashboard.jsx
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authFetch } from "../utils/authFetch";   // ← Added
-
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://sumit-panchal-qa-portfolio.onrender.com";
+import { authFetch } from "../utils/authFetch";
+import { BACKEND_ASSET_BASE_URL } from "../config/api";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -73,9 +70,9 @@ const AdminDashboard = () => {
 
         let avatar = data.profilePic;
         if (avatar && !avatar.startsWith("http")) {
-          avatar = `${API_BASE}${avatar}`;
+          avatar = `${BACKEND_ASSET_BASE_URL}${avatar}`;
         }
-        if (!avatar) avatar = `${API_BASE}/image/profile.jpg`;
+        if (!avatar) avatar = `${BACKEND_ASSET_BASE_URL}/image/profile.jpg`;
 
         localStorage.setItem("adminAvatar", avatar);
         localStorage.setItem("adminName", data.name || "");

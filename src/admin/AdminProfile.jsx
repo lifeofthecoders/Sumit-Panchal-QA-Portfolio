@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../assets/css/admin-profile.css";
 import { authFetch } from "../utils/authFetch";
 import { useToast } from "../components/ToastProvider";
-
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://sumit-panchal-qa-portfolio.onrender.com";
+import { BACKEND_ASSET_BASE_URL } from "../config/api";
 
 const AdminProfile = () => {
   const { showToast } = useToast();
@@ -50,9 +47,9 @@ const AdminProfile = () => {
 
       let avatar = data.profilePic;
       if (avatar && !avatar.startsWith("http")) {
-        avatar = `${API_BASE}${avatar}`;
+        avatar = `${BACKEND_ASSET_BASE_URL}${avatar}`;
       }
-      if (!avatar) avatar = `${API_BASE}/image/profile.jpg`;
+      if (!avatar) avatar = `${BACKEND_ASSET_BASE_URL}/image/profile.jpg`;
 
       const updatedProfile = {
         name: data.name || "",
@@ -132,7 +129,7 @@ const AdminProfile = () => {
       profile.dob ? 1 : 0,
       profile.emergencyName.trim() ? 1 : 0,
       profile.emergencyPhone.trim() ? 1 : 0,
-      profile.profilePic && profile.profilePic !== `${API_BASE}/image/profile.jpg` ? 1 : 0,
+      profile.profilePic && profile.profilePic !== `${BACKEND_ASSET_BASE_URL}/image/profile.jpg` ? 1 : 0,
     ].reduce((a, b) => a + b, 0);
     return Math.round((filledFields / totalFields) * 100);
   };
@@ -177,7 +174,7 @@ const AdminProfile = () => {
 
       let avatar = data.profilePic;
       if (avatar && !avatar.startsWith("http")) {
-        avatar = `${API_BASE}${avatar}`;
+        avatar = `${BACKEND_ASSET_BASE_URL}${avatar}`;
       }
 
       const updatedProfile = {

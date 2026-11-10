@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API_BASE_URL from "../config/api";
+import API_BASE_URL, { BACKEND_ASSET_BASE_URL } from "../config/api";
 import { useToast } from "../components/ToastProvider";
 
 // React Icons
@@ -88,7 +88,7 @@ const AdminLogin = () => {
 
         let avatar = data.admin.profilePic;
         if (avatar && !avatar.startsWith("http")) {
-          avatar = `${API_BASE_URL}${avatar}`;
+          avatar = `${BACKEND_ASSET_BASE_URL}${avatar}`;
         }
 
         localStorage.setItem(
