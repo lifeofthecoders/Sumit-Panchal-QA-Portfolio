@@ -2,7 +2,7 @@
 # Example multipart upload test. Replace FILE with an actual image file on your machine.
 set -euo pipefail
 
-BASE=https://sumit-panchal-qa-portfolio.onrender.com
+BASE=https://sumit-panchal-qa-portfolio-1h3z.onrender.com
 FILE="${1:-D:/Projects/Sumit-Panchal-QA-Portfolio/tinyfile.txt}"
 
 echo "Uploading $FILE to $BASE/api/blogs/upload"

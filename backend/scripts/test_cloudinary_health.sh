@@ -2,7 +2,7 @@
 # Quick health checks for the backend and Cloudinary
 set -euo pipefail
 
-BASE=https://sumit-panchal-qa-portfolio.onrender.com
+BASE=https://sumit-panchal-qa-portfolio-1h3z.onrender.com
 
 echo "GET $BASE/api/health"
 curl -i "$BASE/api/health" || true

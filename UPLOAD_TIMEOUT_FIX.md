@@ -47,7 +47,7 @@ Total: 8-25 seconds
 ### Error: "Failed to fetch"
 **Cause**: Backend is not reachable  
 **Solutions**:
-1. Check: https://sumit-panchal-qa-portfolio.onrender.com/api/health
+1. Check: https://sumit-panchal-qa-portfolio-1h3z.onrender.com/api/health
    - Should return: `{"ok":true,"message":"Backend is running"}`
    - If fails: Backend is down or Render is restarting
 2. Wait 30-60 seconds (Render free tier wakes up slowly)

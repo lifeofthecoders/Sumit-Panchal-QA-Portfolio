@@ -20,9 +20,9 @@
     - After redeploy, run these from your terminal (or paste the URLs in browser):
 
  ```bash
- curl -i https://sumit-panchal-qa-portfolio.onrender.com/api/health
- curl -i https://sumit-panchal-qa-portfolio.onrender.com/api/cloudinary-health
- curl -i -X POST https://sumit-panchal-qa-portfolio.onrender.com/api/blogs/upload-test
+ curl -i https://sumit-panchal-qa-portfolio-1h3z.onrender.com/api/health
+ curl -i https://sumit-panchal-qa-portfolio-1h3z.onrender.com/api/cloudinary-health
+ curl -i -X POST https://sumit-panchal-qa-portfolio-1h3z.onrender.com/api/blogs/upload-test
  ```
 
  Expected results
@@ -31,7 +31,7 @@
   - `/api/blogs/upload-test` → 200 OK
 
  4) Rebuild & redeploy the frontend
-    - Either set `VITE_API_BASE_URL` during the build to `https://sumit-panchal-qa-portfolio.onrender.com` OR make sure you pushed the runtime fix (already made in `src/services/blogService.js`) and rebuild/publish your GitHub Pages site.
+    - Either set `VITE_API_BASE_URL` during the build to `https://sumit-panchal-qa-portfolio-1h3z.onrender.com` OR make sure you pushed the runtime fix (already made in `src/services/blogService.js`) and rebuild/publish your GitHub Pages site.
 
  5) Test an upload from the live site
     - Use the admin UI to upload an image and watch DevTools → Network for `/api/blogs/upload` request and response.
