@@ -495,7 +495,7 @@ app.options("*", cors(corsOptions));
    GET /
    HTML for browsers | JSON for API clients
    ========================================================= */
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   const databaseReady =
     mongoose.connection.readyState === 1 && dbConnected;
 
@@ -521,16 +521,32 @@ app.get("/", (req, res) => {
     });
   }
 
+  // Perform a real Cloudinary ping for the browser dashboard.
+  // The JSON overview response above remains unchanged for existing clients.
+  let cloudinaryHealthy = false;
+
+  if (cloudinaryConfigured) {
+    try {
+      await cloudinary.api.ping();
+      cloudinaryHealthy = true;
+    } catch (cloudinaryError) {
+      console.error(
+        "❌ Root dashboard Cloudinary check failed:",
+        cloudinaryError.message
+      );
+    }
+  }
+
   const sections = [
     {
       title: "System Information",
       content: `
         <div class="info-grid">
           ${infoItem(
-            "API STATUS",
-            databaseReady ? "Operational" : "Degraded",
-            databaseReady ? "healthy" : "unhealthy"
-          )}
+        "API STATUS",
+        databaseReady ? "Operational" : "Degraded",
+        databaseReady ? "healthy" : "unhealthy"
+      )}
 
           ${infoItem("DEVELOPER", "Sumit Panchal")}
 
@@ -539,16 +555,20 @@ app.get("/", (req, res) => {
           ${infoItem("API TYPE", "REST API")}
 
           ${infoItem(
-            "DATABASE",
-            databaseReady ? "Connected" : "Disconnected",
-            databaseReady ? "healthy" : "unhealthy"
-          )}
+        "DATABASE",
+        databaseReady ? "Connected" : "Disconnected",
+        databaseReady ? "healthy" : "unhealthy"
+      )}
 
           ${infoItem(
-            "CLOUDINARY",
-            cloudinaryConfigured ? "Configured" : "Not Configured",
-            cloudinaryConfigured ? "healthy" : "unhealthy"
-          )}
+        "CLOUDINARY",
+        cloudinaryHealthy
+          ? "Connected"
+          : cloudinaryConfigured
+            ? "Connection Failed"
+            : "Not Configured",
+        cloudinaryHealthy ? "healthy" : "unhealthy"
+      )}
         </div>
       `,
     },
@@ -559,9 +579,9 @@ app.get("/", (req, res) => {
           ${endpointItem("/", "API Home")}
           ${endpointItem("/api/health", "/api/health")}
           ${endpointItem(
-            "/api/cloudinary-health",
-            "/api/cloudinary-health"
-          )}
+        "/api/cloudinary-health",
+        "/api/cloudinary-health"
+      )}
           ${endpointItem("/api/blogs", "/api/blogs")}
           ${endpointItem("/api/admin", "/api/admin")}
         </div>
@@ -616,25 +636,25 @@ app.get("/api/health", (req, res) => {
       content: `
         <div class="info-grid">
           ${infoItem(
-            "CURRENT STATUS",
-            databaseReady ? "Healthy" : "Degraded",
-            databaseReady ? "healthy" : "unhealthy"
-          )}
+        "CURRENT STATUS",
+        databaseReady ? "Healthy" : "Degraded",
+        databaseReady ? "healthy" : "unhealthy"
+      )}
 
           ${infoItem(
-            "SERVER UPTIME",
-            formatUptime(process.uptime())
-          )}
+        "SERVER UPTIME",
+        formatUptime(process.uptime())
+      )}
 
           ${infoItem(
-            "LAST CHECKED (UTC)",
-            new Date().toISOString()
-          )}
+        "LAST CHECKED (UTC)",
+        new Date().toISOString()
+      )}
 
           ${infoItem(
-            "SERVICE",
-            "QA Portfolio Backend"
-          )}
+        "SERVICE",
+        "QA Portfolio Backend"
+      )}
         </div>
       `,
     },
@@ -643,24 +663,24 @@ app.get("/api/health", (req, res) => {
       content: `
         <div class="info-grid">
           ${infoItem(
-            "DATABASE STATUS",
-            databaseReady ? "Connected" : "Disconnected",
-            databaseReady ? "healthy" : "unhealthy"
-          )}
+        "DATABASE STATUS",
+        databaseReady ? "Connected" : "Disconnected",
+        databaseReady ? "healthy" : "unhealthy"
+      )}
 
           ${infoItem(
-            "CONNECTION STATE",
-            String(mongoose.connection.readyState)
-          )}
+        "CONNECTION STATE",
+        String(mongoose.connection.readyState)
+      )}
 
           ${infoItem("API ENDPOINT", "/api/health")}
 
           ${infoItem(
-            "HTTP RESPONSE",
-            databaseReady
-              ? "200 OK"
-              : "503 Service Unavailable"
-          )}
+        "HTTP RESPONSE",
+        databaseReady
+          ? "200 OK"
+          : "503 Service Unavailable"
+      )}
         </div>
       `,
     },
@@ -670,9 +690,9 @@ app.get("/api/health", (req, res) => {
         <div class="endpoint-list">
           ${endpointItem("/", "API Home")}
           ${endpointItem(
-            "/api/cloudinary-health",
-            "/api/cloudinary-health"
-          )}
+        "/api/cloudinary-health",
+        "/api/cloudinary-health"
+      )}
         </div>
       `,
     },
@@ -686,9 +706,8 @@ app.get("/api/health", (req, res) => {
       "Real-time backend and MongoDB service health information.",
     statusHealthy: databaseReady,
     sections,
-    footer: `QA Portfolio API · ${
-      databaseReady ? "Database operational" : "Database unavailable"
-    }`,
+    footer: `QA Portfolio API · ${databaseReady ? "Database operational" : "Database unavailable"
+      }`,
   });
 
   return sendHtmlPage(res, html, statusCode);
@@ -721,22 +740,22 @@ app.get("/api/cloudinary-health", async (req, res) => {
         content: `
           <div class="info-grid">
             ${infoItem(
-              "CURRENT STATUS",
-              "Not Configured",
-              "unhealthy"
-            )}
+          "CURRENT STATUS",
+          "Not Configured",
+          "unhealthy"
+        )}
 
             ${infoItem("SERVICE", "Cloudinary")}
 
             ${infoItem(
-              "LAST CHECKED (UTC)",
-              new Date().toISOString()
-            )}
+          "LAST CHECKED (UTC)",
+          new Date().toISOString()
+        )}
 
             ${infoItem(
-              "HTTP RESPONSE",
-              "503 Service Unavailable"
-            )}
+          "HTTP RESPONSE",
+          "503 Service Unavailable"
+        )}
           </div>
         `,
       },
@@ -745,21 +764,21 @@ app.get("/api/cloudinary-health", async (req, res) => {
         content: `
           <div class="info-grid">
             ${infoItem(
-              "CONFIGURATION",
-              "Credentials Missing",
-              "unhealthy"
-            )}
+          "CONFIGURATION",
+          "Credentials Missing",
+          "unhealthy"
+        )}
 
             ${infoItem(
-              "CONNECTION TEST",
-              "Not Performed",
-              "unhealthy"
-            )}
+          "CONNECTION TEST",
+          "Not Performed",
+          "unhealthy"
+        )}
 
             ${infoItem(
-              "API ENDPOINT",
-              "/api/cloudinary-health"
-            )}
+          "API ENDPOINT",
+          "/api/cloudinary-health"
+        )}
 
             ${infoItem("MEDIA PROVIDER", "Cloudinary")}
           </div>
@@ -809,17 +828,17 @@ app.get("/api/cloudinary-health", async (req, res) => {
         content: `
           <div class="info-grid">
             ${infoItem(
-              "CURRENT STATUS",
-              "Connected",
-              "healthy"
-            )}
+          "CURRENT STATUS",
+          "Connected",
+          "healthy"
+        )}
 
             ${infoItem("SERVICE", "Cloudinary")}
 
             ${infoItem(
-              "LAST CHECKED (UTC)",
-              new Date().toISOString()
-            )}
+          "LAST CHECKED (UTC)",
+          new Date().toISOString()
+        )}
 
             ${infoItem("HTTP RESPONSE", "200 OK")}
           </div>
@@ -830,21 +849,21 @@ app.get("/api/cloudinary-health", async (req, res) => {
         content: `
           <div class="info-grid">
             ${infoItem(
-              "CONFIGURATION",
-              "Credentials Available",
-              "healthy"
-            )}
+          "CONFIGURATION",
+          "Credentials Available",
+          "healthy"
+        )}
 
             ${infoItem(
-              "CONNECTION TEST",
-              "Ping Successful",
-              "healthy"
-            )}
+          "CONNECTION TEST",
+          "Ping Successful",
+          "healthy"
+        )}
 
             ${infoItem(
-              "API ENDPOINT",
-              "/api/cloudinary-health"
-            )}
+          "API ENDPOINT",
+          "/api/cloudinary-health"
+        )}
 
             ${infoItem("MEDIA PROVIDER", "Cloudinary")}
           </div>
@@ -896,22 +915,22 @@ app.get("/api/cloudinary-health", async (req, res) => {
         content: `
           <div class="info-grid">
             ${infoItem(
-              "CURRENT STATUS",
-              "Connection Failed",
-              "unhealthy"
-            )}
+          "CURRENT STATUS",
+          "Connection Failed",
+          "unhealthy"
+        )}
 
             ${infoItem("SERVICE", "Cloudinary")}
 
             ${infoItem(
-              "LAST CHECKED (UTC)",
-              new Date().toISOString()
-            )}
+          "LAST CHECKED (UTC)",
+          new Date().toISOString()
+        )}
 
             ${infoItem(
-              "HTTP RESPONSE",
-              "503 Service Unavailable"
-            )}
+          "HTTP RESPONSE",
+          "503 Service Unavailable"
+        )}
           </div>
         `,
       },
@@ -920,21 +939,21 @@ app.get("/api/cloudinary-health", async (req, res) => {
         content: `
           <div class="info-grid">
             ${infoItem(
-              "CONFIGURATION",
-              "Credentials Available",
-              "healthy"
-            )}
+          "CONFIGURATION",
+          "Credentials Available",
+          "healthy"
+        )}
 
             ${infoItem(
-              "CONNECTION TEST",
-              "Ping Failed",
-              "unhealthy"
-            )}
+          "CONNECTION TEST",
+          "Ping Failed",
+          "unhealthy"
+        )}
 
             ${infoItem(
-              "API ENDPOINT",
-              "/api/cloudinary-health"
-            )}
+          "API ENDPOINT",
+          "/api/cloudinary-health"
+        )}
 
             ${infoItem("MEDIA PROVIDER", "Cloudinary")}
           </div>
@@ -966,11 +985,222 @@ app.get("/api/cloudinary-health", async (req, res) => {
   }
 });
 
+
+/* =========================================================
+   ADMIN API DOCUMENTATION
+   Browser GET requests receive documentation pages.
+   Actual API methods and JSON responses remain in adminAuthRoutes.
+   ========================================================= */
+
+const adminEndpointDocumentation = [
+  {
+    path: "/api/admin/login",
+    title: "Admin Login",
+    method: "POST",
+    access: "Public",
+    description:
+      "Authenticates an administrator and establishes the admin session using the authentication flow configured by the login controller.",
+    request: "Send the login credentials in the request body using the field names expected by loginAdmin.",
+    contentType: "application/json (confirm controller implementation)",
+    response:
+      "The controller returns the authentication result. The exact response fields and status codes are defined in loginAdmin.",
+    security: "This endpoint is public so an administrator can sign in.",
+  },
+  {
+    path: "/api/admin/profile",
+    title: "Get Admin Profile",
+    method: "GET",
+    access: "Protected",
+    description:
+      "Returns the authenticated administrator profile after verifyAdmin validates the admin session.",
+    request: "No request body is required.",
+    contentType: "Not applicable",
+    response:
+      "The profile response is generated by getProfile after authentication succeeds.",
+    security: "Requires a valid adminToken cookie or the authentication mechanism accepted by verifyAdmin.",
+  },
+  {
+    path: "/api/admin/profile",
+    title: "Update Admin Profile",
+    method: "PUT",
+    access: "Protected",
+    description:
+      "Updates administrator profile information and optionally accepts a profile image upload.",
+    request:
+      "Submit the profile fields expected by updateProfile. The image upload field is named profilePic.",
+    contentType: "multipart/form-data when uploading profilePic",
+    response:
+      "The update response is generated by updateProfile. Exact fields and validation rules are defined in the controller.",
+    security: "Requires a valid administrator session.",
+  },
+  {
+    path: "/api/admin/change-password",
+    title: "Change Admin Password",
+    method: "PUT",
+    access: "Protected",
+    description:
+      "Changes the authenticated administrator password through changePassword.",
+    request:
+      "Send the password fields expected by changePassword. Refer to the controller for exact field names and validation rules.",
+    contentType: "application/json (confirm controller implementation)",
+    response:
+      "The controller returns the password update result and any validation errors.",
+    security: "Requires a valid administrator session.",
+  },
+  {
+    path: "/api/admin/logout",
+    title: "Admin Logout",
+    method: "POST",
+    access: "Protected",
+    description:
+      "Clears the adminToken cookie and ends the current administrator session.",
+    request: "No request body is required.",
+    contentType: "Not applicable",
+    response: "On success, returns success: true and the message Logged out successfully.",
+    security: "Requires a valid administrator session.",
+  },
+];
+
+const renderAdminEndpointPage = (documentation) => {
+  const sections = [
+    {
+      title: "Endpoint Information",
+      content: `
+        <div class="info-grid">
+          ${infoItem("HTTP METHOD", documentation.method)}
+          ${infoItem("ENDPOINT", documentation.path)}
+          ${infoItem(
+            "AUTHENTICATION",
+            documentation.access,
+            documentation.access === "Protected" ? "unhealthy" : "healthy"
+          )}
+          ${infoItem("CONTENT TYPE", documentation.contentType)}
+        </div>
+      `,
+    },
+    {
+      title: "Description",
+      content: `<p class="description">${escapeHtml(documentation.description)}</p>`,
+    },
+    {
+      title: "Request Information",
+      content: `
+        <div class="info-grid">
+          ${infoItem("REQUEST BODY", documentation.request)}
+          ${infoItem("ACCESS", documentation.security)}
+        </div>
+      `,
+    },
+    {
+      title: "Response Information",
+      content: `<p class="description">${escapeHtml(documentation.response)}</p>`,
+    },
+    {
+      title: "Related Admin Endpoints",
+      content: `
+        <div class="endpoint-list">
+          ${endpointItem("/api/admin", "Admin API Overview")}
+          ${endpointItem("/api/admin/login", "Admin Login", "POST")}
+          ${endpointItem("/api/admin/profile", "Get Admin Profile", "GET")}
+          ${endpointItem("/api/admin/profile", "Update Admin Profile", "PUT")}
+          ${endpointItem("/api/admin/change-password", "Change Password", "PUT")}
+          ${endpointItem("/api/admin/logout", "Admin Logout", "POST")}
+        </div>
+      `,
+    },
+  ];
+
+  return renderApiStatusPage({
+    badge: "ADMINISTRATOR API DOCUMENTATION",
+    title: documentation.title,
+    subtitle: `QA Portfolio Administration · ${documentation.method}`,
+    description: documentation.description,
+    statusHealthy: true,
+    sections,
+    footer: "QA Portfolio API · Administrator endpoint documentation",
+  });
+};
+
+/* Admin API overview */
+app.get("/api/admin", (req, res, next) => {
+  if (!wantsHtmlPage(req)) {
+    return next();
+  }
+
+  const sections = [
+    {
+      title: "Administrator Information",
+      content: `
+        <div class="info-grid">
+          ${infoItem("API STATUS", "Available", "healthy")}
+          ${infoItem("DEVELOPER", "Sumit Panchal")}
+          ${infoItem("AUTHENTICATION", "JWT Authentication")}
+          ${infoItem("API TYPE", "REST API")}
+        </div>
+      `,
+    },
+    {
+      title: "Administrator API Endpoints",
+      content: `
+        <div class="endpoint-list">
+          ${endpointItem("/api/admin/login", "Login documentation", "POST")}
+          ${endpointItem("/api/admin/profile", "Profile documentation", "GET")}
+          ${endpointItem("/api/admin/change-password", "Change Password documentation", "PUT")}
+          ${endpointItem("/api/admin/logout", "Logout documentation", "POST")}
+        </div>
+      `,
+    },
+    {
+      title: "Profile Management",
+      content: `
+        <div class="endpoint-list">
+          ${endpointItem("/api/admin/profile", "Update Profile", "PUT")}
+        </div>
+      `,
+    },
+  ];
+
+  const html = renderApiStatusPage({
+    badge: "ADMINISTRATOR API SERVICES",
+    title: "Admin API",
+    subtitle: "QA Portfolio Administration",
+    description:
+      "Secure administrator services for authentication, profile management, and account operations.",
+    statusHealthy: true,
+    sections,
+    footer: "QA Portfolio API · Administrator services",
+  });
+
+  return sendHtmlPage(res, html, 200);
+});
+
+/*
+ * Documentation is served only for browser-style GET requests.
+ * API clients requesting JSON or using a wildcard Accept header continue to the
+ * original admin router, preserving its authentication and responses.
+ * GET /api/admin/profile in a browser opens documentation; an API
+ * client must request application/json to retrieve the real profile.
+ */
+adminEndpointDocumentation.forEach((documentation) => {
+  app.get(documentation.path, (req, res, next) => {
+    if (!wantsHtmlPage(req)) {
+      return next();
+    }
+
+    return sendHtmlPage(
+      res,
+      renderAdminEndpointPage(documentation),
+      200
+    );
+  });
+});
+
 /* =========================
-   Routes
+   Existing API Routes
    ========================= */
 app.use("/api/blogs", requireDatabase, blogsRouter);
 app.use("/api/admin", adminAuthRoutes);
+
 
 /* =========================
    404 Handler
