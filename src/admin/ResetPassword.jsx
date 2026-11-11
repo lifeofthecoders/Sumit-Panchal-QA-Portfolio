@@ -170,7 +170,7 @@ const ResetPassword = () => {
           <p className="welcome-subtitle">
             {success
               ? "Your administrator password has been updated successfully."
-              : "Create a new password for your administrator account. Enter your new password below and confirm it to continue."}
+              : "Create a new password for your administrator account. Please enter your new password below and confirm it to continue."}
           </p>
 
           {!success ? (
