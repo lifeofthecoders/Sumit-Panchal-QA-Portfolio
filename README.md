@@ -24,9 +24,8 @@ A professional Manual QA portfolio showcasing software testing expertise, practi
 
 </div>
 
-
-
-[Overview](#-project-overview) · [Features](#-key-features) · [Technology](#-technology-stack) · [Architecture](#-application-architecture) · [Project Structure](#-project-structure) · [Setup](#-getting-started) · [Authentication](#-jwt-authentication--administrator-workflow) · [Database](#-mongodb-database-integration) · [Deployment](#-deployment-architecture) · [License](#-license--ownership)
+[Overview](#-project-overview) · [Features](#-key-features) · [Technology](#-technology-stack) · [Architecture](#-application-architecture) · [Project Structure](#-project-structure) · [Setup](#-getting-started) · [Authentication](#-jwt-authentication--administrator-workflow) · [Database](#-mongodb-database-integration) · [API Overview](#-api-overview) ·
+[API Documentation](#-browser-based-api-documentation) · [Deployment](#-deployment-architecture) · [License](#-license--ownership)
 
 ---
 
@@ -652,23 +651,65 @@ Frontend-only changes are deployed through the GitHub Actions workflow. Backend 
 
 The backend exposes REST API endpoints for administrator authentication, blog operations, and service health monitoring.
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/health` | Backend and database health |
-| GET | `/api/cloudinary-health` | Cloudinary connection health |
-| POST | `/api/admin/login` | Administrator login |
-| GET | `/api/admin/profile` | Get administrator profile |
-| PUT | `/api/admin/profile` | Update administrator profile |
-| PUT | `/api/admin/change-password` | Change administrator password |
-| POST | `/api/admin/logout` | Administrator logout |
-| GET | `/api/blogs` | Retrieve paginated blog records |
-| GET | `/api/blogs/:id` | Retrieve a blog by ID |
-| POST | `/api/blogs` | Create a blog record |
-| PUT | `/api/blogs/:id` | Update a blog record |
-| DELETE | `/api/blogs/:id` | Delete a blog record |
-| POST | `/api/blogs/upload` | Upload a blog image |
+### Backend & Health Endpoints
 
-Protected administrator endpoints require a valid JWT in the authorization header.
+| Method | Endpoint                 | Description                                           |
+| ------ | ------------------------ | ----------------------------------------------------- |
+| GET    | `/`                      | Browser-based backend overview; JSON for API clients |
+| GET    | `/api/health`            | Backend and database health                           |
+| GET    | `/api/cloudinary-health` | Cloudinary connection health                          |
+
+### Administrator Endpoints
+
+| Method | Endpoint                     | Description                    | Access    |
+| ------ | ---------------------------- | ------------------------------ | --------- |
+| POST   | `/api/admin/login`           | Administrator login            | Public    |
+| GET    | `/api/admin/profile`         | Get administrator profile      | Protected |
+| PUT    | `/api/admin/profile`         | Update administrator profile   | Protected |
+| PUT    | `/api/admin/change-password` | Change administrator password  | Protected |
+| POST   | `/api/admin/logout`           | Administrator logout            | Protected |
+
+### Blog Endpoints
+
+| Method | Endpoint            | Description                     |
+| ------ | ------------------- | ------------------------------- |
+| GET    | `/api/blogs`        | Retrieve paginated blog records |
+| GET    | `/api/blogs/:id`    | Retrieve a blog by ID           |
+| POST   | `/api/blogs`        | Create a blog record            |
+| PUT    | `/api/blogs/:id`    | Update a blog record            |
+| DELETE | `/api/blogs/:id`    | Delete a blog record            |
+| POST   | `/api/blogs/upload` | Upload a blog image             |
+
+Protected administrator endpoints require valid administrator authentication.
+
+---
+
+## 🌐 Browser-Based API Documentation
+
+The backend provides browser-friendly HTML pages for viewing service information, checking system health, and exploring available administrator API operations.
+
+These pages make backend service information easier to access and understand through a web browser.
+
+### Available Browser Pages
+
+| Page               | Live URL                                                                                           | Description                                      |
+| ------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Backend Overview   | [Open API Home](https://sumit-panchal-qa-portfolio-1h3z.onrender.com/)                             | Backend overview and system information          |
+| Database Health    | [Open Health Page](https://sumit-panchal-qa-portfolio-1h3z.onrender.com/api/health)                | MongoDB connection and backend health status     |
+| Cloudinary Health  | [Open Cloudinary Page](https://sumit-panchal-qa-portfolio-1h3z.onrender.com/api/cloudinary-health) | Cloudinary configuration and connectivity status |
+| Admin API Overview | [Open Admin API Page](https://sumit-panchal-qa-portfolio-1h3z.onrender.com/api/admin)              | Administrator API overview and available operations |
+
+### Response Behavior
+
+- Browser requests that accept HTML receive formatted HTML status or overview pages.
+- API clients continue receiving JSON responses from the documented API endpoints.
+- Administrator operations retain their original HTTP methods and authentication requirements.
+- Protected administrator endpoints still require valid administrator authentication.
+- Health pages display service availability and relevant failure states when checks fail.
+
+**Important:** The administrator login, profile, change-password, and logout URLs are API operations handled by the existing administrator router. They are not separate HTML documentation pages.
+
+**Live Backend:** [Open QA Portfolio Backend](https://sumit-panchal-qa-portfolio-1h3z.onrender.com/)
 
 ---
 
@@ -719,6 +760,7 @@ The application can be verified at both the frontend and backend levels.
 - Test profile updates and password changes.
 - Validate image uploads and Cloudinary connectivity.
 - Check error responses and unavailable-service behavior.
+- Verify browser-based HTML status pages and API JSON responses.
 
 ### Useful Verification Commands
 
@@ -729,8 +771,14 @@ npm run build
 # Check frontend linting
 npm run lint
 
-# Start backend in development mode
+# Check backend server syntax
 cd backend
+node --check server.js
+
+# Check admin route syntax
+node --check src/routes/adminAuth.route.js
+
+# Start backend in development mode
 npm run dev
 ```
 
