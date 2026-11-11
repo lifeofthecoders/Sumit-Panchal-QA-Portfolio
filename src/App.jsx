@@ -1,3 +1,4 @@
+
 import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import API_BASE_URL from "./config/api";
@@ -20,6 +21,8 @@ import BlogDetail from "./pages/BlogDetail";
 const Projects = lazy(() => import("./pages/Projects"));
 
 import AdminLogin from "./admin/AdminLogin";
+import ForgotPassword from "./admin/ForgotPassword";
+import ResetPassword from "./admin/ResetPassword";
 import ProtectedRoute from "./admin/ProtectedRoute";
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/AdminDashboard";
@@ -33,7 +36,7 @@ function Layout() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
-  // 🔥 Warm up Render backend (prevents cold start delay)
+  // Warm up Render backend (prevents cold start delay)
   useEffect(() => {
     if (!API_BASE_URL) return;
 
@@ -62,6 +65,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
+
         <Route
           path="/projects"
           element={
@@ -70,6 +74,7 @@ export default function App() {
             </Suspense>
           }
         />
+
         <Route path="/project" element={<Navigate to="/projects" replace />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/gallery" element={<Gallery />} />
@@ -78,8 +83,10 @@ export default function App() {
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
 
-        {/* ================= ADMIN LOGIN ================= */}
+        {/* ================= ADMIN PUBLIC ROUTES ================= */}
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+        <Route path="/admin/reset-password" element={<ResetPassword />} />
 
         {/* ================= PROTECTED ADMIN SECTION ================= */}
         <Route

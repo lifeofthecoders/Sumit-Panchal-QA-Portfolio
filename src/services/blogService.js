@@ -1,215 +1,406 @@
+
 import API_BASE_URL from "../config/api";
 
-/**
- * Check if backend is accessible
- */
-const checkBackendHealth = async (timeout = 10000) => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+/* =========================
+   AUTHENTICATION HELPERS
+========================= */
 
-    const res = await fetch(`${API_BASE_URL}/api/health`, {
+const getAdminToken = () => {
+  const token = localStorage.getItem("admin-token");
+
+  if (!token) {
+    redirectToAdminLogin();
+    throw new Error("Authentication required. Please log in.");
+  }
+
+  return token;
+};
+
+const getAdminLoginUrl = () => {
+  const baseUrl = import.meta.env.BASE_URL || "/";
+  const normalizedBaseUrl = baseUrl.endsWith("/")
+    ? baseUrl
+    : `${baseUrl}/`;
+
+  return `${normalizedBaseUrl}#/admin/login`;
+};
+
+const redirectToAdminLogin = () => {
+  localStorage.removeItem("admin-token");
+  window.location.replace(getAdminLoginUrl());
+};
+
+const handleUnauthorized = () => {
+  redirectToAdminLogin();
+};
+
+const getAuthenticatedHeaders = (additionalHeaders = {}) => {
+  const token = getAdminToken();
+
+  return {
+    ...additionalHeaders,
+    Authorization: `Bearer ${token}`,
+  };
+};
+
+/* =========================
+   BACKEND HEALTH CHECK
+========================= */
+
+const checkBackendHealth = async (timeout = 10000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/health`, {
       signal: controller.signal,
     });
 
-    clearTimeout(timeoutId);
-    return res.ok;
-  } catch (err) {
+    return response.ok;
+  } catch (error) {
     return false;
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 
+/* =========================
+   PUBLIC BLOG READ OPERATIONS
+========================= */
+
 /**
- * GET all blogs (latest first)
+ * GET all blogs (latest first).
+ * Public access.
  */
 export const getBlogs = async () => {
-  const res = await fetch(`${API_BASE_URL}/api/blogs`);
-  if (!res.ok) throw new Error("Failed to fetch blogs");
-  return await res.json();
-};
+  const response = await fetch(`${API_BASE_URL}/api/blogs`);
 
-/**
- * GET single blog
- */
-export const getBlogById = async (id) => {
-  const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`);
-  if (!res.ok) return null;
-  return await res.json();
-};
-
-/**
- * Create or Update blog
- */
-export const saveBlog = async (blog) => {
-  // Update
-  if (blog.id) {
-    const res = await fetch(`${API_BASE_URL}/api/blogs/${blog.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(blog),
-    });
-
-    if (!res.ok) throw new Error("Failed to update blog");
-    return await res.json();
-  }
-
-  // Create
-  const payload = { ...blog };
-  delete payload.id;
-
-  const res = await fetch(`${API_BASE_URL}/api/blogs`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) throw new Error("Failed to create blog");
-  return await res.json();
-};
-
-/**
- * Delete blog
- */
-export const deleteBlog = async (id) => {
-  const res = await fetch(`${API_BASE_URL}/api/blogs/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!res.ok) throw new Error("Failed to delete blog");
-  return true;
-};
-
-/**
- * Paginated Blogs
- */
-export const getBlogsPaginated = async (page = 1, limit = 10) => {
-  const res = await fetch(
-    `${API_BASE_URL}/api/blogs?page=${page}&limit=${limit}`
-  );
-
-  if (!res.ok) {
+  if (!response.ok) {
     throw new Error("Failed to fetch blogs");
   }
 
-  return await res.json();
+  return await response.json();
 };
 
 /**
- * Upload Blog Image (Computer Upload → Cloudinary)
+ * GET single blog.
+ * Public access.
+ */
+export const getBlogById = async (id) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/blogs/${encodeURIComponent(id)}`
+  );
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return await response.json();
+};
+
+/**
+ * GET paginated blogs.
+ * Public access.
+ */
+export const getBlogsPaginated = async (page = 1, limit = 10) => {
+  const safePage = Math.max(1, Number(page) || 1);
+  const safeLimit = Math.min(50, Math.max(1, Number(limit) || 10));
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/blogs?page=${safePage}&limit=${safeLimit}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch blogs");
+  }
+
+  return await response.json();
+};
+
+/* =========================
+   PROTECTED ADMIN OPERATIONS
+========================= */
+
+/**
+ * Create or update a blog.
+ * Requires administrator authentication.
+ */
+export const saveBlog = async (blog) => {
+  if (!blog || typeof blog !== "object") {
+    throw new Error("Invalid blog data");
+  }
+
+  const token = getAdminToken();
+
+  const isUpdate = Boolean(blog.id);
+
+  let url = `${API_BASE_URL}/api/blogs`;
+  let method = "POST";
+  let payload = { ...blog };
+
+  if (isUpdate) {
+    url = `${API_BASE_URL}/api/blogs/${encodeURIComponent(blog.id)}`;
+    method = "PUT";
+  } else {
+    delete payload.id;
+  }
+
+  const response = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.status === 401) {
+    handleUnauthorized();
+    throw new Error("Your admin session has expired. Please log in again.");
+  }
+
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+        (isUpdate ? "Failed to update blog" : "Failed to create blog")
+    );
+  }
+
+  return data;
+};
+
+/**
+ * Delete a blog.
+ * Requires administrator authentication.
+ */
+export const deleteBlog = async (id) => {
+  if (!id) {
+    throw new Error("Blog ID is required");
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/blogs/${encodeURIComponent(id)}`,
+    {
+      method: "DELETE",
+      headers: getAuthenticatedHeaders(),
+    }
+  );
+
+  if (response.status === 401) {
+    handleUnauthorized();
+    throw new Error("Your admin session has expired. Please log in again.");
+  }
+
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete blog");
+  }
+
+  return true;
+};
+
+/* =========================
+   PROTECTED IMAGE UPLOAD
+========================= */
+
+/**
+ * Upload Blog Image (Computer Upload → Cloudinary).
+ * Requires administrator authentication.
  */
 export const uploadBlogImage = async (file, onProgress) => {
+  if (!(file instanceof File)) {
+    throw new Error("Please select a valid image file");
+  }
+
+  const token = getAdminToken();
   const uploadUrl = `${API_BASE_URL}/api/blogs/upload`;
+
   const formData = new FormData();
   formData.append("image", file);
 
-  // Optional: warm backend (Render cold start protection)
+  // Optional Render backend warm-up.
   if (API_BASE_URL.includes("onrender.com")) {
-    if (onProgress) onProgress(5);
+    if (onProgress) {
+      onProgress(5);
+    }
+
     checkBackendHealth(30000).catch(() => {
-      console.warn("⚠️ Backend health check failed, proceeding anyway");
+      console.warn("Backend health check failed, proceeding anyway.");
     });
   }
 
-  // Progress-based upload
-  if (onProgress && typeof onProgress === "function") {
+  // Progress-based upload using XMLHttpRequest.
+  if (typeof onProgress === "function") {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       let timeoutOccurred = false;
 
-      const timeout = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         timeoutOccurred = true;
         xhr.abort();
       }, 300000);
 
-      xhr.upload.addEventListener("progress", (e) => {
-        if (e.lengthComputable) {
-          const percent = Math.min((e.loaded / e.total) * 90, 90);
+      const cleanup = () => {
+        clearTimeout(timeoutId);
+      };
+
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.min(
+            (event.loaded / event.total) * 90,
+            90
+          );
+
           onProgress(Math.max(5, percent));
         }
       });
 
       xhr.addEventListener("load", () => {
-        clearTimeout(timeout);
-        onProgress(95);
+        cleanup();
 
-        if (xhr.status === 200 || xhr.status === 201) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            const url = data.imageUrl || data.url;
-
-            if (!url || !url.startsWith("http")) {
-              reject(new Error("Upload returned invalid image URL"));
-              return;
-            }
-
-            onProgress(100);
-            resolve(url);
-          } catch (err) {
-            reject(new Error("Invalid upload response"));
-          }
-        } else {
+        if (xhr.status === 401) {
+          handleUnauthorized();
           reject(
-            new Error(`Upload failed (${xhr.status}) at ${uploadUrl}`)
+            new Error("Your admin session has expired. Please log in again.")
           );
+          return;
         }
+
+        let data = {};
+
+        try {
+          data = JSON.parse(xhr.responseText);
+        } catch {
+          reject(new Error("Invalid upload response"));
+          return;
+        }
+
+        if (xhr.status < 200 || xhr.status >= 300) {
+          reject(
+            new Error(data.message || `Image upload failed (${xhr.status})`)
+          );
+          return;
+        }
+
+        const imageUrl = data.imageUrl || data.url;
+
+        if (
+          !imageUrl ||
+          typeof imageUrl !== "string" ||
+          !imageUrl.startsWith("https://")
+        ) {
+          reject(new Error("Upload returned an invalid image URL"));
+          return;
+        }
+
+        onProgress(100);
+        resolve(imageUrl);
       });
 
       xhr.addEventListener("error", () => {
-        clearTimeout(timeout);
-        reject(new Error(`Network error: Cannot reach ${uploadUrl}`));
+        cleanup();
+        reject(new Error("Network error: Unable to reach the upload server"));
       });
 
       xhr.addEventListener("abort", () => {
-        clearTimeout(timeout);
+        cleanup();
+
         if (timeoutOccurred) {
-          reject(
-            new Error(
-              `Upload timeout (5 min exceeded) at ${uploadUrl}`
-            )
-          );
+          reject(new Error("Image upload timed out after 5 minutes"));
         } else {
-          reject(new Error("Upload cancelled"));
+          reject(new Error("Image upload cancelled"));
         }
       });
 
+      xhr.addEventListener("timeout", () => {
+        cleanup();
+        reject(new Error("Image upload timed out"));
+      });
+
       xhr.open("POST", uploadUrl);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
       xhr.send(formData);
     });
   }
 
-  // Simple upload fallback
+  // Fetch-based upload fallback.
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 300000);
+  const timeoutId = setTimeout(() => controller.abort(), 300000);
 
-  const res = await fetch(uploadUrl, {
-    method: "POST",
-    body: formData,
-    signal: controller.signal,
-  });
+  try {
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+      signal: controller.signal,
+    });
 
-  clearTimeout(timeout);
+    if (response.status === 401) {
+      handleUnauthorized();
+      throw new Error("Your admin session has expired. Please log in again.");
+    }
 
-  const data = await res.json();
+    let data = {};
 
-  if (!res.ok) {
-    throw new Error(data.message || "Image upload failed");
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
+
+    if (!response.ok) {
+      throw new Error(data.message || "Image upload failed");
+    }
+
+    const imageUrl = data.imageUrl || data.url;
+
+    if (
+      !imageUrl ||
+      typeof imageUrl !== "string" ||
+      !imageUrl.startsWith("https://")
+    ) {
+      throw new Error("Upload returned an invalid image URL");
+    }
+
+    return imageUrl;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw new Error("Image upload timed out after 5 minutes");
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  const url = data.imageUrl || data.url;
-
-  if (!url || !url.startsWith("http")) {
-    throw new Error("Upload returned invalid image URL");
-  }
-
-  return url;
 };
 
-/**
- * Validate image URL
- */
+/* =========================
+   IMAGE URL VALIDATION
+========================= */
+
 export const ensureImageIsRemote = (image) => {
   if (!image) return true;
-  if (typeof image !== "string") return false;
-  const v = image.trim();
-  return v.startsWith("http://") || v.startsWith("https://");
+
+  if (typeof image !== "string") {
+    return false;
+  }
+
+  return image.trim().startsWith("https://");
 };

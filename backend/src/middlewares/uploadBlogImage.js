@@ -1,69 +1,154 @@
+
 import multer from "multer";
-import cloudinary from "../config/cloudinary.js";
 
-let upload;
-export let isCloudinaryAvailable = false;
+/**
+ * Blog image upload configuration.
+ *
+ * Images are stored temporarily in memory so the blog route can
+ * upload the validated buffer directly to Cloudinary.
+ */
 
-try {
-  // Dynamically import the package and handle multiple export shapes so the
-  // server doesn't crash if the package exports differ between environments.
-  import("multer-storage-cloudinary")
-    .then((pkg) => {
-      try {
-        // Handle possible module shapes:
-        // - pkg.CloudinaryStorage (ESM named export)
-        // - pkg.default.CloudinaryStorage (CommonJS wrapped)
-        // - pkg.default (module.exports = CloudinaryStorage)
-        let CloudinaryStorage = undefined;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 10 MB
 
-        if (pkg && pkg.CloudinaryStorage) {
-          CloudinaryStorage = pkg.CloudinaryStorage;
-        } else if (pkg && pkg.default && pkg.default.CloudinaryStorage) {
-          CloudinaryStorage = pkg.default.CloudinaryStorage;
-        } else if (pkg && pkg.default && typeof pkg.default === "function") {
-          CloudinaryStorage = pkg.default;
-        }
+const ALLOWED_IMAGE_TYPES = {
+  "image/jpeg": "jpeg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
 
-        if (typeof CloudinaryStorage !== "function") {
-          throw new Error("CloudinaryStorage export not found or not a constructor");
-        }
+/**
+ * Check the actual binary signature of the uploaded image.
+ * Do not trust the file extension or browser-provided MIME type alone.
+ */
+const validateImageSignature = (buffer, mimetype) => {
+  if (!Buffer.isBuffer(buffer) || buffer.length < 12) {
+    return false;
+  }
 
-        const storage = new CloudinaryStorage({
-          cloudinary,
-          params: {
-            folder: "blogs",
-            allowed_formats: ["jpg", "jpeg", "png", "webp"],
-          },
-        });
-
-        upload = multer({ storage });
-        isCloudinaryAvailable = true;
-      } catch (error) {
-        console.warn(
-          "⚠️ Failed to initialize Cloudinary storage, falling back to memory storage",
-          error && error.message ? error.message : String(error)
-        );
-        upload = multer({ storage: multer.memoryStorage() });
-      }
-    })
-    .catch((error) => {
-      console.warn(
-        "⚠️ multer-storage-cloudinary not available, using memory storage",
-        error && error.message ? error.message : String(error)
+  switch (mimetype) {
+    case "image/jpeg":
+      return (
+        buffer[0] === 0xff &&
+        buffer[1] === 0xd8 &&
+        buffer[2] === 0xff
       );
-      upload = multer({ storage: multer.memoryStorage() });
-    });
-} catch (error) {
-  console.warn(
-    "⚠️ Error loading Cloudinary storage module, using memory storage",
-    error.message
-  );
-  upload = multer({ storage: multer.memoryStorage() });
-}
 
-// Fallback in case async initialization hasn't completed
-if (!upload) {
-  upload = multer({ storage: multer.memoryStorage() });
-}
+    case "image/png":
+      return buffer.subarray(0, 8).equals(
+        Buffer.from([
+          0x89, 0x50, 0x4e, 0x47,
+          0x0d, 0x0a, 0x1a, 0x0a,
+        ])
+      );
+
+    case "image/webp":
+      return (
+        buffer.toString("ascii", 0, 4) === "RIFF" &&
+        buffer.toString("ascii", 8, 12) === "WEBP"
+      );
+
+    default:
+      return false;
+  }
+};
+
+/**
+ * Multer configuration.
+ */
+const multerInstance = multer({
+  storage: multer.memoryStorage(),
+
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+    files: 1,
+    fields: 10,
+    parts: 11,
+  },
+
+  fileFilter: (req, file, callback) => {
+    if (!Object.prototype.hasOwnProperty.call(
+      ALLOWED_IMAGE_TYPES,
+      file.mimetype
+    )) {
+      const error = new Error(
+        "Invalid image type. Only JPEG, PNG, and WEBP images are allowed."
+      );
+
+      error.status = 415;
+      return callback(error);
+    }
+
+    callback(null, true);
+  },
+});
+
+/**
+ * Compatibility export.
+ * Indicates whether Cloudinary credentials are configured.
+ * Actual connectivity is checked by the Cloudinary health endpoint.
+ */
+export const isCloudinaryAvailable = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+);
+
+/**
+ * Upload middleware wrapper.
+ *
+ * Keeps compatibility with existing usage:
+ * upload.single("image")
+ *
+ * It validates both the declared MIME type and actual file signature.
+ */
+const upload = {
+  single: (fieldName) => {
+    const multerSingle = multerInstance.single(fieldName);
+
+    return (req, res, next) => {
+      multerSingle(req, res, (error) => {
+        if (error) {
+          if (error instanceof multer.MulterError) {
+            if (error.code === "LIMIT_FILE_SIZE") {
+              return res.status(413).json({
+                success: false,
+                message: "Image exceeds the maximum allowed size of 10 MB.",
+              });
+            }
+
+            return res.status(400).json({
+              success: false,
+              message: "Invalid image upload request.",
+            });
+          }
+
+          return res.status(error.status || 400).json({
+            success: false,
+            message: error.message || "Image upload failed.",
+          });
+        }
+
+        if (!req.file) {
+          return next();
+        }
+
+        const validImage = validateImageSignature(
+          req.file.buffer,
+          req.file.mimetype
+        );
+
+        if (!validImage) {
+          return res.status(415).json({
+            success: false,
+            message:
+              "The uploaded file is not a valid JPEG, PNG, or WEBP image.",
+          });
+        }
+
+        next();
+      });
+    };
+  },
+};
 
 export default upload;

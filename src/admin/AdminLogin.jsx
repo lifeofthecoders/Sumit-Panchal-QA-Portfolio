@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_BASE_URL, { BACKEND_ASSET_BASE_URL } from "../config/api";
@@ -17,50 +18,53 @@ const AdminLogin = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [backendHealthy, setBackendHealthy] = useState(true);
   const [backendCheckLoading, setBackendCheckLoading] = useState(true);
-  const [backendStatusMessage, setBackendStatusMessage] = useState("");
 
+  /* =========================
+     ADMIN LOGIN
+  ========================= */
   const handleLogin = async (e) => {
     e.preventDefault();
 
     const trimmedEmail = email.trim();
 
     if (!trimmedEmail || !password) {
-      const msg = "Please enter both email and password";
-      setError(msg);
-      showToast(msg, "error");
+      showToast("Please enter both email and password", "error");
       return;
     }
 
     if (!backendHealthy && !backendCheckLoading) {
-      const msg =
-        "Backend server is unavailable. Please wait and try again later.";
-      setError(msg);
-      showToast(msg, "error");
+      showToast(
+        "Backend server is unavailable. Please wait and try again later.",
+        "error"
+      );
       return;
     }
 
-    setError("");
-    setSuccessMsg("");
     setLoading(true);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmedEmail, password }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          password,
+        }),
         signal: controller.signal,
       });
 
       let data = {};
+
       try {
         data = await response.json();
       } catch {
@@ -68,42 +72,91 @@ const AdminLogin = () => {
       }
 
       if (!response.ok) {
-        setPassword(""); // Clear password on failed attempt
         throw new Error(
           data.message || "Invalid email or password. Please try again."
         );
       }
 
-      if (!data.token) {
-        throw new Error("Authentication token not received from server.");
+      if (
+        data.success !== true ||
+        typeof data.token !== "string" ||
+        !data.token
+      ) {
+        throw new Error(
+          "Authentication token was not received from the server."
+        );
       }
 
-      // Always overwrite previous token safely
+      // Store the newly issued database-backed JWT.
       localStorage.removeItem("admin-token");
       localStorage.setItem("admin-token", data.token);
 
-      if (data?.admin) {
-        localStorage.setItem("adminName", data.admin.name || "Admin");
-        localStorage.setItem("adminEmail", data.admin.email || "");
-
-        let avatar = data.admin.profilePic;
-        if (avatar && !avatar.startsWith("http")) {
-          avatar = `${BACKEND_ASSET_BASE_URL}${avatar}`;
+      // Retrieve the authenticated administrator's profile.
+      const profileResponse = await fetch(
+        `${API_BASE_URL}/api/admin/profile`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+            Accept: "application/json",
+          },
+          signal: controller.signal,
         }
+      );
 
-        localStorage.setItem(
-          "adminAvatar",
-          avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-        );
+      let profileResult = {};
 
-        window.dispatchEvent(new Event("admin-data-updated"));
+      try {
+        profileResult = await profileResponse.json();
+      } catch {
+        profileResult = {};
       }
 
-      const successMessage = "Login successful! Redirecting...";
-      setSuccessMsg(successMessage);
-      showToast(successMessage, "success");
-      navigate("/admin/dashboard", { replace: true });
+      if (!profileResponse.ok || profileResult.success !== true) {
+        localStorage.removeItem("admin-token");
 
+        throw new Error(
+          profileResult.message ||
+            "Unable to verify administrator account. Please log in again."
+        );
+      }
+
+      const admin = profileResult.data;
+
+      if (!admin || !admin._id || !admin.email) {
+        localStorage.removeItem("admin-token");
+
+        throw new Error(
+          "Administrator profile verification failed."
+        );
+      }
+
+      // Store non-sensitive profile information for existing UI components.
+      localStorage.setItem("adminName", admin.name || "Admin");
+      localStorage.setItem("adminEmail", admin.email);
+
+      let avatar = admin.profilePic;
+
+      if (avatar && !avatar.startsWith("http")) {
+        avatar = `${BACKEND_ASSET_BASE_URL}${avatar}`;
+      }
+
+      localStorage.setItem(
+        "adminAvatar",
+        avatar ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+      );
+
+      window.dispatchEvent(new Event("admin-data-updated"));
+
+      const successMessage = "Login successful! Redirecting...";
+
+      setPassword("");
+      showToast(successMessage, "success");
+
+      navigate("/admin/dashboard", {
+        replace: true,
+      });
     } catch (err) {
       const networkMessage =
         err.message &&
@@ -117,7 +170,7 @@ const AdminLogin = () => {
           ? "Cannot reach backend server. Please check the server status or your network."
           : err.message || "Login failed. Please try again.";
 
-      setError(message);
+      setPassword("");
       showToast(message, "error");
     } finally {
       clearTimeout(timeoutId);
@@ -125,13 +178,26 @@ const AdminLogin = () => {
     }
   };
 
+  /* =========================
+     FORGOT PASSWORD
+  ========================= */
+  const handleForgotPassword = () => {
+    navigate("/admin/forgot-password");
+  };
+
+  /* =========================
+     BACKEND HEALTH CHECK
+  ========================= */
   const checkBackendHealth = async () => {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/health`, {
         method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
         signal: controller.signal,
       });
 
@@ -140,17 +206,16 @@ const AdminLogin = () => {
       }
 
       const data = await response.json();
+
       if (!data?.ok) {
-        throw new Error(data.message || "Health endpoint returned an error");
+        throw new Error(
+          data.message || "Health endpoint returned an error"
+        );
       }
 
       setBackendHealthy(true);
-      setBackendStatusMessage("Backend server is available.");
     } catch (err) {
       setBackendHealthy(false);
-      setBackendStatusMessage(
-        "Backend server is unavailable. Please try again later."
-      );
     } finally {
       clearTimeout(timeoutId);
       setBackendCheckLoading(false);
@@ -160,7 +225,6 @@ const AdminLogin = () => {
   useEffect(() => {
     checkBackendHealth();
   }, []);
-
 
   return (
     <div className="login-page">
@@ -192,26 +256,15 @@ const AdminLogin = () => {
           <h2 className="welcome-title">
             Welcome to <span className="highlight">Admin Panel</span>
           </h2>
-          <p className="welcome-subtitle">
-            Log in to manage your portfolio
-          </p>
 
           <form onSubmit={handleLogin} noValidate className="login-form">
-            {backendCheckLoading && (
-              <div className="success-alert">
-                Checking backend availability...
-              </div>
-            )}
-            {!backendCheckLoading && !backendHealthy && backendStatusMessage && (
-              <div className="error-alert">{backendStatusMessage}</div>
-            )}
-            {error && <div className="error-alert">{error}</div>}
-            {successMsg && <div className="success-alert">{successMsg}</div>}
 
             <div className="form-group">
               <label htmlFor="email">Email</label>
+
               <div className="input-wrapper">
                 <FaEnvelope className="field-icon" />
+
                 <input
                   id="email"
                   type="email"
@@ -219,7 +272,7 @@ const AdminLogin = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  autoComplete="email"
+                  autoComplete="username"
                   disabled={loading}
                 />
               </div>
@@ -227,8 +280,10 @@ const AdminLogin = () => {
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
+
               <div className="input-wrapper">
                 <FaLock className="field-icon" />
+
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -239,13 +294,29 @@ const AdminLogin = () => {
                   autoComplete="current-password"
                   disabled={loading}
                 />
+
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={loading}
+                  aria-label={
+                    showPassword ? "Hide password" : "Show password"
+                  }
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+
+              {/* Forgot Password - Admin Login Only */}
+              <div className="forgot-password-row">
+                <button
+                  type="button"
+                  className="forgot-password-link"
+                  onClick={handleForgotPassword}
+                  disabled={loading}
+                >
+                  Forgot Password?
                 </button>
               </div>
             </div>
@@ -253,7 +324,11 @@ const AdminLogin = () => {
             <button
               type="submit"
               className="submit-button"
-              disabled={loading || (!backendHealthy && !backendCheckLoading)}
+              disabled={
+                loading ||
+                backendCheckLoading ||
+                !backendHealthy
+              }
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>

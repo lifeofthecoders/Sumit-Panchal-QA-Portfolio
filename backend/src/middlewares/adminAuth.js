@@ -1,96 +1,108 @@
+
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import Admin from "../models/Admin.js";
-import { getFallbackAdmin } from "../utils/adminFallback.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-/* Security Check */
-if (!JWT_SECRET || JWT_SECRET.length < 32) {
-  if (process.env.NODE_ENV === "production") {
-    console.error("CRITICAL: JWT_SECRET missing or weak.");
-    process.exit(1);
-  } else {
-    console.warn("Warning: Weak JWT_SECRET in development.");
-  }
-}
+/* =========================
+   JWT CONFIGURATION
+========================= */
+const isJwtConfigured = () =>
+  typeof JWT_SECRET === "string" && JWT_SECRET.length >= 32;
 
+/* =========================
+   VERIFY ADMIN AUTHENTICATION
+========================= */
 export const verifyAdmin = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    // 1. Require a valid JWT configuration.
+    if (!isJwtConfigured()) {
+      console.error("JWT_SECRET is missing or too weak.");
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
+      return res.status(503).json({
         success: false,
-        message: "Authentication required – no token provided",
+        message: "Authentication service is not configured correctly",
       });
     }
 
-    const token = authHeader.split(" ")[1];
+    // 2. Require an active MongoDB connection.
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message: "Authentication service is temporarily unavailable",
+      });
+    }
 
+    // 3. Require a Bearer token.
+    const authHeader = req.headers.authorization;
+
+    if (
+      typeof authHeader !== "string" ||
+      !authHeader.startsWith("Bearer ")
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required. Please log in.",
+      });
+    }
+
+    const token = authHeader.slice(7).trim();
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication token is missing",
+      });
+    }
+
+    // 4. Verify token signature, expiry and algorithm.
     let decoded;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      if (jwtError.name === "TokenExpiredError") {
-        return res.status(401).json({
-          success: false,
-          message: "Session expired – please log in again",
-        });
-      }
 
+    try {
+      decoded = jwt.verify(token, JWT_SECRET, {
+        algorithms: ["HS256"],
+      });
+    } catch (jwtError) {
+      return res.status(401).json({
+        success: false,
+        message:
+          jwtError.name === "TokenExpiredError"
+            ? "Session expired. Please log in again."
+            : "Invalid authentication token",
+      });
+    }
+
+    // 5. Require the expected token claims.
+    if (
+      !decoded ||
+      typeof decoded !== "object" ||
+      typeof decoded.id !== "string" ||
+      !mongoose.Types.ObjectId.isValid(decoded.id) ||
+      !Number.isInteger(decoded.tokenVersion) ||
+      !["admin", "superadmin"].includes(decoded.role)
+    ) {
       return res.status(401).json({
         success: false,
         message: "Invalid authentication token",
       });
     }
 
-    let admin = null;
-    const fallbackAdmin = getFallbackAdmin();
-
-    if (mongoose.connection.readyState === 1) {
-      admin = await Admin.findById(decoded.id).select("+tokenVersion");
-
-      if (!admin && decoded.id === fallbackAdmin._id) {
-        admin = await Admin.findOne({ email: fallbackAdmin.email }).select(
-          "+tokenVersion"
-        );
-
-        if (admin) {
-          decoded.id = admin._id; // use real DB admin id for protected actions
-        } else {
-          // If DB is connected but fallback user isn't yet persisted, create it now
-          try {
-            const createdAdmin = await Admin.create({
-              name: fallbackAdmin.name,
-              email: fallbackAdmin.email,
-              password: "Sumit@2552",
-              phone: "",
-              isVerified: true,
-            });
-            admin = await Admin.findById(createdAdmin._id).select(
-              "+tokenVersion"
-            );
-            decoded.id = admin._id;
-          } catch (creationErr) {
-            admin = fallbackAdmin;
-          }
-        }
-      }
-    } else if (decoded.id === fallbackAdmin._id) {
-      admin = fallbackAdmin;
-    }
+    // 6. Find the actual administrator in MongoDB.
+    // No fallback accounts and no automatic account creation.
+    const admin = await Admin.findById(decoded.id)
+      .select("+tokenVersion");
 
     if (!admin) {
       return res.status(401).json({
         success: false,
-        message: "Admin account no longer exists",
+        message: "Administrator account not found",
       });
     }
 
+    // 7. Confirm the token still belongs to this account.
     if (
-      typeof decoded.tokenVersion !== "undefined" &&
-      decoded.tokenVersion !== admin.tokenVersion
+      decoded.tokenVersion !== (admin.tokenVersion || 0)
     ) {
       return res.status(401).json({
         success: false,
@@ -98,19 +110,38 @@ export const verifyAdmin = async (req, res, next) => {
       });
     }
 
+    // 8. Confirm the role has not changed.
+    if (decoded.role !== admin.role) {
+      return res.status(403).json({
+        success: false,
+        message: "Administrator permissions have changed",
+      });
+    }
+
+    // 9. Attach verified administrator information.
     req.admin = {
-      id: admin._id,
+      id: admin._id.toString(),
       role: admin.role,
     };
 
-    next();
-
+    return next();
   } catch (error) {
-    console.error("Admin verification failed:", error.message);
+    console.error("Admin authentication error:", error.message);
 
-    return res.status(401).json({
+    // Fail closed if database verification or another
+    // authentication operation fails.
+    if (error.name === "MongoServerError" ||
+        error.name === "MongooseError" ||
+        error.name === "MongoNetworkError") {
+      return res.status(503).json({
+        success: false,
+        message: "Authentication service is temporarily unavailable",
+      });
+    }
+
+    return res.status(500).json({
       success: false,
-      message: "Unauthorized – authentication failed",
+      message: "Unable to verify administrator authentication",
     });
   }
 };
