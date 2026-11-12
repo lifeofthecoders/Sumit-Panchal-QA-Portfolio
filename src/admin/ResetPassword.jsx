@@ -17,6 +17,56 @@ import "../assets/css/admin-login.css";
 
 import logoSrc from "/image/logo.svg";
 
+/* ==========================================
+   PASSWORD VALIDATION
+========================================== */
+
+const validatePassword = (password) => {
+  if (typeof password !== "string" || !password) {
+    return "Please enter your new password.";
+  }
+
+  // Reject passwords containing only whitespace.
+  if (!password.trim()) {
+    return "Password cannot contain only spaces.";
+  }
+
+  // Count Unicode characters rather than UTF-16 code units.
+  if (Array.from(password).length < 8) {
+    return "Password must contain at least 8 characters.";
+  }
+
+  if (!/[A-Z]/.test(password)) {
+    return "Password must contain at least one uppercase letter (A-Z).";
+  }
+
+  if (!/[a-z]/.test(password)) {
+    return "Password must contain at least one lowercase letter (a-z).";
+  }
+
+  if (!/[0-9]/.test(password)) {
+    return "Password must contain at least one number (0-9).";
+  }
+
+  // A special character must not be a letter, number, or whitespace.
+  if (!/[^A-Za-z0-9\s]/.test(password)) {
+    return "Password must contain at least one special character, such as !, @, #, or $.";
+  }
+
+  // bcrypt supports a maximum of 72 UTF-8 bytes.
+  const passwordBytes = new TextEncoder().encode(password).length;
+
+  if (passwordBytes > 72) {
+    return "Password must not exceed 72 UTF-8 bytes.";
+  }
+
+  return null;
+};
+
+/* ==========================================
+   RESET PASSWORD COMPONENT
+========================================== */
+
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -31,42 +81,62 @@ const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  /* ==========================================
+     FORM SUBMISSION
+  ========================================== */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 1. Validate reset token.
     if (!resetToken || !/^[a-fA-F0-9]{64}$/.test(resetToken)) {
-      setError(
-        "This password reset link is invalid. Please request a new reset link."
+      showToast(
+        "This password reset link is invalid. Please request a new reset link.",
+        "error"
       );
       return;
     }
 
+    // 2. Validate both password fields.
     if (!newPassword || !confirmPassword) {
-      setError("Please complete both password fields.");
+      showToast(
+        "Please complete both password fields.",
+        "error"
+      );
       return;
     }
 
+    // 3. Validate password confirmation.
     if (newPassword !== confirmPassword) {
-      setError("New Password and Confirm New Password do not match.");
+      showToast(
+        "New Password and Confirm New Password do not match.",
+        "error"
+      );
       return;
     }
 
-    // bcrypt only supports passwords up to 72 UTF-8 bytes.
-    const passwordBytes = new TextEncoder().encode(newPassword).length;
+    // 4. Validate password strength and security requirements.
+    const passwordError = validatePassword(newPassword);
 
-    if (passwordBytes > 72) {
-      setError("Your password must not exceed 72 UTF-8 bytes.");
+    if (passwordError) {
+      showToast(passwordError, "error");
       return;
     }
 
-    setError("");
+    // Prevent duplicate submissions.
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, 20000);
 
     try {
       const response = await fetch(
@@ -96,10 +166,12 @@ const ResetPassword = () => {
 
       if (!response.ok || data.success !== true) {
         throw new Error(
-          data.message || "Unable to reset your password. Please try again."
+          data.message ||
+            "Unable to reset your password. Please try again."
         );
       }
 
+      // Password reset completed successfully.
       setSuccess(true);
       setNewPassword("");
       setConfirmPassword("");
@@ -108,21 +180,27 @@ const ResetPassword = () => {
         "Your administrator password has been reset successfully.",
         "success"
       );
+
     } catch (err) {
       const message =
         err.name === "AbortError"
           ? "The request timed out. Please try again."
           : err.message?.includes("Failed to fetch")
           ? "Unable to connect to the server. Please try again later."
-          : err.message || "Something went wrong. Please try again.";
+          : err.message ||
+            "Something went wrong. Please try again.";
 
-      setError(message);
       showToast(message, "error");
+
     } finally {
       clearTimeout(timeoutId);
       setLoading(false);
     }
   };
+
+  /* ==========================================
+     COMPONENT UI
+  ========================================== */
 
   return (
     <div className="login-page">
@@ -187,11 +265,6 @@ const ResetPassword = () => {
                 noValidate
                 className="login-form"
               >
-                {error && (
-                  <div className="error-alert" role="alert">
-                    {error}
-                  </div>
-                )}
 
                 {/* New Password */}
                 <div className="form-group">
@@ -209,7 +282,6 @@ const ResetPassword = () => {
                       value={newPassword}
                       onChange={(e) => {
                         setNewPassword(e.target.value);
-                        setError("");
                       }}
                       autoComplete="new-password"
                       autoFocus
@@ -252,7 +324,6 @@ const ResetPassword = () => {
                       value={confirmPassword}
                       onChange={(e) => {
                         setConfirmPassword(e.target.value);
-                        setError("");
                       }}
                       autoComplete="new-password"
                       required
@@ -278,6 +349,7 @@ const ResetPassword = () => {
                   </div>
                 </div>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
                   className="submit-button"
@@ -292,6 +364,7 @@ const ResetPassword = () => {
                     "Continue"
                   )}
                 </button>
+
               </form>
             </>
           ) : (

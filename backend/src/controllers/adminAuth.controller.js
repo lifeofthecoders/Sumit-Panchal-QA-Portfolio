@@ -568,6 +568,7 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
+
 /* =========================
    RESET ADMIN PASSWORD
 ========================= */
@@ -575,6 +576,7 @@ export const resetPassword = async (req, res) => {
   try {
     const { token, newPassword, confirmPassword } = req.body || {};
 
+    // 1. Validate reset token format.
     if (
       typeof token !== "string" ||
       !/^[a-f0-9]{64}$/i.test(token)
@@ -585,6 +587,7 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    // 2. Validate both password fields.
     if (
       typeof newPassword !== "string" ||
       typeof confirmPassword !== "string" ||
@@ -593,24 +596,76 @@ export const resetPassword = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
-        message: "Both password fields are required.",
+        message: "Please complete both password fields.",
       });
     }
 
+    // 3. Validate password confirmation.
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "Passwords do not match.",
+        message: "New Password and Confirm New Password do not match.",
       });
     }
 
+    // 4. Reject passwords containing only whitespace.
+    if (!newPassword.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Password cannot contain only spaces.",
+      });
+    }
+
+    // 5. Minimum password length: 8 characters.
+    if (Array.from(newPassword).length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain at least 8 characters.",
+      });
+    }
+
+    // 6. Require at least one uppercase letter.
+    if (!/[A-Z]/.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain at least one uppercase letter (A-Z).",
+      });
+    }
+
+    // 7. Require at least one lowercase letter.
+    if (!/[a-z]/.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain at least one lowercase letter (a-z).",
+      });
+    }
+
+    // 8. Require at least one number.
+    if (!/[0-9]/.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain at least one number (0-9).",
+      });
+    }
+
+    // 9. Require at least one special character.
+    if (!/[^A-Za-z0-9\s]/.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must contain at least one special character, such as !, @, #, or $.",
+      });
+    }
+
+    // 10. bcrypt supports a maximum of 72 UTF-8 bytes.
     if (Buffer.byteLength(newPassword, "utf8") > 72) {
       return res.status(400).json({
         success: false,
-        message: "Password cannot exceed 72 UTF-8 bytes.",
+        message: "Password must not exceed 72 UTF-8 bytes.",
       });
     }
 
+    // 11. Check database availability.
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({
         success: false,
@@ -618,7 +673,7 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // Hash the incoming token before looking it up.
+    // 12. Hash the incoming reset token.
     const hashedToken = crypto
       .createHash("sha256")
       .update(token)
@@ -626,6 +681,7 @@ export const resetPassword = async (req, res) => {
 
     const now = new Date();
 
+    // 13. Verify the token and its expiration.
     const admin = await Admin.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: now },
@@ -638,7 +694,7 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // Reject the current password and the five previous passwords.
+    // 14. Prevent reuse of the current or previous five passwords.
     const recentlyUsed = await admin.isPasswordRecentlyUsed(newPassword);
 
     if (recentlyUsed) {
@@ -649,7 +705,7 @@ export const resetPassword = async (req, res) => {
     }
 
     /*
-      Atomically consume the reset token.
+      15. Atomically consume the reset token.
 
       Only one concurrent request can successfully match and
       remove this token. A second request cannot reuse it.
@@ -674,10 +730,12 @@ export const resetPassword = async (req, res) => {
     if (!claimedAdmin) {
       return res.status(400).json({
         success: false,
-        message: "This password reset link has already been used or expired.",
+        message:
+          "This password reset link has already been used or expired.",
       });
     }
 
+    // 16. Set the new password.
     claimedAdmin.password = newPassword;
 
     claimedAdmin.activity = claimedAdmin.activity || [];
@@ -688,15 +746,16 @@ export const resetPassword = async (req, res) => {
     });
 
     /*
-      The model save hook:
+      The existing Admin model save hook:
       - Hashes the new password.
       - Stores the previous password in history.
-      - Retains only the five latest previous hashes.
+      - Retains the five latest previous hashes.
       - Increments tokenVersion.
       - Invalidates existing sessions.
     */
     await claimedAdmin.save();
 
+    // 17. Send the existing password-change notification.
     try {
       await sendPasswordChangeMail(claimedAdmin.email);
     } catch (mailError) {
@@ -711,6 +770,7 @@ export const resetPassword = async (req, res) => {
       message:
         "Your password has been reset successfully. Please log in using your new password.",
     });
+
   } catch (error) {
     console.error("Reset password error:", error.message);
 

@@ -360,7 +360,7 @@ export const sendPasswordResetMail = async (
             font-size: 13px;
             line-height: 1.8;
           ">
-            <strong>Security Notice:</strong> This password reset link is valid for 10 minutes and may only be used once. For your protection, it will expire automatically after this period.
+            <strong>Security Notice:</strong> This password reset link is valid for 5 minutes and may only be used once. For your protection, it will expire automatically after this period.
           </p>
 
           <p style="
@@ -415,7 +415,7 @@ Open this secure link to reset your password:
 
 ${resetUrl}
 
-This link expires in 10 minutes and can only be used once.
+This link expires in 5 minutes and can only be used once.
 
 If you did not request this reset, ignore this email.
 

@@ -254,9 +254,9 @@ adminSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest("hex");
 
-  // Reset link expires after 10 minutes.
+  // Reset link expires after 5 minutes.
   this.passwordResetExpires = new Date(
-    Date.now() + 10 * 60 * 1000
+    Date.now() + 5 * 60 * 1000
   );
 
   // Return the original token for the email link.
