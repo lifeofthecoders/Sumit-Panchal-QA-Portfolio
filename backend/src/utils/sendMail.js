@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 
 /* ==========================================
    EMAIL TRANSPORTER
+   Gmail SMTP retained for local development.
 ========================================== */
 
 const transporter = nodemailer.createTransport({
@@ -40,17 +41,143 @@ const getFrontendUrl = () => {
 
 /* ==========================================
    GENERIC EMAIL SENDER
+   Production: Resend HTTPS API
+   Local: Existing Gmail SMTP
 ========================================== */
 
 const sendMail = async ({ to, subject, html, text = "" }) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+  if (!to || !subject || !html) {
     throw new Error(
-      "Email configuration missing. Check EMAIL_USER and EMAIL_APP_PASSWORD."
+      "Recipient, subject and email content are required."
     );
   }
 
-  if (!to || !subject || !html) {
-    throw new Error("Recipient, subject and email content are required.");
+  const isProduction = process.env.NODE_ENV === "production";
+
+  const mailBridgeUrl = process.env.MAIL_BRIDGE_URL?.trim();
+  const mailBridgeSecret = process.env.MAIL_BRIDGE_SECRET?.trim();
+
+  /*
+   * PRODUCTION EMAIL DELIVERY
+   * Render HTTPS → Google Apps Script → Gmail
+   */
+
+  if (isProduction || mailBridgeUrl || mailBridgeSecret) {
+    if (!mailBridgeUrl || !mailBridgeSecret) {
+      throw new Error(
+        "Email bridge configuration is incomplete. " +
+        "Configure MAIL_BRIDGE_URL and MAIL_BRIDGE_SECRET."
+      );
+    }
+
+    let endpoint;
+
+    try {
+      endpoint = new URL(mailBridgeUrl);
+    } catch {
+      throw new Error("Invalid MAIL_BRIDGE_URL configuration.");
+    }
+
+    if (
+      endpoint.protocol !== "https:" ||
+      endpoint.hostname !== "script.google.com" ||
+      !endpoint.pathname.startsWith("/macros/s/") ||
+      !endpoint.pathname.endsWith("/exec")
+    ) {
+      throw new Error(
+        "MAIL_BRIDGE_URL must be a valid Google Apps Script Web App URL."
+      );
+    }
+
+    const controller = new AbortController();
+
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, 25000);
+
+    try {
+      const response = await fetch(endpoint.toString(), {
+        method: "POST",
+        redirect: "follow",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          secret: mailBridgeSecret,
+          to,
+          subject,
+          html,
+          text: text || html.replace(/<[^>]+>/g, ""),
+        }),
+        signal: controller.signal,
+      });
+
+      const responseText = await response.text();
+
+      let result;
+
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        throw new Error(
+          "Google Apps Script returned an invalid response. " +
+          "Check its Web App deployment and access settings."
+        );
+      }
+
+      if (!response.ok || result.success !== true) {
+        throw new Error(
+          result.message ||
+          `Email bridge request failed with HTTP ${response.status}.`
+        );
+      }
+
+      console.log(
+        "Email successfully sent through Google Apps Script.",
+        { subject }
+      );
+
+      return {
+        messageId: null,
+        accepted: [to],
+        rejected: [],
+      };
+
+    } catch (error) {
+      if (error.name === "AbortError") {
+        throw new Error(
+          "Google Apps Script email request timed out."
+        );
+      }
+
+      console.error(
+        "Google Apps Script email delivery failed:",
+        error.message
+      );
+
+      throw new Error(
+        `Email sending failed: ${error.message}`
+      );
+
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  /*
+   * LOCAL DEVELOPMENT
+   * Retain the existing Gmail SMTP implementation.
+   */
+
+  if (
+    !process.env.EMAIL_USER ||
+    !process.env.EMAIL_APP_PASSWORD
+  ) {
+    throw new Error(
+      "Local email configuration missing. " +
+      "Check EMAIL_USER and EMAIL_APP_PASSWORD."
+    );
   }
 
   try {
@@ -63,26 +190,27 @@ const sendMail = async ({ to, subject, html, text = "" }) => {
     });
 
     if (!info.accepted || info.accepted.length === 0) {
-      throw new Error("The email provider did not accept the recipient.");
+      throw new Error(
+        "The email provider did not accept the recipient."
+      );
     }
 
-    console.log("Password/email notification accepted by mail server:", {
-      to,
-      subject,
-      messageId: info.messageId,
-      accepted: info.accepted,
-      rejected: info.rejected,
-    });
+    console.log(
+      "Local Gmail email sent successfully:",
+      { messageId: info.messageId }
+    );
 
     return info;
-  } catch (error) {
-    console.error("Email delivery failed:", {
-      to,
-      subject,
-      error: error.message,
-    });
 
-    throw new Error(`Email sending failed: ${error.message}`);
+  } catch (error) {
+    console.error(
+      "Local Gmail email delivery failed:",
+      error.message
+    );
+
+    throw new Error(
+      `Email sending failed: ${error.message}`
+    );
   }
 };
 
