@@ -921,13 +921,26 @@ https://www.linkedin.com/in/sumit-panchal-b790a8236
 
 ## 💼 Professional Focus
 
-I'm interested in opportunities where I can contribute to building products that are:
+### Beyond Finding Bugs. Building Confidence in Every Release.
 
-**Reliable • Usable • Consistent • Stable • Scalable • User-Friendly**
+I approach quality assurance with one core belief: **A feature is not truly tested until its behaviour, reliability, and impact on the overall user experience are understood.**
 
-I bring a QA mindset that focuses not only on whether a feature works, but also on **how the complete product behaves in the hands of a real user**.
+My focus goes beyond validating requirements and finding defects. I look at software from three perspectives: the business expectation, the user's actual behaviour, and the risks that could compromise product quality.
 
-My approach combines structured testing with real-world user behavior, helping identify defects, usability issues, edge cases, and potential risks before they reach the end user.
+**My QA Philosophy**
+
+- **Think in Risks, Not Just Test Cases:** Identify critical workflows, evaluate potential impact, and focus testing where failure matters most.
+- **Challenge the Expected Behaviour:** Explore beyond happy paths to uncover hidden defects, boundary conditions, and unexpected scenarios.
+- **Understand the User Behind the Feature:** Validate functionality through real-world usage, usability, and end-to-end experience.
+- **Make Defects Actionable:** Report issues with precise reproduction steps, meaningful evidence, and clear impact.
+- **Protect What Already Works:** Strengthen regression coverage and verify that every change preserves existing functionality.
+- **Build Release Confidence:** Combine requirement analysis, structured testing, exploratory investigation, and defect verification to support informed release decisions.
+
+**The Quality Standard I Strive For**
+
+Reliable functionality. Predictable behaviour. Consistent experiences. Fewer surprises. Greater user confidence.
+
+I aim to contribute to engineering teams where QA is not simply the final checkpoint, but an active part of product thinking, development decisions, and continuous quality improvement.
 
 ---
 
