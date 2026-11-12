@@ -1,3 +1,4 @@
+
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "../components/ToastProvider";
@@ -425,6 +426,12 @@ export default function BlogForm() {
                 if (!validation.valid) {
                   setUploadError(validation.error);
                   return;
+                }
+
+                // Show a non-blocking warning for original images above 10 MB.
+                // Image compression continues; the backend validates the compressed file.
+                if (validation.warning) {
+                  showToast(validation.warning, "warning");
                 }
 
                 // Show compressing UI

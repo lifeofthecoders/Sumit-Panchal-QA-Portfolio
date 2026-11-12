@@ -8,7 +8,7 @@ import multer from "multer";
  * upload the validated buffer directly to Cloudinary.
  */
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 10 MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MiB
 
 const ALLOWED_IMAGE_TYPES = {
   "image/jpeg": "jpeg",
@@ -112,7 +112,7 @@ const upload = {
             if (error.code === "LIMIT_FILE_SIZE") {
               return res.status(413).json({
                 success: false,
-                message: "Image exceeds the maximum allowed size of 10 MB.",
+                message: "Image exceeds the maximum allowed size of 5 MiB.",
               });
             }
 
